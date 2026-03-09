@@ -1,0 +1,39 @@
+#!/bin/bash
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "fedora")) -}}
+
+set -euo pipefail
+
+error_handler() {
+    echo "[󰚌] critical issue during packages installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+PACKAGES=(
+    "sudo-rs"
+    "ghostty"
+    "ulauncher"
+    "qemu"
+)
+
+MISSING_PKGS=""
+
+echo "[] search missing package..."
+for PKG in "${PACKAGES[@]}"; do
+    if ! rpm -q "${PKG}" &> /dev/null; then
+        MISSING_PKGS="${MISSING_PKGS} ${PKG}"
+    fi
+done
+
+if [ -n "${MISSING_PKGS}" ]; then
+    echo "[] install packages..."
+    sudo rpm-ostree install $MISSING_PKGS
+    echo "[] packages installed"
+    echo "[] reboot needed launch \"systemctl reboot\""
+else
+    echo "[] packages already installed"
+fi
+
+{{ else -}}
+
+{{ end -}}
