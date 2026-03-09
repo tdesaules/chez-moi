@@ -1,0 +1,20 @@
+[Unit]
+Description=Open WebUI
+After=network.target lemonade-server.service
+Wants=open-terminal.service
+BindsTo=lemonade-server.service
+
+[Container]
+Image=ghcr.io/open-webui/open-webui:latest
+ContainerName=open-webui
+Network=ai.network
+PublishPort=127.0.0.1:3000:8080
+Volume=open-webui:/app/backend/data
+Environment=ENABLE_PERSISTENT_CONFIG=False
+Environment=WEBUI_AUTH=False
+Environment=ENABLE_SIGNUP=False
+Environment=ENABLE_OPENAI_API=True
+Environment=OPENAI_API_BASE_URL=http://lemonade-server:13305/v1
+Environment=OPENAI_API_KEY=empty
+Environment=TERMINAL_SERVER_CONNECTIONS='[{"id":"open-terminal","url":"http://localhost:8000","key":"empty","name":"Terminal","auth_type":"bearer","config":{"access_grants": []}}]'
+Environment=ENABLE_AUTOCOMPLETE_GENERATION=False

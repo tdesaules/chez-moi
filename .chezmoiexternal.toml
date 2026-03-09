@@ -1,0 +1,12 @@
+[".config/usage/specs"]
+    type = "archive"
+    url = "https://github.com/tdesaules/usage-specs/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    include = ["*/*.kdl"]
+
+[".config/nvim"]
+    type = "archive"
+    url = "https://github.com/LazyVim/starter/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# Check if ssh-keygen binary exists
+if command -v ssh-keygen &> /dev/null; then
+    # Check if SSH key already exists
+    if test -f "{{ .chezmoi.homeDir }}/.ssh/id_ed25519" || test -f "{{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub"; then
+        _log "info" "SSH ed25519 key already exists, skipping generation."
+    else
+        _log "info" "Generating SSH ed25519 key..."
+        mkdir -p "{{ .chezmoi.homeDir }}/.ssh"
+        if ssh-keygen -t ed25519 -f "{{ .chezmoi.homeDir }}/.ssh/id_ed25519" -N "" -C "{{ .chezmoi.username }}@{{ .chezmoi.hostname }}" -q; then
+            chmod 600 "{{ .chezmoi.homeDir }}/.ssh/id_ed25519"
+            _log "success" "SSH key generated successfully."
+        else
+            _log "error" "Failed to generate SSH key."
+            exit 1
+        fi
+    fi
+else
+    _log "error" "ssh-keygen binary not found. Please ensure OpenSSH is installed."
+    exit 1
+fi

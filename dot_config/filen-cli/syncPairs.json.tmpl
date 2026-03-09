@@ -1,0 +1,26 @@
+[
+  {
+    "local": "/var{{ .chezmoi.homeDir }}/document",
+    "remote": "/document",
+    "syncMode": "twoWay",
+    "disableLocalTrash": false,
+    "ignore": [],
+    "excludeDotFiles": true
+  },
+  {
+    "local": "/var{{ .chezmoi.homeDir }}/.config/chromium",
+    "remote": "/.config/chromium",
+    "syncMode": "twoWay",
+    "disableLocalTrash": true,
+    "ignore": [],
+    "excludeDotFiles": false
+  },
+  {
+    "local": "/var{{ .chezmoi.homeDir }}/.zen",
+    "remote": "/.zen",
+    "syncMode": "twoWay",
+    "disableLocalTrash": true,
+    "ignore": [],
+    "excludeDotFiles": false
+  }
+]

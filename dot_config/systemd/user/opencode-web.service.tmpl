@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenCode Web
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/opencode serve --hostname 0.0.0.0 --port 4096
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

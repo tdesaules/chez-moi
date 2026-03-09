@@ -1,0 +1,12 @@
+[Unit]
+Description=Filen Two-Way Sync
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/filen-cli sync --continuous
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

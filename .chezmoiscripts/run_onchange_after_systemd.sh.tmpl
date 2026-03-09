@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# Hash des fichiers .service, .socket et .container pour déclencher sur ajout/modification/suppression
+# {{ include "dot_config/systemd/user/x11-unix.service.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/filen-sync.service.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
+
+# Check if systemctl is available
+if ! command -v systemctl &> /dev/null; then
+    _log "error" "systemctl not found. Cannot manage systemd user services."
+    exit 1
+fi
+
+# Reload systemd user daemon
+_log "info" "Reloading systemd user daemon..."
+if systemctl --user daemon-reload > /dev/null 2>&1; then
+    _log "success" "systemd user daemon reloaded."
+else
+    _log "error" "Failed to reload systemd user daemon."
+    exit 1
+fi
+
+# Directories to scan
+USER_SYSTEMD_DIR="{{ .chezmoi.homeDir }}/.config/systemd/user"
+USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/.config/containers/systemd"
+
+# Podman quadlet .container files are handled by daemon-reload only
+_log "info" "Podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
+
+# Get list of .service and .socket files (podman quadlets don't need enable/start)
+services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*.socket' \) -printf '%f\n' 2>/dev/null)
+
+if [ -z "$services" ]; then
+    _log "info" "No systemd user service/socket files found."
+    exit 0
+fi
+
+for service in $services; do
+    _log "info" "Enabling and starting $service..."
+    if systemctl --user enable --now "$service" > /dev/null 2>&1; then
+        _log "success" "Enabled and started $service"
+    else
+        _log "error" "Failed to enable/start $service"
+    fi
+done
+
+_log "success" "All systemd user services processed. Podman quadlet containers will be started by systemd."

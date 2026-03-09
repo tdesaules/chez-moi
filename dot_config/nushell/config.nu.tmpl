@@ -1,0 +1,69 @@
+# config.nu
+
+use scripts/nord.nu *
+use scripts/aliases.nu *
+use scripts/bat.nu *
+use scripts/fzf.nu *
+use scripts/paths.nu *
+use scripts/starship.nu *
+use scripts/vivid.nu *
+
+$env.config = {
+    show_banner: false
+    color_config: (nord)
+    table: {
+        mode: rounded
+        index_mode: always
+        show_empty: true
+        padding: { left: 1, right: 1 }
+    }
+    completions: {
+            use_ls_colors: false
+            external: {
+                enable: true
+                max_results: 100
+            }
+        }
+    keybindings: [
+        {
+            name: fzf_file_completion
+            modifier: Alt
+            keycode: Right
+            mode: [emacs, vi_normal, vi_insert]
+            event: {
+                send: executehostcommand
+                cmd: "file-completion"
+            }
+        },
+        {
+            name: fzf_bin_completion
+            modifier: Alt
+            keycode: Left
+            mode: [emacs, vi_insert, vi_normal]
+            event: {
+                send: executehostcommand
+                cmd: "bin-completion"
+            }
+        },
+        {
+            name: fzf_history
+            modifier: control
+            keycode: char_r
+            mode: [emacs, vi_insert, vi_normal]
+            event: {
+                send: executehostcommand
+                cmd: "commandline edit --insert (history | get command | reverse | uniq | str join (char nl) | fzf --scheme=history --prompt='History> ' | decode utf-8 | str trim)"
+            }
+        }
+    ]
+}
+
+try {
+    if (which fastfetch | is-not-empty) {
+        with-env {
+            FASTFETCH_CONFIG: (($nu.home-dir | path join ".config" "fastfetch" "config.jsonc") | path expand)
+        } {
+            ^fastfetch
+        }
+    }
+} catch { }

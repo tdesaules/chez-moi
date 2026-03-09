@@ -1,0 +1,23 @@
+os:
+  editCommand: "nvim"
+git:
+  overrideGpg: false
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+customCommands:
+  - key: "E"
+    command: "ec"
+    context: "files"
+    description: "Check EditorConfig compliance"
+    prompts:
+      - type: "confirm"
+        title: "EditorConfig Checker"
+        body: "Run ec on the current repository?"
+    loadingText: "Checking files..."
+    stream: true
+  - key: "C"
+    command: "ec && git commit"
+    context: "files"
+    description: "Verify EditorConfig and commit"
+    subprocess: true

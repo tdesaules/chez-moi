@@ -1,0 +1,20 @@
+[Unit]
+Description=Lemonade Server
+After=network.target
+Wants=open-webui.service
+
+[Container]
+Image=ghcr.io/lemonade-sdk/lemonade-server:latest
+ContainerName=lemonade-server
+Network=ai.network
+AddDevice=/dev/dri:/dev/dri
+AddDevice=/dev/accel/accel0:/dev/accel/accel0
+AddDevice=/dev/kfd:/dev/kfd
+SecurityLabelDisable=true
+PublishPort=127.0.0.1:13305:13305
+Volume=lemonade-cache:/root/.cache/huggingface
+Volume=lemonade-llama:/opt/lemonade/llama
+Volume=lemonade-recipe:/root/.cache/lemonade
+Volume={{ .chezmoi.homeDir }}/.config/lemonade/config.json:/root/.cache/lemonade/config.json
+Volume={{ .chezmoi.homeDir }}/.config/lemonade/recipe_options.json:/root/.cache/lemonade/recipe_options.json
+Volume={{ .chezmoi.homeDir }}/.config/lemonade/user_models.json:/root/.cache/lemonade/user_models.json

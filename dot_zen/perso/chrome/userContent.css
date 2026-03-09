@@ -1,0 +1,131 @@
+/*
+ * userContent.css
+ * Theme: Nord (https://www.nordtheme.com/)
+ * Deep integration for internal browser pages
+ */
+
+:root {
+    /* Nord Palette Setup */
+    --nord0: #2e3440;
+    --nord1: #3b4252;
+    --nord2: #434c5e;
+    --nord3: #4c566a;
+    --nord4: #d8dee9;
+    --nord5: #e5e9f0;
+    --nord6: #eceff4;
+    --nord8: #88c0d0;
+    --nord9: #81a1c1;
+    --nord10: #5e81ac;
+
+    /* Override internal variables */
+    --zen-primary-color: var(--nord8) !important;
+    --in-content-page-background: light-dark(
+        var(--nord6),
+        var(--nord0)
+    ) !important;
+    --zen-in-content-dialog-background: light-dark(
+        var(--nord5),
+        var(--nord1)
+    ) !important;
+    --in-content-box-background: light-dark(
+        var(--nord5),
+        var(--nord1)
+    ) !important;
+
+    /* Form elements & buttons */
+    --in-content-primary-button-background: var(--nord8) !important;
+    --in-content-primary-button-background-hover: var(--nord9) !important;
+    --in-content-primary-button-background-active: var(--nord10) !important;
+    --in-content-primary-button-text-color: var(--nord0) !important;
+
+    --in-content-button-background: light-dark(
+        var(--nord4),
+        var(--nord2)
+    ) !important;
+    --in-content-button-background-hover: light-dark(
+        var(--nord5),
+        var(--nord3)
+    ) !important;
+    --in-content-button-text-color: light-dark(
+        var(--nord0),
+        var(--nord6)
+    ) !important;
+
+    /* Borders and text */
+    --in-content-border-color: light-dark(
+        var(--nord4),
+        var(--nord3)
+    ) !important;
+    --in-content-border-hover: var(--nord8) !important;
+    --in-content-page-color: light-dark(var(--nord0), var(--nord5)) !important;
+    --in-content-text-color: light-dark(var(--nord0), var(--nord5)) !important;
+
+    --link-color: var(--nord10) !important;
+    --link-color-hover: var(--nord8) !important;
+}
+
+/* Explicit enforcement for all about:* pages */
+@-moz-document url-prefix(about:) {
+    :root,
+    body,
+    page,
+    window {
+        background-color: light-dark(var(--nord6), var(--nord0)) !important;
+        color: light-dark(var(--nord0), var(--nord5)) !important;
+    }
+
+    /* Cards inside preferences */
+    .category[selected],
+    .card,
+    groupbox {
+        background-color: light-dark(var(--nord5), var(--nord1)) !important;
+        border-color: light-dark(var(--nord4), var(--nord2)) !important;
+    }
+
+    /* Style the main dropdown button */
+    select,
+    menulist {
+        appearance: none !important;
+        background-color: light-dark(var(--nord5), var(--nord1)) !important;
+        color: light-dark(var(--nord0), var(--nord6)) !important;
+        border: 1px solid light-dark(var(--nord4), var(--nord3)) !important;
+        border-radius: 4px !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Hover state for dropdowns */
+    select:hover,
+    menulist:hover {
+        background-color: light-dark(var(--nord4), var(--nord2)) !important;
+    }
+
+    /* Active/Open state for dropdowns */
+    select:active,
+    menulist:active,
+    menulist[open="true"] {
+        border-color: var(--nord8) !important;
+    }
+
+    /* Style the options inside the dropdown list */
+    option,
+    menuitem {
+        background-color: light-dark(var(--nord5), var(--nord1)) !important;
+        color: light-dark(var(--nord0), var(--nord6)) !important;
+        padding: 4px !important;
+    }
+
+    option:hover,
+    menuitem:hover,
+    menuitem[_moz-menuactive="true"] {
+        background-color: light-dark(var(--nord4), var(--nord2)) !important;
+        color: light-dark(var(--nord0), var(--nord6)) !important;
+    }
+}
+
+/* New Tab / Home Page Deep Override */
+@-moz-document url("about:home"), url("about:newtab"), url("about:blank") {
+    .activity-stream {
+        background-color: light-dark(var(--nord6), var(--nord0)) !important;
+        color: light-dark(var(--nord0), var(--nord5)) !important;
+    }
+}

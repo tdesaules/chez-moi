@@ -1,0 +1,89 @@
+input {
+    keyboard {
+        track-layout "global"
+    }
+    touchpad {
+        accel-speed 0.1
+        accel-profile "adaptive"
+        scroll-method "two-finger"
+        scroll-factor 0.2
+        click-method "clickfinger"
+        natural-scroll
+        dwt
+        dwtp
+    }
+}
+
+layout {
+    gaps 12
+    center-focused-column "never"
+    default-column-width { proportion 0.5; }
+    focus-ring {
+        width 4
+        active-color "#81a1c1"
+        urgent-color "#bf616a"
+    }
+    border {
+        off
+        width 4
+        active-color "#81a1c1"
+        urgent-color "#bf616a"
+    }
+    shadow {
+        off
+    }
+    preset-column-widths {
+        proportion 0.5
+        proportion 0.75
+        proportion 1.0
+    }
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+workspace "gaming" {
+    layout {
+        default-column-width { proportion 1.0; }
+    }
+}
+
+window-rule {
+    match app-id="steam"
+    open-on-workspace "gaming"
+}
+
+binds {
+    Mod+F1 { spawn "pactl" "set-sink-mute" "@DEFAULT_SINK@" "toggle"; }
+    Mod+F2 { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "-1%"; }
+    Mod+F3 { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "+1%"; }
+    Mod+F4 { spawn "bash" "-c" "brightnessctl --device='asus::kbd_backlight' set $(( ( $(brightnessctl --device='asus::kbd_backlight' get 2>/dev/null) + 1 ) % $(($(brightnessctl --device='asus::kbd_backlight' max 2>/dev/null) + 1)) )) >/dev/null 2>&1"; }
+    Mod+F5 { spawn "brightnessctl" "set" "5%-"; }
+    Mod+F6 { spawn "brightnessctl" "set" "+5%"; }
+    Mod+F9 { spawn "pactl" "set-source-mute" "@DEFAULT_SOURCE@" "toggle"; }
+    Mod+F10 { spawn "bash" "-c" "if [ \"$(cat /sys/bus/usb/devices/1-1/authorized 2>/dev/null)\" = \"1\" ]; then echo 0 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'disabled'; else echo 1 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'enabled'; fi"; }
+    Mod+F11 { spawn "dms" "screenshot" "--no-file"; }
+    Mod+F12 { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
+    Mod+T { spawn "ghostty"; }
+    Mod+space hotkey-overlay-title="App Launcher Toggle" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+L { spawn "loginctl" "lock-session"; }
+    Mod+G { focus-workspace "gaming"; }
+    Mod+Return { maximize-column; }
+}
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+cursor {
+    xcursor-theme "Bibata-Modern-Ice"
+    xcursor-size 24
+}
+
+hotkey-overlay {
+    skip-at-startup
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=X11 Unix Socket Permissions
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sudo /usr/bin/chown -R {{ .chezmoi.username }}:{{ .chezmoi.username }} /tmp/.X11-unix
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

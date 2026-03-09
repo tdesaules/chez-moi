@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Chromium Nord Theme 11",
+  "description": "",
+  "version": "1.0",
+  "author": "Thibault DESAULES",
+  "theme": {
+    "colors": {
+      "frame": [46, 52, 64],
+      "frame_inactive": [46, 52, 64],
+      "frame_incognito": [46, 52, 64],
+      "frame_incognito_inactive": [46, 52, 64],
+      "background_tab": [76, 86, 106],
+      "background_tab_inactive": [76, 86, 106],
+      "background_tab_incognito": [76, 86, 106],
+      "background_tab_incognito_inactive": [76, 86, 106],
+      "bookmark_text": [236, 239, 244],
+      "tab_background_text": [216, 222, 233],
+      "tab_background_text_inactive": [216, 222, 233],
+      "tab_background_text_incognito": [216, 222, 233],
+      "tab_background_text_incognito_inactive": [216, 222, 233],
+      "tab_text": [236, 239, 244],
+      "toolbar": [208, 135, 112],
+      "toolbar_button_icon": [236, 239, 244],
+      "omnibox_text": [208, 135, 112],
+      "omnibox_background": [236, 239, 244]
+    }
+  }
+}

@@ -1,0 +1,2 @@
+Host *
+    ProxyCommand assh connect --batchmode %h %p
