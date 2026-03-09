@@ -27,7 +27,7 @@ done
 
 if [ -n "${MISSING_PKGS}" ]; then
     echo "[] install packages..."
-    sudo rpm-ostree install $MISSING_PKGS
+    rpm-ostree install ${MISSING_PKGS}
     echo "[] packages installed"
     echo "[] reboot needed launch \"systemctl reboot\""
 else
