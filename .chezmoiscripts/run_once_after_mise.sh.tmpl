@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# Check if mise binary exists
+if command -v mise &> /dev/null; then
+    _log "info" "Installing mise tools..."
+    if mise install --quiet --yes; then
+        _log "success" "Mise executed successfully."
+    else
+        _log "error" "Failed to install mise tools."
+        exit 1
+    fi
+else
+    _log "error" "Mise binary not found. Please ensure mise is installed."
+    exit 1
+fi

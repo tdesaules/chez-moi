@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=Lutris
+StartupWMClass=net.lutris.Lutris
+Comment=Video Game Preservation Platform
+Categories=Game;PackageManager;
+Keywords=gaming;wine;emulator;
+Exec=env PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python lutris %U
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/lutris-logo.svg
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=x-scheme-handler/lutris;application/x-lutris;
+X-GNOME-UsesNotifications=true
+X-Desktop-File-Install-Version=0.28

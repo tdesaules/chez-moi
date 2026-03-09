@@ -1,0 +1,26 @@
+[Desktop Entry]
+NoDisplay=true
+Name=ProtonPlus
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=protonplus com.vysp3r.ProtonPlus
+Icon=com.vysp3r.ProtonPlus
+Comment[cs]=Moderní správce nástrojů kompatibility
+Comment[de]=Ein moderner Verwalter für Kompatibilitätstools
+Comment[es]=Un administrador moderno de herramientas de compatibilidad
+Comment[fr]=Un gestionnaire moderne d’outils de compatibilité pour Linux.
+Comment[it]=Un gestore moderno per strumenti di compatibilità
+Comment[ru]=Современный менеджер инструментов совместимости
+Comment[id]=Manajer alat kompatibilitas modern
+Comment[pt]=Um gerenciador de ferramentas de compatibilidade moderno
+Comment[zh_CN]=现代的兼容性工具管理器。
+Comment[fi]=Nykyaikainen hallintakeskus yhteensopivuustyökaluille.
+Comment[zh_TW]=現代的相容性工具管理程式。
+Comment[nl]=Een moderne compatibiliteitstoolbeheerder
+Comment[ar]=مدير لأدوات التوافق بطابع حديث
+Comment[ja]=モダンな互換性ツールマネージャー
+Comment[ka]=თანამედროვე თავსებადობის ხელსაწყოების მმართველი
+Comment=A modern compatibility tools manager
+Terminal=false
+Type=Application
+Categories=Game;Utility;
+StartupNotify=true
+X-Flatpak=com.vysp3r.ProtonPlus

@@ -1,0 +1,2 @@
+export LS_COLORS=$(cat "$HOME/.config/vivid/nord.config")
+export EZA_COLORS="sn=38;5;146:sb=38;5;146:da=38;5;109:ur=38;5;109:uw=38;5;174:ux=38;5;150"

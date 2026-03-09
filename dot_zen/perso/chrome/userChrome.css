@@ -1,0 +1,326 @@
+/*
+ * userChrome.css
+ * Theme: Nord (https://www.nordtheme.com/)
+ * Full deep-override of Zen Browser variables
+ */
+
+:host(:is(.anonymous-content-host, notification-message)),
+:root {
+    /* 1. Nord Palette Definition */
+    --nord0: #2e3440; /* Polar Night - Darkest */
+    --nord1: #3b4252; /* Polar Night - UI Elements */
+    --nord2: #434c5e; /* Polar Night - UI Hover/Active */
+    --nord3: #4c566a; /* Polar Night - Lightest */
+
+    --nord4: #d8dee9; /* Snow Storm - Darkest UI Hover */
+    --nord5: #e5e9f0; /* Snow Storm - UI Elements */
+    --nord6: #eceff4; /* Snow Storm - Lightest Background */
+
+    --nord7: #8fbcbb; /* Frost */
+    --nord8: #88c0d0; /* Frost - Primary Accent */
+    --nord9: #81a1c1; /* Frost */
+    --nord10: #5e81ac; /* Frost - Folders and Active States */
+
+    /* 2. Core Branding & Accent Overrides */
+    --zen-primary-color: var(--nord8) !important;
+    --zen-branding-dark: var(--nord0) !important;
+    --zen-branding-paper: var(--nord6) !important;
+
+    /* 3. Bypassing Zen's color-mix() generation */
+    --zen-colors-primary: light-dark(var(--nord10), var(--nord8)) !important;
+    --zen-colors-secondary: light-dark(var(--nord9), var(--nord7)) !important;
+    --zen-colors-tertiary: light-dark(var(--nord5), var(--nord1)) !important;
+    --zen-colors-hover-bg: light-dark(var(--nord4), var(--nord2)) !important;
+    --zen-colors-primary-foreground: light-dark(
+        var(--nord0),
+        var(--nord6)
+    ) !important;
+    --zen-colors-border: light-dark(var(--nord4), var(--nord3)) !important;
+    --zen-colors-border-contrast: light-dark(
+        rgba(216, 222, 233, 0.5),
+        rgba(76, 86, 106, 0.5)
+    ) !important;
+    --zen-colors-input-bg: light-dark(var(--nord5), var(--nord1)) !important;
+
+    /* 4. Global Backgrounds */
+    --zen-main-browser-background: light-dark(
+        var(--nord6),
+        var(--nord0)
+    ) !important;
+    --zen-main-browser-background-toolbar: light-dark(
+        var(--nord6),
+        var(--nord0)
+    ) !important;
+    --zen-themed-toolbar-bg-transparent: light-dark(
+        var(--nord6),
+        var(--nord0)
+    ) !important;
+
+    /* 5. Toolbars, Sidebar elements and Tabs */
+    --toolbar-bgcolor: light-dark(
+        rgba(236, 239, 244, 0.6),
+        rgba(46, 52, 64, 0.6)
+    ) !important;
+    --zen-toolbar-element-bg: light-dark(
+        rgba(216, 222, 233, 0.5),
+        rgba(59, 66, 82, 0.5)
+    ) !important;
+    --zen-toolbar-element-bg-hover: light-dark(
+        var(--nord4),
+        var(--nord2)
+    ) !important;
+    --toolbarbutton-hover-background: var(
+        --zen-toolbar-element-bg-hover
+    ) !important;
+    --toolbarbutton-active-background: light-dark(
+        var(--nord3),
+        var(--nord3)
+    ) !important;
+    --tab-hover-background-color: light-dark(
+        var(--nord4),
+        var(--nord2)
+    ) !important;
+
+    /* 6. URL Bar & Popups */
+    --zen-dialog-background: light-dark(var(--nord6), var(--nord0)) !important;
+    --zen-urlbar-background: light-dark(var(--nord5), var(--nord1)) !important;
+    --zen-urlbar-background-base: light-dark(
+        var(--nord6),
+        var(--nord0)
+    ) !important;
+    --arrowpanel-background: light-dark(var(--nord5), var(--nord1)) !important;
+    --input-bgcolor: light-dark(var(--nord5), var(--nord1)) !important;
+    --zen-input-border-color: light-dark(var(--nord4), var(--nord3)) !important;
+    --urlbar-box-hover-bgcolor: light-dark(
+        var(--nord4),
+        var(--nord2)
+    ) !important;
+
+    /* 7. Typography / Text Colors */
+    --toolbox-textcolor: light-dark(var(--nord0), var(--nord6)) !important;
+    --toolbar-field-color: light-dark(var(--nord0), var(--nord6)) !important;
+    --link-color: var(--nord10) !important;
+    --link-color-hover: var(--nord8) !important;
+
+    /* 8. Button Standardization */
+    --in-content-primary-button-background: var(--nord8) !important;
+    --in-content-primary-button-background-hover: var(--nord9) !important;
+    --in-content-primary-button-text-color: var(--nord0) !important;
+    --in-content-button-background: light-dark(
+        var(--nord4),
+        var(--nord2)
+    ) !important;
+    --in-content-button-background-hover: light-dark(
+        var(--nord5),
+        var(--nord3)
+    ) !important;
+}
+
+/* ========================================================= */
+/* GLOBAL BACKGROUND FIXES                                   */
+/* ========================================================= */
+
+/* Force Sidebar explicitly just in case native themes interfere */
+#sidebar-box,
+.browserSidebarContainer,
+#zen-main-app-wrapper,
+.zen-browser-generic-background::after,
+.zen-browser-generic-background::before {
+    background-color: light-dark(var(--nord6), var(--nord0)) !important;
+}
+
+/* Empty Browser / Base Window Background Fix */
+#main-window,
+#browser,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
+.browserStack,
+xul|window,
+xul|browser {
+    background-color: light-dark(var(--nord6), var(--nord0)) !important;
+}
+
+/* Ensure empty web views force the Nord background */
+#tabbrowser-tabpanels {
+    appearance: none !important;
+}
+.zen-browser-generic-background,
+.zen-browser-generic-background::before,
+.zen-browser-generic-background::after {
+    background-color: light-dark(var(--nord6), var(--nord0)) !important;
+    background-image: none !important;
+}
+
+/* Override Zen's hardcoded background for the internal web content container */
+#tabbrowser-tabpanels browser[type="content"],
+#tabbrowser-tabpanels browser[type="content"]:not([transparent="true"]) {
+    background-color: light-dark(var(--nord6), var(--nord0)) !important;
+}
+
+/* Split view & Sidebar splitter */
+.zen-split-view-splitter::before,
+#zen-sidebar-splitter::before {
+    background: var(--nord8) !important;
+}
+
+/* ========================================================= */
+/* URL BAR & SEARCH POPUP                                    */
+/* ========================================================= */
+
+/* URL Bar Inner Background (Lighter Resting State) */
+#urlbar:not([breakout-extend="true"]) .urlbar-background,
+#searchbar {
+    background-color: light-dark(var(--nord5), var(--nord2)) !important;
+    border: 1px solid light-dark(var(--nord4), var(--nord3)) !important;
+}
+#urlbar-input {
+    color: light-dark(var(--nord0), var(--nord6)) !important;
+}
+
+/* Search Popup breakout styles */
+#urlbar[breakout-extend="true"] .urlbar-background {
+    background-color: light-dark(var(--nord6), var(--nord1)) !important;
+    border: 5px solid var(--nord0) !important;
+    outline: none !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    --zen-urlbar-background-transparent: light-dark(
+        rgba(236, 239, 244, 0.95),
+        rgba(59, 66, 82, 0.95)
+    ) !important;
+}
+.urlbarView {
+    background-color: transparent !important;
+    border: none !important;
+}
+.urlbarView-row[selected] {
+    --zen-selected-bg: light-dark(var(--nord4), var(--nord3)) !important;
+    background-color: var(--zen-selected-bg) !important;
+}
+.urlbarView-row:hover {
+    background-color: light-dark(var(--nord5), var(--nord2)) !important;
+}
+.search-panel-one-offs {
+    background-color: light-dark(var(--nord6), var(--nord1)) !important;
+    border-top: 5px solid var(--nord0) !important;
+}
+
+/* ========================================================= */
+/* ZEN SPECIFIC: FOLDERS & TAB GROUPS OVERRIDE               */
+/* ========================================================= */
+
+/* Restores folder depth and nuances with the Nord palette */
+zen-folder {
+    /* Back of the folder (slightly lighter blue for contrast) */
+    --zen-folder-behind-bgcolor: var(--nord9) !important;
+
+    /* Front of the folder (main accent color) */
+    --zen-folder-front-bgcolor: var(--nord10) !important;
+
+    /* Outlines and internal details (dark gray to draw the icon) */
+    --zen-folder-stroke: var(--nord2) !important;
+}
+
+/* Passes the correct base color for Zen's engine to handle opacities */
+zen-folder .tab-group-folder-icon {
+    color: var(--nord10) !important;
+}
+
+/* Removes any brute-force filling that flattened the image */
+zen-folder .tab-group-folder-icon svg image {
+    fill: unset !important;
+    color: unset !important;
+}
+
+/* Folder background on hover (Nord Gray) */
+zen-folder > .tab-group-label-container:hover::before {
+    background-color: light-dark(var(--nord4), var(--nord2)) !important;
+}
+
+/* Folder background when selected/active */
+zen-folder[selected] > .tab-group-label-container::before {
+    background-color: var(--nord10) !important;
+}
+
+/* Ensures selected folder text remains readable (Nord White) */
+zen-folder[selected] > .tab-group-label-container > label {
+    color: var(--nord6) !important;
+}
+
+/* Forces workspace indicators to follow the same logic */
+.zen-current-workspace-indicator-icon {
+    fill: var(--nord10) !important;
+    color: var(--nord10) !important;
+}
+
+/* ========================================================= */
+/* LEGACY TAB GROUPS, WORKSPACES, AND SELECTIONS             */
+/* ========================================================= */
+
+/* Forcefully overwrite identity variables */
+#tabbrowser-tabs,
+.tabbrowser-tab,
+#zen-workspaces-button,
+.zen-workspace-icon,
+tab-group,
+.tab-group,
+[class*="workspace"],
+[class*="group"],
+[id*="workspace"],
+[id*="group"] {
+    --tab-group-color: var(--nord10) !important;
+    --identity-icon-color: var(--nord10) !important;
+    --identity-tab-color: var(--nord10) !important;
+    --tab-line-color: var(--nord10) !important;
+    --zen-workspace-color: var(--nord10) !important;
+}
+
+/* Aggressively target SVG images to force the Nord10 fill (Includes Mask bypass) */
+.tabbrowser-tab[is-group="true"] .tab-icon-image,
+.tabbrowser-tab[class*="group"] .tab-icon-image,
+.tab-group-icon,
+.zen-workspace-icon,
+.bookmark-item[container="true"] > .toolbarbutton-icon,
+image[class*="workspace"],
+image[class*="group"] {
+    fill: var(--nord10) !important;
+    color: var(--nord10) !important;
+    -moz-context-properties: fill, fill-opacity !important;
+    mask-image: none !important;
+}
+
+/* Context Line */
+.tab-context-line {
+    background-color: var(--nord10) !important;
+}
+
+/* Selected states in the sidebar (History/Bookmarks) */
+treechildren::-moz-tree-row(selected) {
+    background-color: var(--nord10) !important;
+    outline: none !important;
+}
+treechildren::-moz-tree-cell-text(selected) {
+    color: var(--nord6) !important;
+}
+
+/* Selected Tab in Sidebar */
+.tabbrowser-tab[selected="true"] .tab-background,
+.tabbrowser-tab[multiselected="true"] .tab-background {
+    background-color: var(--nord10) !important;
+    border-color: transparent !important;
+}
+.tabbrowser-tab[selected="true"] .tab-content,
+.tabbrowser-tab[multiselected="true"] .tab-content {
+    color: var(--nord6) !important;
+}
+
+/* ========================================================= */
+/* MISC UI ELEMENTS                                          */
+/* ========================================================= */
+
+/* Toast Notifications styling */
+#zen-toast-container .zen-toast {
+    background: light-dark(var(--nord5), var(--nord1)) !important;
+    color: light-dark(var(--nord0), var(--nord6)) !important;
+    border: 1px solid light-dark(var(--nord4), var(--nord3)) !important;
+    box-shadow: 0 4px 15px light-dark(rgba(46, 52, 64, 0.1), rgba(0, 0, 0, 0.4)) !important;
+}

@@ -1,0 +1,73 @@
+[user]
+    name = {{ .git.user.name | quote }}
+    email = {{ .git.user.email | quote }}
+
+[core]
+    # Use delta as the default pager for terminal (Ptyxis/Ghostty)
+    pager = delta
+    # Neovim is the primary editor for commit messages and manual edits
+    editor = nvim
+    autocrlf = input
+    # Ignore file mode changes (useful on Bazzite/Linux shared filesystems)
+    filemode = false
+
+[interactive]
+    # Enhanced UI for interactive staging (git add -p)
+    diffFilter = delta --color-only
+
+[sequence]
+    # Visual interface for interactive rebasing (Rust-based tool)
+    editor = interactive-rebase-tool
+
+[delta]
+    # Nord palette optimization
+    features = nord-theme
+    navigate = true    # use 'n' and 'N' to jump between files
+    side-by-side = true
+    line-numbers = true
+    # Synchronize syntax highlighting with your Nord terminal theme
+    syntax-theme = Nord
+
+[merge]
+    # Modern conflict style (shows base, local, and remote versions)
+    conflictstyle = zdiff3
+    # Use Neovim as the engine for 3-way merges
+    tool = nvimdiff
+
+[mergetool "nvimdiff"]
+    # Setup Neovim layout for 3-way merges
+    layout = "LOCAL,BASE,REMOTE / MERGED"
+
+[diff]
+    # Detect moved blocks of code (helps Zed and Neovim gutter markers)
+    colorMoved = default
+    # Use histogram for more human-readable diff results
+    algorithm = histogram
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    # Fast interactive rebase (e.g., 'git ri 5' to rebase last 5 commits)
+    ri = "!f() { git rebase -i HEAD~$1; }; f"
+    # Pretty graph log for terminal inspection
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[push]
+    # Automatically setup remote tracking on first push
+    autoSetupRemote = true
+
+[init]
+    defaultBranch = main
+
+[fetch]
+    # Automatically clean up remote-tracking references that no longer exist on the remote
+    prune = true
+
+[pull]
+    # Rebase local commits on top of fetched branch to maintain a linear history
+    rebase = true
+
+[rebase]
+    # Automatically stash and pop uncommitted changes when rebasing
+    autoStash = true

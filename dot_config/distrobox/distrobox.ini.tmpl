@@ -1,0 +1,12 @@
+[zed-distrobox]
+image=docker.io/fedora:rawhide
+replace=true
+start_now=true
+entry=false
+hostname="distrobox-zed"
+pre_init_hooks="export SHELL='/bin/bash'"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terrarawhide' terra-release; fi"
+additional_packages="zed"
+exported_bins="/usr/bin/zed"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="/usr/share/applications/dev.zed.Zed.desktop"

@@ -1,0 +1,31 @@
+{{- $is_linux := false -}}
+{{- if ( eq .chezmoi.os "linux" ) -}}
+    {{- $is_linux = true -}}
+{{- end -}}
+
+{{- $is_fedora := false -}}
+{{- if ( eq .chezmoi.osRelease.id "fedora" ) -}}
+    {{- $is_fedora = true -}}
+{{- end -}}
+
+{{- $is_topgrade := false -}}
+{{- if ( lookPath "topgrade" ) -}}
+    {{- $is_topgrade = true -}}
+{{- end -}}
+
+{{- $is_mise := false -}}
+{{- if ( lookPath "mise" ) -}}
+    {{- $is_mise = true -}}
+{{- end -}}
+
+{{- $is_nushell := false -}}
+{{- if ( lookPath "nu" ) -}}
+    {{- $is_nushell = true -}}
+{{- end -}}
+
+[data]
+    is_linux = {{ $is_linux }}
+    is_fedora = {{ $is_fedora }}
+    is_topgrade = {{ $is_topgrade }}
+    is_mise = {{ $is_mise }}
+    is_nushell = {{ $is_nushell }}

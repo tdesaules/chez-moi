@@ -1,0 +1,31 @@
+[Desktop Entry]
+Version=1.0
+Name=Zen Perso
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "perso" --name zen-perso @@u %u @@
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/zen-perso-logo.svg
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
+StartupWMClass=zen-perso
+Categories=Network;WebBrowser;
+StartupNotify=true
+Terminal=false
+X-MultipleArgs=false
+Keywords=Internet;WWW;Browser;Web;Explorer;
+Actions=new-window;new-blank-window;new-private-window;profilemanager;
+X-Flatpak=app.zen_browser.zen
+
+[Desktop Action new-window]
+Name=Open a New Window (Perso)
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "perso" --name zen-perso @@u %u @@
+
+[Desktop Action new-blank-window]
+Name=Open a New Blank Window (Perso)
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "perso" --name zen-perso --blank-window @@u %u @@
+
+[Desktop Action new-private-window]
+Name=Open a New Private Window (Perso)
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "perso" --name zen-perso --private-window @@u %u @@
+
+[Desktop Action profilemanager]
+Name=Open the Profile Manager
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen --ProfileManager @@u %u @@

@@ -1,0 +1,78 @@
+input {
+    keyboard {
+        track-layout "global"
+    }
+    touchpad {
+        accel-speed 0.2
+        accel-profile "adaptive"
+        scroll-method "two-finger"
+        natural-scroll
+        dwt
+        dwtp
+    }
+}
+
+layout {
+    gaps 12
+    center-focused-column "never"
+    default-column-width { proportion 0.5; }
+    focus-ring {
+        width 4
+        active-color "#81a1c1"
+        urgent-color "#bf616a"
+    }
+    border {
+        off
+        width 4
+        active-color "#81a1c1"
+        urgent-color "#bf616a"
+    }
+    shadow {
+        off
+    }
+    preset-column-widths {
+        proportion 0.5
+        proportion 0.75
+        proportion 1.0
+    }
+}
+
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+workspace "gaming" {
+    layout {
+        default-column-width { proportion 1.0; }
+    }
+}
+
+window-rule {
+    match app-id="steam"
+    open-on-workspace "gaming"
+}
+
+binds {
+    Mod+T { spawn "ghostty"; }
+    Mod+space hotkey-overlay-title="App Launcher Toggle" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+L { spawn "loginctl" "lock-session"; }
+    XF86PowerOff { spawn "loginctl" "lock-session"; }
+    Mod+G { focus-workspace "gaming"; }
+    Mod+Return { maximize-column; }
+}
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+cursor {
+    xcursor-theme "Bibata-Modern-Ice"
+    xcursor-size 24
+}
+
+hotkey-overlay {
+    skip-at-startup
+}

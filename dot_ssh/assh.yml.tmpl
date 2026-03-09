@@ -1,0 +1,18 @@
+defaults:
+  User: tdesaules
+  Port: 22
+  ControlMaster: auto
+  ControlPersist: 10m
+
+hosts:
+  vps-nord:
+    HostName: 1.2.3.4
+    User: admin
+
+  internal-server:
+    HostName: 10.0.0.5
+    Gateways: vps-nord
+
+  "*.prod":
+    IdentityFile: ~/.ssh/id_rsa_prod
+    User: deploy

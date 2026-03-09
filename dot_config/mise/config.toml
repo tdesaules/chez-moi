@@ -1,0 +1,74 @@
+[settings]
+trusted_config_paths = [
+    "~/.config/mise",
+    "/var/home/{{ .chezmoi.username }}/.config/mise"
+]
+experimental = true
+
+[tools]
+# Rust programming language
+rust = "latest"
+# Python programming language
+python = "latest"
+# Go programming language
+go = "latest"
+# PowerShell scripting language
+powershell = "latest"
+# Usage tracking tool - https://github.com/jdx/usage
+"github:jdx/usage" = "latest"
+# Starship shell prompt - https://github.com/starship/starship
+"github:starship/starship" = "latest"
+# Nushell shell - https://github.com/nushell/nushell
+"github:nushell/nushell" = "latest"
+# Fastfetch system information tool - https://github.com/fastfetch-cli/fastfetch
+"github:fastfetch-cli/fastfetch" = "latest"
+# Eza file lister - https://github.com/eza-community/eza
+"github:eza-community/eza" = "latest"
+# Btop system monitor - https://github.com/aristocratos/btop
+"github:aristocratos/btop" = "latest"
+# Lazygit git client - https://github.com/jesseduffield/lazygit
+"github:jesseduffield/lazygit" = "latest"
+# YQ YAML processor - https://github.com/mikefarah/yq
+"github:mikefarah/yq" = "latest"
+# JQ JSON processor - https://github.com/jqlang/jq
+"github:jqlang/jq" = "latest"
+# Vivid color tool - https://github.com/sharkdp/vivid
+"github:sharkdp/vivid" = "latest"
+# Age encryption tool - https://github.com/FiloSottile/age
+"github:FiloSottile/age" = "latest"
+# Aria2 download manager - https://github.com/aria2/aria2
+"github:aria2/aria2" = "latest"
+# Assh SSH client - https://github.com/moul/assh
+"github:moul/assh" = "latest"
+# Atuin shell history - https://github.com/atuinsh/atuin
+"github:atuinsh/atuin" = "latest"
+# Bat cat alternative - https://github.com/sharkdp/bat
+"github:sharkdp/bat" = "latest"
+# Bookokrat bookmark manager - https://github.com/bugzmanov/bookokrat
+"github:bugzmanov/bookokrat" = "latest"
+# Broot file browser - https://github.com/Canop/broot
+"github:Canop/broot" = "latest"
+# Cyme system monitor - https://github.com/tuna-f1sh/cyme
+"github:tuna-f1sh/cyme" = "latest"
+# Duf disk usage - https://github.com/muesli/duf
+"github:muesli/duf" = "latest"
+# Dust disk usage - https://github.com/bootandy/dust
+"github:bootandy/dust" = "latest"
+# Ec file explorer - https://github.com/chojs23/ec
+"github:chojs23/ec" = "latest"
+# Delta git diff tool - https://github.com/dandavison/delta
+"github:dandavison/delta" = "latest"
+# Envx environment manager - https://github.com/mikeleppane/envx
+"github:mikeleppane/envx" = "latest"
+# Fd file finder - https://github.com/sharkdp/fd
+"github:sharkdp/fd" = "latest"
+# Filen CLI - https://github.com/FilenCloudDienste/filen-cli
+"github:FilenCloudDienste/filen-cli" = "latest"
+# Fzf fuzzy finder - https://github.com/junegunn/fzf
+"github:junegunn/fzf" = "latest"
+# Gopass password manager - https://github.com/gopasspw/gopass
+"github:gopasspw/gopass" = "latest"
+# Gping ping tool - https://github.com/orf/gping
+"github:orf/gping" = "latest"
+# Git interactive rebase tool - https://github.com/MitMaro/git-interactive-rebase-tool
+"cargo:git-interactive-rebase-tool" = "latest"

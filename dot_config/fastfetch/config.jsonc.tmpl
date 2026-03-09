@@ -1,0 +1,107 @@
+{
+  "logo": {
+    "source": "/usr/share/icons/niri-tonic-os/png/logo.png",
+    "type": "kitty",
+    "width": 38,
+    "padding": {
+      "top": 1,
+      "left": 2,
+      "right": 4
+    }
+  },
+  "display": {
+    "separator": " -- ",
+    "color": {
+      "keys": "#88C0D0"
+    }
+  },
+  "modules": [
+    "title",
+    "separator",
+    {
+      "type": "os",
+      "key": "os",
+      "keyColor": "#88C0D0"
+    },
+    {
+      "type": "kernel",
+      "key": "kernel",
+      "keyColor": "#81A1C1"
+    },
+    {
+      "type": "uptime",
+      "key": "uptime",
+      "keyColor": "#A3BE8C"
+    },
+    {
+      "type": "host",
+      "key": "host",
+      "keyColor": "#B48EAD"
+    },
+    {
+      "type": "cpu",
+      "key": "cpu",
+      "keyColor": "#BF616A"
+    },
+    {
+      "type": "gpu",
+      "key": "gpu",
+      "keyColor": "#D08770"
+    },
+    {
+      "type": "memory",
+      "key": "ram",
+      "keyColor": "#EBCB8B"
+    },
+    {
+      "type": "command",
+      "key": "vram",
+      "text": "used=$(cat /sys/class/drm/card1/device/mem_info_vram_used); total=$(cat /sys/class/drm/card1/device/mem_info_vram_total); used_gib=$(echo \"scale=2; $used/1024/1024/1024\" | bc); total_gib=$(echo \"scale=2; $total/1024/1024/1024\" | bc); pct=$(echo \"scale=0; $used*100/$total\" | bc); echo \"$used_gib GiB / $total_gib GiB ($pct%)\""
+    },
+    {
+      "type": "disk",
+      "key": "disk",
+      "keyColor": "#A3BE8C"
+    },
+    {
+      "type": "display",
+      "key": "display",
+      "keyColor": "#8FBCBB"
+    },
+    {
+      "type": "battery",
+      "key": "battery",
+      "keyColor": "#A3BE8C"
+    },
+    {
+      "type": "de",
+      "key": "desktop",
+      "keyColor": "#5E81AC"
+    },
+    {
+      "type": "wm",
+      "key": "windows manager",
+      "keyColor": "#81A1C1"
+    },
+    {
+      "type": "shell",
+      "key": "shell",
+      "keyColor": "#88C0D0"
+    },
+    {
+      "type": "terminal",
+      "key": "terminal",
+      "keyColor": "#8FBCBB"
+    },
+    {
+      "type": "packages",
+      "key": "packages",
+      "keyColor": "#BF616A"
+    },
+    "break",
+    {
+      "type": "colors",
+      "symbol": "circle"
+    }
+  ]
+}

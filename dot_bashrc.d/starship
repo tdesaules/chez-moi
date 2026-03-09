@@ -1,0 +1,5 @@
+# Starship prompt configuration
+if command -v starship &> /dev/null; then
+  export STARSHIP_CONFIG="$HOME/.config/starship/config.toml"
+  eval "$(starship init bash)"
+fi

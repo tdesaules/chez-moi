@@ -1,0 +1,6 @@
+# Fastfetch on startup
+# We use the environment variable to override any Bazzite defaults
+if command -v fastfetch &> /dev/null; then
+  FASTFETCH_CONFIG=~/.config/fastfetch/config.jsonc command fastfetch
+  echo ""
+fi
