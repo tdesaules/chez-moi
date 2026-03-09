@@ -1,0 +1,133 @@
+/*
+ * NORD THEME - GTK 4 / LIBADWAITA & GTK 3 COMPATIBILITY
+ * Based on: https://www.nordtheme.com/
+ * 
+ * Palette Reference:
+ * Polar Night: nord0 #2e3440, nord1 #3b4252, nord2 #434c5e, nord3 #4c566a
+ * Snow Storm:  nord4 #d8dee9, nord5 #e5e9f0, nord6 #eceff4
+ * Frost:       nord7 #8fbcbb, nord8 #88c0d0, nord9 #81a1c1, nord10 #5e81ac
+ * Aurora:      nord11 #bf616a, nord12 #d08770, nord13 #ebcb8b, nord14 #a3be8c, nord15 #b48ead
+ */
+
+/* --- MODERN GTK 4 / LIBADWAITA VARIABLES --- */
+
+/* --- ACCENT COLORS (Snow Storm - nord4) --- */
+@define-color accent_color #d8dee9;
+@define-color accent_bg_color #d8dee9;
+@define-color accent_fg_color #2e3440;
+
+/* --- WINDOWS & BACKGROUNDS (Polar Night) --- */
+@define-color window_bg_color #2e3440; /* nord0: Main background */
+@define-color window_fg_color #d8dee9; /* nord4: Main text */
+
+/* Content areas like lists or text views */
+@define-color view_bg_color #2e3440;
+@define-color view_fg_color #d8dee9;
+
+/* --- HEADERBARS --- */
+@define-color headerbar_bg_color #2e3440;
+@define-color headerbar_fg_color #d8dee9; /* nord4: Consistent with main text */
+@define-color headerbar_border_color #434c5e; /* nord2 */
+@define-color headerbar_backdrop_color #2e3440;
+
+/* --- SIDEBARS & CARDS --- */
+@define-color sidebar_bg_color #3b4252; /* nord1 */
+@define-color sidebar_fg_color #d8dee9;
+@define-color sidebar_backdrop_color #3b4252;
+@define-color secondary_sidebar_bg_color #3b4252;
+@define-color secondary_sidebar_fg_color #d8dee9;
+
+@define-color card_bg_color #3b4252;
+@define-color card_fg_color #d8dee9;
+
+@define-color popover_bg_color #3b4252;
+@define-color popover_fg_color #d8dee9;
+
+/* --- STATE MESSAGES --- */
+@define-color success_color #a3be8c;
+@define-color success_bg_color #a3be8c;
+@define-color success_fg_color #2e3440;
+
+@define-color warning_color #ebcb8b;
+@define-color warning_bg_color #ebcb8b;
+@define-color warning_fg_color #2e3440;
+
+@define-color destructive_color #bf616a;
+@define-color destructive_bg_color #bf616a;
+@define-color destructive_fg_color #eceff4;
+@define-color error_color #bf616a;
+@define-color error_bg_color #bf616a;
+@define-color error_fg_color #eceff4;
+
+/* --- BORDERS & SHADOWS --- */
+@define-color border_color #4c566a; /* nord3 */
+@define-color separator_color rgba(76, 86, 106, 0.4);
+@define-color shade_color rgba(0, 0, 0, 0.2);
+
+/* --- GTK 3 LEGACY ALIASES (Essential for Chrome, Bruno & GTK3 Flatpaks) --- */
+/* These map the modern variables to the old GTK3 names */
+@define-color theme_bg_color @window_bg_color;
+@define-color theme_fg_color @window_fg_color;
+@define-color theme_base_color @view_bg_color;
+@define-color theme_text_color @view_fg_color;
+@define-color theme_selected_bg_color @accent_bg_color;
+@define-color theme_selected_fg_color @accent_fg_color;
+@define-color theme_view_hover_bg_color rgba(216, 222, 233, 0.15);
+@define-color theme_unfocused_bg_color @window_bg_color;
+@define-color theme_unfocused_fg_color @window_fg_color;
+@define-color theme_unfocused_selected_bg_color rgba(216, 222, 233, 0.2);
+@define-color theme_unfocused_selected_fg_color @window_fg_color;
+
+/* --- INTERACTION & SELECTION --- */
+@define-color fill_color rgba(216, 222, 233, 0.15);
+@define-color selection_bg_color #d8dee9; 
+@define-color selection_fg_color #2e3440;
+
+/* --- EXPLICIT SELECTORS FOR GTK 3 & 4 --- */
+
+/* Base Window & Background */
+window, 
+.background, 
+.view, 
+viewport {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+/* Headerbar / Titlebar */
+headerbar,
+.titlebar,
+menubar,
+.header-bar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-color: @headerbar_border_color;
+    box-shadow: none;
+}
+
+/* Buttons */
+button {
+    background-image: none;
+    transition: all 200ms ease;
+}
+
+button:hover {
+    background-color: rgba(136, 192, 208, 0.1);
+}
+
+button.suggested-action {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+/* Selection */
+selection {
+    background-color: @selection_bg_color;
+}
+
+/* Text entries */
+entry {
+    background-color: @sidebar_bg_color;
+    color: @window_fg_color;
+    border-color: @border_color;
+}

@@ -1,0 +1,57 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if ( and ( .is_linux ) ( .is_gnome ) ) }}
+
+# Ulauncher configuration hash dependencies:
+# config directory: {{ range (glob "dot_config/ulauncher/**") }}{{ if not (stat .).IsDir }}{{ . | include | sha256sum }}{{ end }}{{ end }}
+
+set -euo pipefail
+
+_log "title" "Ulauncher Management"
+trap '_error_handler "Ulauncher configuration failed"' ERR
+
+# --- SECTION 1: GNOME KEYBOARD SHORTCUTS ---
+readonly SHORTCUT="{{ .ulauncher.shortcut }}"
+readonly ULAUNCHER_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom-ulauncher/"
+
+_log "info" "Configuring Ulauncher shortcut ($SHORTCUT)..."
+
+# Disable default GNOME input source switching which often conflicts with Super+Space
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "[]"
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "[]"
+
+CURRENT_BINDINGS=$(gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings)
+
+# Inject our custom binding if not present
+if [[ $CURRENT_BINDINGS != *"$ULAUNCHER_PATH"* ]]; then
+    if [ "$CURRENT_BINDINGS" = "@as []" ] || [ "$CURRENT_BINDINGS" = "[]" ]; then
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$ULAUNCHER_PATH']"
+    else
+        # Append the new path to the existing array safely
+        # We strip the closing bracket, add the new path, then close it
+        NEW_BINDINGS="${CURRENT_BINDINGS%]*}, '$ULAUNCHER_PATH']"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "$NEW_BINDINGS"
+    fi
+fi
+
+# Apply actual shortcut settings
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" name 'Ulauncher'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" command 'ulauncher'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" binding "$SHORTCUT"
+
+_log "success" "Keyboard shortcut configured"
+
+# --- SECTION 2: APPLICATION RESTART (Optional) ---
+# Check if ulauncher is running to apply settings
+if pgrep -x ulauncher > /dev/null; then
+    _log "info" "Restarting Ulauncher to apply new settings..."
+    pkill -HUP ulauncher || true
+fi
+
+# Final cleanup
+trap - ERR
+_log "success" "Ulauncher environment is up to date"
+
+{{ end }}

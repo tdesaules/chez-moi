@@ -1,0 +1,45 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+SOURCE_FILE="{{ .chezmoi.homeDir }}/.config/keyd/default.conf"
+DEST_DIR="/etc/keyd"
+DEST_FILE="${DEST_DIR}/default.conf"
+
+_log "info" "check if keyd configuration file is present..."
+if [ -f "${SOURCE_FILE}" ]; then
+    if [ ! -d "${DEST_DIR}" ]; then
+        _log "notice" "create system folder ${DEST_DIR}"
+        sudo mkdir -p "${DEST_DIR}"
+    fi
+    if ! sudo diff -q "${SOURCE_FILE}" "${DEST_FILE}" > /dev/null 2>&1; then
+        _log "notice" "update ${DEST_FILE}..."
+        sudo cp "${SOURCE_FILE}" "${DEST_FILE}"
+        sudo chmod 644 "${DEST_FILE}"
+        _log "info" "reload keyd service..."
+        sudo systemctl enable --now keyd
+        sudo systemctl restart keyd
+        _log "success" "keyd started"
+    else
+        _log "info" "keyd already configured and up to date"
+        if ! systemctl is-active --quiet keyd; then
+            _log "notice" "start keyd service..."
+            sudo systemctl enable --now keyd
+            _log "sucess" "keyd started"
+        fi
+    fi
+else
+    _log "error" "${SOURCE_FILE} not found"
+fi
+
+{{- end }}

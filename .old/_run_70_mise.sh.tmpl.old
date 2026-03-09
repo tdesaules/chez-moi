@@ -1,0 +1,38 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+BIN_DIR="$HOME/.local/bin"
+MISE_BIN="$BIN_DIR/mise"
+
+export MISE_YES=1
+export MISE_TRUSTED_CONFIG_PATHS="$HOME/.config/mise"
+
+if [ ! -f "$MISE_BIN" ]; then
+    _log "info" "install mise..."
+    curl https://mise.run | MISE_INSTALL_PATH="$MISE_BIN" sh
+    echo ""
+    _log "success" "mise installed"
+else
+    _log "info" "check for mise update..."
+    "$MISE_BIN" self-update --yes
+    echo ""
+    _log "info" "update finish"
+fi
+
+_log "info" "install software managed with mise..."
+$HOME/.local/bin/mise install --yes
+echo ""
+_log "success" "software installed"
+
+{{- end }}

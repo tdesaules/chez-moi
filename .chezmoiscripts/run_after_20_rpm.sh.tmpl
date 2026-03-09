@@ -1,0 +1,71 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if ( and ( .is_linux ) ( .is_fedora ) ) }}
+
+set -euo pipefail
+
+# --- CONFIGURATION (Direct Injection from .chezmoidata) ---
+readonly COPR_REPOS=({{ range .rpm.copr_repos }}{{ . | quote }} {{ end }})
+readonly PACKAGES=({{ range .rpm.packages }}{{ . | quote }} {{ end }})
+
+_log "title" "RPM-OSTREE Package Management"
+trap '_error_handler "rpm-ostree package management failed"' ERR
+
+# --- SECTION 1: COPR REPOSITORIES ---
+readonly FEDORA_VERSION=$(rpm -E %fedora)
+
+for REPO in "${COPR_REPOS[@]}"; do
+    # Format repo name for file path (slash becomes colon)
+    REPO_NAME=${REPO//\//:}
+    REPO_FILE="/etc/yum.repos.d/_copr:${REPO_NAME}.repo"
+
+    if [ ! -f "${REPO_FILE}" ]; then
+        _log "info" "Adding ${REPO} COPR repository..."
+
+        # Format filename for the curl request
+        REPO_FILENAME="${REPO/\//-}-fedora-${FEDORA_VERSION}.repo"
+
+        curl -fsSL "https://copr.fedorainfracloud.org/coprs/${REPO}/repo/fedora-${FEDORA_VERSION}/${REPO_FILENAME}" | sudo tee "${REPO_FILE}" > /dev/null
+
+        _log "info" "Refreshing rpm-ostree metadata..."
+        rpm-ostree refresh-md &> /dev/null
+    fi
+done
+
+# --- SECTION 2: PACKAGE INSTALLATION ---
+MISSING_PKGS=()
+
+_log "info" "Checking for missing packages..."
+
+# Extract currently layered packages from rpm-ostree status
+STAGED_PKGS=$(rpm-ostree status --json | jq -r '.deployments[0].["requested-packages"][]?' 2>/dev/null || true)
+
+for PKG in "${PACKAGES[@]}"; do
+    # Check if package is installed or already staged for next boot
+    if rpm -q "${PKG}" &> /dev/null || echo "${STAGED_PKGS}" | grep -qxw "${PKG}"; then
+        _log "notice" "${PKG} is already installed or staged"
+    else
+        _log "warning" "${PKG} is missing"
+        MISSING_PKGS+=("${PKG}")
+    fi
+done
+
+# Install missing packages if any
+if [ ${#MISSING_PKGS[@]} -gt 0 ]; then
+    _log "info" "Installing missing packages: ${MISSING_PKGS[*]}..."
+
+    # Using --apply-live to try applying changes without immediate reboot
+    rpm-ostree install --allow-replacement --assumeyes --apply-live "${MISSING_PKGS[@]}" &> /dev/null
+
+    _log "success" "Packages installed successfully"
+else
+    _log "success" "No new packages to install"
+fi
+
+# Final cleanup
+trap - ERR
+_log "success" "RPM-OSTREE environment is up to date"
+
+{{ end }}

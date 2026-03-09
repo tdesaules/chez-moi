@@ -1,0 +1,72 @@
+# --- Font Settings ---
+font-family = "Geist Mono"
+font-size = 10.5
+
+# Documentation: adjust-cell-height increases line spacing
+# 15% is equivalent to a 1.15 line-height
+adjust-cell-height = 15%
+
+# --- Nord Palette (Polar Night & Aurora Red) ---
+# Fond principal (Nord0 - correspond au window_bg_color de GTK)
+background = #2e3440
+# Texte principal (Nord4)
+foreground = #d8dee9
+
+# Couleur de sélection (Nord3 ou un rouge très sombre pour rappeler l'accent)
+selection-background = #434c5e
+selection-foreground = #eceff4
+
+# Palette standard Nord
+palette = 0=#3b4252
+palette = 1=#bf616a
+palette = 2=#a3be8c
+palette = 3=#ebcb8b
+palette = 4=#81a1c1
+palette = 5=#b48ead
+palette = 6=#88c0d0
+palette = 7=#e5e9f0
+palette = 8=#4c566a
+palette = 9=#bf616a
+palette = 10=#a3be8c
+palette = 11=#ebcb8b
+palette = 12=#81a1c1
+palette = 13=#b48ead
+palette = 14=#8fbcbb
+palette = 15=#eceff4
+
+# --- Cursor & Selection ---
+# On utilise l'accent Aurora (Red) pour le curseur, comme dans GTK
+cursor-color = #bf616a
+# Couleur du texte sous le curseur
+cursor-text = #eceff4
+
+cursor-style = block
+# Documentation: cursor-style-blink controls blinking
+cursor-style-blink = false
+copy-on-select = true
+
+# --- Window Appearance ---
+# TRÈS IMPORTANT : Mettre à true pour que GNOME/GTK4 applique les coins arrondis
+window-decoration = true
+
+# Ghostty utilise GTK4 sur Linux, on lui dit d'utiliser le mode sombre par défaut
+window-theme = dark
+
+window-padding-x = 12
+window-padding-y = 12
+
+# Documentation: background-opacity and background-blur (no 'window-' prefix)
+background-opacity = 1
+background-blur = true
+
+split-divider-color = #4c566a
+
+# --- Cross-Platform Adaptation (Mac vs Linux) ---
+{{ if (eq .chezmoi.os "darwin") -}}
+font-size = 13
+font-thicken = true
+# Sur Mac, on peut cacher la barre de titre tout en gardant les coins arrondis natifs
+window-decoration = false
+macos-titlebar-style = hidden
+
+{{ end -}}

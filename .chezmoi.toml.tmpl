@@ -1,0 +1,37 @@
+{{- $is_linux := false -}}
+{{- if ( eq .chezmoi.os "linux" ) -}}
+    {{- $is_linux = true -}}
+{{- end -}}
+
+{{- $is_fedora := false -}}
+{{- if ( eq .chezmoi.osRelease.idLike "fedora" ) -}}
+    {{- $is_fedora = true -}}
+{{- end -}}
+
+{{- $is_bazzite := false -}}
+{{- if ( and ( eq .chezmoi.os "linux" ) ( hasKey .chezmoi.osRelease "variantID" ) ( contains "bazzite" .chezmoi.osRelease.variantID ) ) -}}
+    {{- $is_bazzite = true -}}
+{{- end -}}
+
+{{- $is_gnome := false -}}
+{{- if ( eq ( env "XDG_CURRENT_DESKTOP" | lower ) "gnome" ) -}}
+    {{- $is_gnome = true -}}
+{{- end -}}
+
+{{- $is_topgrade := false -}}
+{{- if ( lookPath "topgrade" ) -}}
+    {{- $is_topgrade = true -}}
+{{- end -}}
+
+{{- $is_flatpak := false -}}
+{{- if ( lookPath "flatpak" ) -}}
+    {{- $is_flatpak = true -}}
+{{- end -}}
+
+[data]
+    is_linux = {{ $is_linux }}
+    is_fedora = {{ $is_fedora }}
+    is_bazzite = {{ $is_bazzite }}
+    is_gnome = {{ $is_gnome }}
+    is_topgrade = {{ $is_topgrade }}
+    is_flatpak = {{ $is_flatpak }}

@@ -1,0 +1,17 @@
+[Desktop Entry]
+NoDisplay=true
+Name[ru]=Тюнер
+Name=Tuner
+Comment[ru]=Расширяемый центр управления
+Comment=Extensible control center
+Keywords=settings;tuner;tune;tweaks;
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=tuner org.altlinux.Tuner
+Icon=org.altlinux.Tuner
+Terminal=false
+Type=Application
+Categories=Utility;GNOME;GTK;
+StartupNotify=true
+X-GNOME-Gettext-Domain=tuner
+X-SingleMainWindow=true
+X-Purism-FormFactor=Workstation;Mobile;
+X-Flatpak=org.altlinux.Tuner

@@ -1,0 +1,16 @@
+rpm:
+  # COPR Repositories to enable
+  copr_repos:
+    - "scottames/ghostty"
+    - "alternateved/keyd"
+
+  # System packages to be layered via rpm-ostree
+  packages:
+    - "sudo-rs"
+    - "git"
+    - "ghostty"
+    - "ulauncher"
+    - "qemu"
+    - "pipx"
+    - "keyd"
+    - "ImageMagick"

@@ -1,0 +1,33 @@
+gnome:
+  # Static settings
+  workspaces: 8
+  # Relative paths from $HOME
+  wallpaper_dir: ".local/share/backgrounds"
+  wallpaper: "6.png"
+  dconf_dir: ".local/share/dconf"
+  font_dir: ".local/share/fonts"
+
+  # List of extensions
+  extensions:
+    - "4269" # Alphabetical App Grid
+    - "779" # Clipboard Indicator
+    - "3843" # Just Perfection
+    - "7065" # Tiling Shell
+    - "3193" # Blur my Shell
+    - "1160" # Logo Menu
+    - "7850" # Touchpad Gesture Customization
+
+  # Dock favorites
+  favorites_apps:
+    - "org.gnome.Settings.desktop"
+    - "org.gnome.Nautilus.desktop"
+    - "steam.desktop"
+    - "com.mitchellh.ghostty.desktop"
+    - "app.zen_browser.zen.perso.desktop"
+    - "app.zen_browser.zen.devoteam.desktop"
+
+  # Typography
+  font_interface: "Comfortaa"
+  font_titlebar: "Comfortaa Bold"
+  font_document: "Geist"
+  font_size: 12

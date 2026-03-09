@@ -1,0 +1,25 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if ( and ( .is_linux ) ( .is_topgrade ) ) }}
+
+set -euo pipefail
+
+_log "title" "Topgrade Update"
+trap '_error_handler "ujust update failed"' ERR
+
+_log "info" "Running topgrade update..."
+sudo /usr/bin/topgrade --config /usr/share/ublue-os/topgrade.toml --yes --cleanup --no-retry --skip-notify --no-self-update > /dev/null 2>&1
+
+_log "success" "Topgrade update completed"
+
+if rpm-ostree status --json | jq -e '.deployments | length > 1 and .deployments[0].booted == false' &> /dev/null; then
+    _log "warning" "A system update has been staged and requires a reboot to take effect."
+    _log "notice" "You can reboot now with: systemctl reboot"
+fi
+
+# Final cleanup
+trap - ERR
+
+{{ end }}
