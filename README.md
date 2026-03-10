@@ -13,4 +13,5 @@ rpm-ostree install chezmoi
 
 ```bash
 chezmoi init --apply https://github.com/tdesaules/chez-moi.git
+chezmoi update
 ```

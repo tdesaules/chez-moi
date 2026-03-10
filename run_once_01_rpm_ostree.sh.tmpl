@@ -1,5 +1,6 @@
 #!/bin/bash
-{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "bazzite")) -}}
+
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "fedora")) -}}
 
 set -euo pipefail
 
@@ -9,10 +10,11 @@ error_handler() {
 }
 trap 'error_handler' ERR
 
-if [ ! -f "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo" ]; then
+REPO_FILE="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo"
+if [ ! -f "$REPO_FILE" ]; then
     echo "[󰚰] adding ghostty copr repository..."
     VERSION_ID=$(rpm -E %fedora)
-    curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | sudo tee "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo" > /dev/null
+    curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | sudo tee "$REPO_FILE" > /dev/null
     echo "[󰚰] refreshing rpm-ostree metadata..."
     rpm-ostree refresh-md
 fi
@@ -28,21 +30,25 @@ PACKAGES=(
 MISSING_PKGS=""
 
 echo "[] search missing package..."
+
+STAGED_PKGS=$(rpm-ostree status | grep -A 10 "LocalPackages:" | grep -v "LocalPackages:" || true)
+
 for PKG in "${PACKAGES[@]}"; do
-    if ! rpm -q "${PKG}" &> /dev/null; then
+    if rpm -q "${PKG}" &> /dev/null || echo "${STAGED_PKGS}" | grep -q "${PKG}"; then
+        echo "[] ${PKG} is already installed or staged"
+    else
+        echo "[] ${PKG} is missing"
         MISSING_PKGS="${MISSING_PKGS} ${PKG}"
     fi
 done
 
 if [ -n "${MISSING_PKGS}" ]; then
     echo "[] install packages..."
-    rpm-ostree install ${MISSING_PKGS}
-    echo "[] packages installed"
-    echo "[] reboot needed launch \"systemctl reboot\""
+    sudo rpm-ostree install ${MISSING_PKGS}
+    echo "[] packages installed"
+    echo "[] reboot needed: launch \"systemctl reboot\""
 else
-    echo "[] packages already installed"
+    echo "[] all packages are already handled (installed or staged)"
 fi
 
-{{ else -}}
-
-{{ end -}}
+{{- end }}
