@@ -1,8 +1,10 @@
 # --- Font Settings ---
 font-family = "Geist Mono"
 font-size = 10.5
-# Use 'line-height' for newer Ghostty versions (replaces adjust-line-height)
-line-height = 1.15
+
+# Documentation: adjust-cell-height increases line spacing
+# 15% is equivalent to a 1.15 line-height
+adjust-cell-height = 15%
 
 # --- Graphite-Nordic Theme ---
 background = #1e1e1e
@@ -10,7 +12,7 @@ foreground = #d8dee9
 selection-background = #3b4252
 selection-foreground = #eceff4
 
-# Nordic Palette (Matches Bazzite/GNOME aesthetic)
+# Nordic Palette
 palette = 0=#3b4252
 palette = 1=#bf616a
 palette = 2=#a3be8c
@@ -31,24 +33,23 @@ palette = 15=#eceff4
 # --- Cursor & Selection ---
 cursor-color = #88c0d0
 cursor-style = block
-# 'copy-on-select' for a native Linux feel
+# Documentation: cursor-style-blink controls blinking
+cursor-style-blink = false
 copy-on-select = true
 
-# --- Window Appearance (Minimalist Graphite Style) ---
+# --- Window Appearance ---
 window-decoration = false
 window-padding-x = 12
 window-padding-y = 12
 
-# Transparency & Blur (Modern GTK look)
-background-opacity = 0.95
+# Documentation: background-opacity and background-blur (no 'window-' prefix)
+background-opacity = 0.92
 background-blur = true
 
-# Layout
 split-divider-color = #4c566a
 
 # --- Cross-Platform Adaptation (Mac vs Linux) ---
 {{ if (eq .chezmoi.os "darwin") -}}
 font-size = 13
-# Enable font thickening specifically for Retina displays
 font-thicken = true
 {{ end -}}
