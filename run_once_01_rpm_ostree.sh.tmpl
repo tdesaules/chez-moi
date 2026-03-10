@@ -4,13 +4,22 @@
 set -euo pipefail
 
 error_handler() {
-    echo "[󰚌] critical issue during packages installation"
+    echo "[] critical issue during packages installation"
     exit 1
 }
 trap 'error_handler' ERR
 
+if [ ! -f "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo" ]; then
+    echo "[󰚰] adding ghostty copr repository..."
+    VERSION_ID=$(rpm -E %fedora)
+    curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | sudo tee "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo" > /dev/null
+    echo "[󰚰] refreshing rpm-ostree metadata..."
+    rpm-ostree refresh-md
+fi
+
 PACKAGES=(
     "sudo-rs"
+    "git"
     "ghostty"
     "ulauncher"
     "qemu"
