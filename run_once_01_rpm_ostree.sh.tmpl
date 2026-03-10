@@ -1,5 +1,5 @@
 #!/bin/bash
-{{- template "functions.sh.tmpl" . }}
+{{- template "functions.sh.tmpl" . -}}
 {{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "fedora")) -}}
 set -euo pipefail
 
