@@ -14,13 +14,13 @@ _log() {
     local COLOR=$NC
     local ICON="•"
     case " ${LEVEL} " in
-        " debug ")    COLOR=$WHITE;   ICON="[]" ;;
-        " info ")     COLOR=$BLUE;    ICON="[]" ;;
-        " notice ")   COLOR=$CYAN;    ICON="[]" ;;
-        " success")   COLOR=$GREEN;   ICON="[]" ;;
-        " warning ")  COLOR=$YELLOW;  ICON="[]" ;;
-        " error ")    COLOR=$RED;     ICON="[]" ;;
-        " critical ") COLOR=$MAGENTA; ICON="[]" ;;
+        " debug ")    COLOR=$WHITE;   ICON="[  ]" ;;
+        " info ")     COLOR=$BLUE;    ICON="[  ]" ;;
+        " notice ")   COLOR=$CYAN;    ICON="[  ]" ;;
+        " success")   COLOR=$GREEN;   ICON="[  ]" ;;
+        " warning ")  COLOR=$YELLOW;  ICON="[  ]" ;;
+        " error ")    COLOR=$RED;     ICON="[  ]" ;;
+        " critical ") COLOR=$MAGENTA; ICON="[  ]" ;;
     esac
     echo -e "${WHITE}[$TIME]${NC} ${COLOR}${BOLD}[$LEVEL]${NC} ${COLOR}$ICON $MSG${NC}"
 }
