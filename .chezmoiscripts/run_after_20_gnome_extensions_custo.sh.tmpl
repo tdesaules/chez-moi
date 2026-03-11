@@ -1,0 +1,29 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+_log "info" "configuring clipboard indicator..."
+SCHEMA="org.gnome.shell.extensions.clipboard-indicator"
+gsettings set $SCHEMA history-size 50 2>/dev/null || true
+gsettings set $SCHEMA keep-history-on-exit true 2>/dev/null || true
+gsettings set $SCHEMA display-mode 0 2>/dev/null || true
+gsettings set $SCHEMA toggle-menu "['<Control>F12']" 2>/dev/null || true
+gsettings set $SCHEMA strip-text true 2>/dev/null || true
+gsettings set $SCHEMA case-sensitive-search true 2>/dev/null || true
+gsettings set $SCHEMA regex-search true 2>/dev/null || true
+gsettings set $SCHEMA hide-arrow false 2>/dev/null || true
+gsettings set $SCHEMA notify-on-copy true 2>/dev/null || true
+gsettings set $SCHEMA enable-shortcuts false 2>/dev/null || true
+_log "success" "clipboard indicator configured."
+
+{{- end }}
