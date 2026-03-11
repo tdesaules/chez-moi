@@ -47,7 +47,7 @@ EXTENSIONS=(
 )
 
 _log "info" "disabling unwanted extensions..."
-$HOME/.local/bin/gext disabled "${EXTENSIONS[@]}"
+$HOME/.local/bin/gext disable "${EXTENSIONS[@]}"
 _log "success" "extensions enabled"
 
 {{ else -}}
