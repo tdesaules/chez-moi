@@ -7,7 +7,7 @@
 set -euo pipefail
 
 error_handler() {
-    _log "critical" "issue during packages installation  \n"
+    _log "critical" "issue during packages installation"
     exit 1
 }
 trap 'error_handler' ERR
@@ -17,7 +17,7 @@ if [ ! -f "$REPO_FILE" ]; then
     _log "info" "adding ghostty copr repository..."
     VERSION_ID=$(rpm -E %fedora)
     curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | tee "$REPO_FILE" > /dev/null
-    _log "info" "refreshing rpm-ostree metadata...  \n"
+    _log "info" "refreshing rpm-ostree metadata..."
     rpm-ostree refresh-md
 fi
 
@@ -38,9 +38,9 @@ ALL_KNOWN_PKGS=$(rpm-ostree status --json | jq -r '.deployments[].["requested-pa
 
 for PKG in "${PACKAGES[@]}"; do
     if rpm -q "${PKG}" &> /dev/null || echo "${ALL_KNOWN_PKGS}" | grep -qxw "${PKG}"; then
-        _log "notice" "${PKG} is already handled (installed or staged)  \n"
+        _log "notice" "${PKG} is already handled (installed or staged)"
     else
-        _log "warning" "${PKG} is missing  \n"
+        _log "warning" "${PKG} is missing"
         MISSING_PKGS="${MISSING_PKGS} ${PKG}"
     fi
 done
@@ -49,10 +49,10 @@ if [ -n "${MISSING_PKGS}" ]; then
     _log "info" "install packages..."
     rpm-ostree install --assumeyes --apply-live ${MISSING_PKGS}
     _log "success" "packages installed"
-    _log "warning" "reboot needed: launch \"systemctl reboot\"  \n"
+    _log "warning" "reboot needed: launch \"systemctl reboot\""
 
 else
-    _log "success" "all packages are already handled (installed or staged)  \n"
+    _log "success" "all packages are already handled (installed or staged)"
 fi
 
 {{- end }}

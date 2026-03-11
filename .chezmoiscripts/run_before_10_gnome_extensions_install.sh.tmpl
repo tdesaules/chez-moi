@@ -7,7 +7,7 @@
 set -euo pipefail
 
 error_handler() {
-    _log "critical" "issue during gnome extension installation  \n"
+    _log "critical" "issue during gnome extension installation"
     exit 1
 }
 trap 'error_handler' ERR
@@ -15,14 +15,14 @@ trap 'error_handler' ERR
 if ! command -v gext &> /dev/null; then
     _log "notice" "installing \"gext\"..."
     pipx install gnome-extensions-cli
-    _log "notice" "\"gext\" installed  \n"
+    _log "notice" "\"gext\" installed"
 fi
 
 CURRENT_STATUS=
 if [ "$(gsettings get org.gnome.shell disable-user-extensions)" = "true" ]; then
     _log "notice" "enable gnome user extensions support..."
     gsettings set org.gnome.shell disable-user-extensions false
-    _log "notice" "gnome user extensions support enabled  \n"
+    _log "notice" "gnome user extensions support enabled"
 fi
 
 EXTENSIONS=(
@@ -36,11 +36,11 @@ EXTENSIONS=(
 
 _log "info" "installing extensions..."
 $HOME/.local/bin/gext update --install --yes "${EXTENSIONS[@]}"
-_log "success" "extensions installed  \n"
+_log "success" "extensions installed"
 
 _log "info" "enabling extensions..."
 $HOME/.local/bin/gext enable "${EXTENSIONS[@]}"
-_log "success" "extensions enabled  \n"
+_log "success" "extensions enabled"
 
 EXTENSIONS=(
     "615" # https://extensions.gnome.org/extension/615/appindicator-support/
@@ -48,7 +48,7 @@ EXTENSIONS=(
 
 _log "info" "disabling unwanted extensions..."
 $HOME/.local/bin/gext disable "${EXTENSIONS[@]}"
-_log "success" "extensions enabled  \n"
+_log "success" "extensions enabled"
 
 {{ else -}}
 
