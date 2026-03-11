@@ -47,7 +47,7 @@ done
 
 if [ -n "${MISSING_PKGS}" ]; then
     _log "info" "install packages..."
-    rpm-ostree install --apply-live ${MISSING_PKGS}
+    rpm-ostree install --assumeyes --apply-live ${MISSING_PKGS}
     _log "success" "packages installed"
     _log "warning" "reboot needed: launch \"systemctl reboot\""
 
