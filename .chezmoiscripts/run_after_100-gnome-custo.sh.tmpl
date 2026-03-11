@@ -1,0 +1,19 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+_log "info" "cleaning application grid (removing all folders)..."
+gsettings set org.gnome.desktop.app-folders folder-children "[]"
+_log "success" "Application grid is now flat and alphabetical."
+
+{{- end }}
