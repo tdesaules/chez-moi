@@ -26,17 +26,18 @@ if [ "$(gsettings get org.gnome.shell disable-user-extensions)" = "true" ]; then
 fi
 
 EXTENSIONS=(
-    "tilingshell@ferrarodomenico.com"
-    "clipboard-indicator@tudmotu.com"
-    "dash-to-dock@micxgx.gmail.com"
-    "blur-my-shell@aunetx"
-    "just-perfection-desktop@just-perfection"
-    "user-theme@gnome-shell-extensions.gcampax.github.com"
-    "AlphabeticalAppGrid@stuarthayhurst"
+    "7065" # https://extensions.gnome.org/extension/7065/tiling-shell/
+    "779"  # https://extensions.gnome.org/extension/779/clipboard-indicator/
+    "307"  # https://extensions.gnome.org/extension/307/dash-to-dock/
+    "3193" # https://extensions.gnome.org/extension/3193/blur-my-shell/
+    "3843" # https://extensions.gnome.org/extension/3843/just-perfection/
+    "19"   # https://extensions.gnome.org/extension/19/user-themes/
+    "4269" # https://extensions.gnome.org/extension/4269/alphabetical-app-grid/
 )
 
 _log "info" "installing extensions..."
 $HOME/.local/bin/gext update --install --yes "${EXTENSIONS[@]}"
+$HOME/.local/bin/gext enable "${EXTENSIONS[@]}"
 _log "success" "extensions installed"
 
 {{ else -}}
