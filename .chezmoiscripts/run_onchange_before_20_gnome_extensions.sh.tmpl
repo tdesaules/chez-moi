@@ -38,7 +38,7 @@ EXTENSIONS=(
 )
 
 _log "info" "installing extensions..."
-$HOME/.local/bin/gext install "${EXTENSIONS[@]}" --update --enable
+$HOME/.local/bin/gext update --install "${EXTENSIONS[@]}"
 _log "success" "extensions installed"
 
 {{ else -}}
