@@ -2,7 +2,7 @@
 
 {{ template "functions.sh.tmpl" . }}
 
-{{ if (and (eq .chezmoi.os "linux") (eq (index .chezmoi.env "XDG_CURRENT_DESKTOP") "GNOME")) -}}
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
 
 set -euo pipefail
 

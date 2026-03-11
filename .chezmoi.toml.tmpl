@@ -1,0 +1,4 @@
+{{- $desktop := env "XDG_CURRENT_DESKTOP" | default "none" -}}
+
+[data]
+    desktop = {{ $desktop | quote }}
