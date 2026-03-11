@@ -7,18 +7,18 @@
 set -euo pipefail
 
 error_handler() {
-    _log "critical" "issue during gnome extension installation"
+    _log "critical" "issue during gnome extension installation  \n"
     exit 1
 }
 trap 'error_handler' ERR
 
 _log "info" "cleaning application grid..."
 gsettings set org.gnome.desktop.app-folders folder-children "[]"
-_log "success" "application grid is now flat and alphabetical."
+_log "success" "application grid is now flat and alphabetical  \n"
 
 _log "info" "cleaning gnome dock..."
 FAVORITES="['com.mitchellh.ghostty.desktop']"
 gsettings set org.gnome.shell favorite-apps "$FAVORITES"
-_log "success" "dock cleaned"
+_log "success" "dock cleaned  \n"
 
 {{- end }}
