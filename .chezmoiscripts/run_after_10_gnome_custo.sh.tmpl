@@ -12,8 +12,13 @@ error_handler() {
 }
 trap 'error_handler' ERR
 
-_log "info" "cleaning application grid (removing all folders)..."
+_log "info" "cleaning application grid..."
 gsettings set org.gnome.desktop.app-folders folder-children "[]"
-_log "success" "Application grid is now flat and alphabetical."
+_log "success" "application grid is now flat and alphabetical."
+
+_log "info" "cleaning gnome dock..."
+FAVORITES="['com.mitchellh.ghostty.desktop']"
+gsettings set org.gnome.shell favorite-apps "$FAVORITES"
+_log "success" "dock cleaned"
 
 {{- end }}
