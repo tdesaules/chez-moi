@@ -27,6 +27,7 @@ PACKAGES=(
     "ghostty"
     "ulauncher"
     "qemu"
+    "pipx"
 )
 
 MISSING_PKGS=""
@@ -46,9 +47,10 @@ done
 
 if [ -n "${MISSING_PKGS}" ]; then
     _log "info" "install packages..."
-    rpm-ostree install ${MISSING_PKGS}
+    rpm-ostree install --apply-live ${MISSING_PKGS}
     _log "success" "packages installed"
     _log "warning" "reboot needed: launch \"systemctl reboot\""
+
 else
     _log "success" "all packages are already handled (installed or staged)"
 fi
