@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Btrfs Assistant
+Comment=Change system settings
+Exec=btrfs-assistant-launcher
+Terminal=false
+Type=Application
+Icon=btrfs-assistant
+Categories=System
+NoDisplay=false
+NoDisplay=true
