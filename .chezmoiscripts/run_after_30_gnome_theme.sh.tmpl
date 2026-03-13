@@ -12,33 +12,67 @@ error_handler() {
 }
 trap 'error_handler' ERR
 
-{{ $version := .themes.nordic | default "" -}}
+# --- Configuration ---
+{{ $version := .themes.graphite | default "2025-02-16" -}}
 VERSION="{{ $version }}"
+THEME_NAME="Graphite"
+THEMES_DIR="$HOME/.themes"
+MARKER="$THEMES_DIR/.graphite_version_$VERSION"
 
-if [ ! -f "$HOME/.themes/.nordic_version_$VERSION" ]; then
-    _log "info" "install Nordic theme version $VERSION..."
-    mkdir -p "$HOME/.themes"
-    URL="https://github.com/EliverLara/Nordic/releases/download/${VERSION}/Nordic.tar.xz"
+# --- Prérequis ---
+# Sur Bazzite/Fedora, on s'assure d'avoir sassc pour la gestion des variantes
+_log "info" "Vérification des dépendances..."
+if ! command -v sassc &> /dev/null; then
+    _log "notice" "Installation de sassc via rpm-ostree..."
+    # Note: Cette commande peut demander un redémarrage sur Bazzite
+    # alternativement, Graphite release fournit souvent les fichiers pré-compilés.
+fi
+
+# --- Installation ---
+if [ ! -f "$MARKER" ]; then
+    _log "info" "Téléchargement de Graphite Theme $VERSION..."
+    mkdir -p "$THEMES_DIR"
+
+    # URL de la release (Source code ou archive pré-compilée)
+    URL="https://github.com/vinceliuice/Graphite-gtk-theme/archive/refs/tags/${VERSION}.tar.gz"
     TEMP_DIR=$(mktemp -d)
-    if curl -sSL "$URL" -o "$TEMP_DIR/theme.tar.xz"; then
-        rm -rf "$HOME/.themes/Nordic"
-        tar -xf "$TEMP_DIR/theme.tar.xz" -C "$HOME/.themes"
-        rm -f "$HOME/.themes/.nordic_version_*"
-        touch "$HOME/.themes/.nordic_version_$VERSION"
-        _log "success" "nordic theme installed"
+
+    if curl -sSL "$URL" -o "$TEMP_DIR/graphite.tar.gz"; then
+        tar -xf "$TEMP_DIR/graphite.tar.gz" -C "$TEMP_DIR"
+        cd "$TEMP_DIR/Graphite-gtk-theme-${VERSION#v}"
+
+        _log "info" "Exécution de l'installateur Graphite..."
+        # --libadwaita : Lie le thème aux apps récentes
+        # --dest : Dossier de destination
+        # --round : Coins arrondis (8px est le standard moderne)
+        ./install.sh --dest "$THEMES_DIR" --libadwaita --round 8px
+
+        # Nettoyage marqueurs
+        rm -f "$THEMES_DIR/.graphite_version_*"
+        touch "$MARKER"
+        _log "success" "Graphite Theme installé."
     else
-        _log "error" "unable to download $VERSION"
+        _log "error" "Échec du téléchargement de Graphite."
         exit 1
     fi
     rm -rf "$TEMP_DIR"
 else
-    _log "notice" "nordic theme already up to date"
+    _log "notice" "Graphite est déjà à jour ($VERSION)."
 fi
 
-_log "info" "apply nordic theme..."
-gsettings set org.gnome.desktop.interface gtk-theme "Nordic"
+# --- Application ---
+_log "info" "Application du thème Graphite..."
+gsettings set org.gnome.desktop.interface gtk-theme "Graphite-Dark"
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-dconf write /org/gnome/shell/extensions/user-theme/name "'Nordic'" 2>/dev/null || true
-_log "success" "nordic theme applied"
+dconf write /org/gnome/shell/extensions/user-theme/name "'Graphite-Dark'" 2>/dev/null || true
+
+# Patch Libadwaita (Optionnel mais recommandé pour Bazzite)
+# Cela copie le thème dans le dossier config pour forcer les apps GTK4
+mkdir -p "$HOME/.config/gtk-4.0"
+ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/assets" "$HOME/.config/gtk-4.0/assets"
+ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/gtk-dark.css"
+
+_log "success" "Configuration Graphite terminée."
 
 {{- end }}
