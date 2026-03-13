@@ -62,7 +62,7 @@ FLATPAKS=(
 )
 
 _log "info" "install Flatpaks..."
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 for APP in "${FLATPAKS[@]}"; do
     if ! flatpak list --columns=application | grep -q "^$APP$"; then
         flatpak install -y --user flathub "$APP"
