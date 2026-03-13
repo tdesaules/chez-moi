@@ -34,13 +34,15 @@ EXTENSIONS=(
     "4269" # https://extensions.gnome.org/extension/4269/alphabetical-app-grid/
 )
 
-_log "\ninfo" "installing extensions..."
+echo ""
+_log "info" "installing extensions..."
 $HOME/.local/bin/gext update --install --yes "${EXTENSIONS[@]}"
 _log "success" "extensions installed"
 
 _log "info" "enabling extensions..."
 $HOME/.local/bin/gext enable "${EXTENSIONS[@]}"
-_log "\nsuccess" "extensions enabled"
+echo ""
+_log "success" "extensions enabled"
 
 EXTENSIONS=(
     "615" # https://extensions.gnome.org/extension/615/appindicator-support/
@@ -48,6 +50,7 @@ EXTENSIONS=(
 
 _log "info" "disabling unwanted extensions..."
 $HOME/.local/bin/gext disable "${EXTENSIONS[@]}"
-_log "\nsuccess" "extensions enabled"
+echo ""
+_log "success" "extensions enabled"
 
 {{ end -}}
