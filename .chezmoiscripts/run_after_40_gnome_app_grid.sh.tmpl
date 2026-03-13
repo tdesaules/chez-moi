@@ -13,7 +13,11 @@ error_handler() {
 trap 'error_handler' ERR
 
 APPS_TO_HIDE=(
-  "firewall-config.desktop"
+    "bazzite-documentation.desktop"
+    "bbrew.desktop"
+    "btrfs-assistant.desktop"
+
+    "firewall-config.desktop"
 )
 
 _log "info" "hide grid apps..."
