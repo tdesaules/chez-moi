@@ -1,6 +1,6 @@
 [Desktop Entry]
-Type=Application
 NoDisplay=true
+Type=Application
 Terminal=false
 Exec=xdg-open https://universal-blue.discourse.group/c/bazzite/
 Icon=/usr/share/ublue-os/bazzite/discourse.svg

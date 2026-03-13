@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Type=Application
 Name=Force Restart Waydroid
 Name[cs]=Vynucený restart Waydroidu
@@ -8,4 +9,3 @@ Exec=pkexec /usr/libexec/waydroid-container-restart
 Categories=X-WayDroid-App;
 X-Purism-FormFactor=Workstation;Mobile;
 Icon=waydroid
-NoDisplay=false

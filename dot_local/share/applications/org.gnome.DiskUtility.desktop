@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name[ar]=الأقراص
 Name[as]=ডিস্ক
 Name[be]=Дыскі
@@ -62,7 +63,7 @@ Name[sr]=Дискови
 Name[sr@latin]=Diskovi
 Name[sv]=Diskar
 Name[ta]=வட்டுகள்
-Name[te]=డిస్కులు 
+Name[te]=డిస్కులు
 Name[tg]=Дискҳо
 Name[th]=ดิสก์
 Name[tr]=Diskler

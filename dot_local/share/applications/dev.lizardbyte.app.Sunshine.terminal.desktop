@@ -1,6 +1,6 @@
 [Desktop Entry]
+NoDisplay=true
 Name=Sunshine
 Exec=sunshine
 Terminal=true
 Type=Application
-NoDisplay=true
