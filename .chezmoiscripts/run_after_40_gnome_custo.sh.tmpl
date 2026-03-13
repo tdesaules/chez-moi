@@ -29,4 +29,12 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
 _log "success" "theme color configured"
 
+_log "info" "refresh fonts cache..."
+fc-cache -f -v ~/.local/share/fonts/
+_log "info" "adapt fonts"
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Comfortaa Bold 10'
+gsettings set org.gnome.desktop.interface font-name 'Comfortaa 10'
+gsettings set org.gnome.desktop.interface document-font-name 'Geist 10'
+_log "success" "fonts applied"
+
 {{- end }}
