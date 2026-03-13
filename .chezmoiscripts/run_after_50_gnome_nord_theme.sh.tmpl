@@ -1,0 +1,44 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+{{ $version := .themes.nordic | default "" -}}
+VERSION="{{ $version }}"
+
+if [ ! -f "$HOME/.themes/.nordic_version_$VERSION" ]; then
+    _log "info" "install Nordic theme version $VERSION..."
+    mkdir -p "$HOME/.themes"
+    URL="https://github.com/EliverLara/Nordic/releases/download/${VERSION}/Nordic.tar.xz"
+    TEMP_DIR=$(mktemp -d)
+    if curl -sSL "$URL" -o "$TEMP_DIR/theme.tar.xz"; then
+        rm -rf "$HOME/.themes/Nordic"
+        tar -xf "$TEMP_DIR/theme.tar.xz" -C "$HOME/.themes"
+        rm -f "$HOME/.themes/.nordic_version_*"
+        touch "$HOME/.themes/.nordic_version_$VERSION"
+        _log "success" "nordic theme installed"
+    else
+        _log "error" "unable to download $VERSION"
+        exit 1
+    fi
+    rm -rf "$TEMP_DIR"
+else
+    _log "notice" "nordic theme already up to date"
+fi
+
+_log "info" "apply nordic theme..."
+gsettings set org.gnome.desktop.interface gtk-theme "Nordic"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+dconf write /org/gnome/shell/extensions/user-theme/name "'Nordic'" 2>/dev/null || true
+_log "success" "nordic theme applied"
+
+{{- end }}
