@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Type=Application
 Name=System Update
 Name[cs]=Aktualizace systému
@@ -14,4 +15,3 @@ Icon=/usr/share/ublue-os/bazzite/update.svg
 Categories=ConsoleOnly;System;
 Terminal=true
 Exec=/usr/bin/ujust update
-NoDisplay=true

@@ -1,9 +1,0 @@
-[MIME Cache]
-application/vnd.flatpak=io.github.flattool.Warehouse.desktop;
-application/vnd.flatpak.ref=io.github.flattool.Warehouse.desktop;
-application/vnd.flatpak.repo=io.github.flattool.Warehouse.desktop;
-application/x-ms-dos-executable=com.github.Matoking.protontricks-launch.desktop;
-application/x-ms-shortcut=com.github.Matoking.protontricks-launch.desktop;
-application/x-msi=com.github.Matoking.protontricks-launch.desktop;
-x-scheme-handler/flatpak=io.github.flattool.Warehouse.desktop;
-x-scheme-handler/gnome-extensions=com.mattjakeman.ExtensionManager.desktop;

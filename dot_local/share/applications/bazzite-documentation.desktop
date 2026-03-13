@@ -1,6 +1,6 @@
 [Desktop Entry]
+NoDisplay=true
 Type=Application
-NoDisplay=false
 Terminal=false
 Exec=/usr/share/ublue-os/docs/serve.sh
 Icon=/usr/share/ublue-os/bazzite/docs.svg
@@ -14,4 +14,3 @@ Comment[fr]=Voir la documentation de Bazzite
 Comment[el]=Προβολή τεκμηρίωσης Bazzite
 Comment[ru]=Посмотреть документацию Bazzite
 Categories=Utility;
-NoDisplay=true

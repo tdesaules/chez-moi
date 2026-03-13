@@ -12,39 +12,6 @@ error_handler() {
 }
 trap 'error_handler' ERR
 
-APPS_TO_HIDE=(
-    "bazzite-documentation.desktop"
-    "bazzite-steam-bpm.desktop"
-    "bbrew.desktop"
-    "btrfs-assistant.desktop"
-    "discourse.desktop"
-    "ulauncher.desktop"
-    "system-update.desktop"
-    "input-remapper-gtk.dektop"
-    "firewall-config.desktop"
-    "io.github.flattool.Warehouse"
-    "com.ranfdev.DistroShelf"
-    "com.github.tchx84.Flatseal"
-)
-
-_log "info" "hide grid apps..."
-mkdir -p "$HOME/.local/share/applications"
-for app in "${APPS_TO_HIDE[@]}"; do
-    ORIGINAL_PATH=""
-    if [ -f "/usr/share/applications/$app" ]; then
-        ORIGINAL_PATH="/usr/share/applications/$app"
-    elif [ -f "/var/lib/flatpak/exports/share/applications/$app" ]; then
-        ORIGINAL_PATH="/var/lib/flatpak/exports/share/applications/$app"
-    fi
-    if [ -n "$ORIGINAL_PATH" ]; then
-        _log "notice" "Masquage de : $app"
-        cp "$ORIGINAL_PATH" "$HOME/.local/share/applications/$app"
-        echo "NoDisplay=true" >> "$HOME/.local/share/applications/$app"
-    fi
-done
-update-desktop-database ~/.local/share/applications
-_log "success" "application grid hidden"
-
 _log "info" "cleaning application grid..."
 gsettings set org.gnome.desktop.app-folders folder-children "[]"
 _log "success" "application grid is now flat"

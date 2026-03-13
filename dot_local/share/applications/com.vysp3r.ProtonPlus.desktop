@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name=ProtonPlus
 Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=protonplus com.vysp3r.ProtonPlus
 Icon=com.vysp3r.ProtonPlus

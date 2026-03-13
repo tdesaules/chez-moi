@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name=Ulauncher
 Comment=Application launcher for Linux
 GenericName=Launcher
@@ -8,4 +9,3 @@ Exec=env GDK_BACKEND=x11 /usr/bin/ulauncher --hide-window
 Icon=ulauncher
 Terminal=false
 Type=Application
-NoDisplay=true

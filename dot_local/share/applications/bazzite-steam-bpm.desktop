@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name=Steam Big Picture Mode
 Name[cs]=Režim Steam Big Picture
 Name[fr]=Mode Big Picture
@@ -9,4 +10,3 @@ Icon=steam
 Terminal=false
 Type=Application
 Categories=Network;FileTransfer;Game;
-NoDisplay=true

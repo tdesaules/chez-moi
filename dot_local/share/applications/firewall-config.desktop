@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name=Firewall
 Name[ar]=الجدار النّاري
 Name[as]=ফায়াৰ্ৱাল
@@ -72,7 +73,7 @@ Comment[fi]=Palomuuriasetukset
 Comment[fr]=Configuration du pare-feu
 Comment[gl]=Configuración da devasa
 Comment[gu]=ફાયરવોલ રૂપરેખાંકન
-Comment[hi]=फायरवाल विन्यास 
+Comment[hi]=फायरवाल विन्यास
 Comment[hu]=Tűzfal beállítások
 Comment[ia]=Configuration de parafoco
 Comment[id]=Pengaturan Firewall
@@ -155,4 +156,3 @@ Type=Application
 StartupNotify=true
 Terminal=false
 X-Desktop-File-Install-Version=0.28
-NoDisplay=true
