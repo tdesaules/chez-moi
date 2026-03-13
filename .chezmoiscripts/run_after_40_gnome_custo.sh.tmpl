@@ -21,4 +21,12 @@ FAVORITES="['com.mitchellh.ghostty.desktop']"
 gsettings set org.gnome.shell favorite-apps "$FAVORITES"
 _log "success" "dock cleaned"
 
+_log "info" "configure theme color..."
+mkdir -p "$HOME/.config/gtk-4.0"
+mkdir -p "$HOME/.config/gtk-3.0"
+ln -sf "$HOME/.config/gtk-4.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+_log "success" "theme color configured"
+
 {{- end }}
