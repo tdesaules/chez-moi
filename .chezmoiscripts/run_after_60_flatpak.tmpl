@@ -31,14 +31,16 @@ FLATPAKS_TO_REMOVE=(
 )
 
 _log "info" "clean useless flatpak apps..."
+INSTALLED_FLATPAKS=$(flatpak list --columns=application 2>/dev/null || true)
 for app in "${FLATPAKS_TO_REMOVE[@]}"; do
-    if echo "$INSTALLED_FLATPAKS" | grep -q "$app"; then
-        _log "notice" "Désinstallation de : $app"
+    if echo "${INSTALLED_FLATPAKS:-}" | grep -q "$app"; then
         flatpak uninstall --delete-data -y "$app" || sudo flatpak uninstall --delete-data -y "$app"
     fi
 done
+echo ""
 _log "info" "clean dependencies..."
-flatpak uninstall --unused -y
+flatpak uninstall --unused -y || sudo flatpak uninstall --unused -y
+echo ""
 _log "info" "flatpak cleaned"
 
 {{- end }}
