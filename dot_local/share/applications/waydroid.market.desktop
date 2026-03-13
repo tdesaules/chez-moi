@@ -1,5 +1,4 @@
 [Desktop Entry]
-NoDisplay=true
 Name=Waydroid Market
 Comment=Android Market Protocol Handler
 Exec=waydroid app intent android.intent.action.VIEW %u
@@ -7,6 +6,7 @@ Icon=waydroid
 Type=Application
 Encoding=UTF-8
 Terminal=false
+NoDisplay=true
 Categories=Utility;
 MimeType=x-scheme-handler/market;
 X-KDE-Protocols=market;
