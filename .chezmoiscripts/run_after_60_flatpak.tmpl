@@ -1,0 +1,44 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+FLATPAKS_TO_REMOVE=(
+  "org.gnome.Calculator"
+  "org.gnome.Calendar"
+  "org.gnome.Characters"
+  "org.gnome.Contacts"
+  "org.gnome.Logs"
+  "org.gnome.Loupe"
+  "org.gnome.NautilusPreviewer"
+  "org.gnome.Papers"
+  "org.gnome.Showtime"
+  "org.gnome.TextEditor"
+  "org.gnome.Weather"
+  "org.gnome.baobab"
+  "org.gnome.clocks"
+  "org.gnome.font-viewer"
+  "org.mozilla.firefox"
+)
+
+_log "info" "clean useless flatpak apps..."
+for app in "${FLATPAKS_TO_REMOVE[@]}"; do
+    if flatpak list --ids | grep -q "^$app$"; then
+        _log "notice" "uninstall : $app"
+        flatpak uninstall --delete-data -y "$app"
+    fi
+done
+_log "info" "clean dependencies..."
+sudo flatpak uninstall --unused -y
+_log "info" "flatpak cleaned"
+
+{{- end }}

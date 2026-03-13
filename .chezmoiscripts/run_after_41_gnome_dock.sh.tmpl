@@ -1,0 +1,20 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+_log "info" "cleaning gnome dock..."
+FAVORITES="['com.mitchellh.ghostty.desktop']"
+gsettings set org.gnome.shell favorite-apps "$FAVORITES"
+_log "success" "dock cleaned"
+
+{{- end }}
