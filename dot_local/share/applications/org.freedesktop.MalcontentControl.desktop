@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name[ar]=أدوات الإشراف العائلي
 Name[ca]=Controls parentals
 Name[cs]=Rodičovská kontrola
@@ -7,7 +8,7 @@ Name[de]=Kindersicherung
 Name[es]=Controles parentales
 Name[fa]=واپایش‌های والدین
 Name[fr]=Contrôles parentaux
-Name[hi]=पैरेंटल कंट्रोल 
+Name[hi]=पैरेंटल कंट्रोल
 Name[hu]=Szülői felügyelet
 Name[id]=Pengawasan Orang Tua
 Name[it]=Controlli parentali
@@ -53,7 +54,7 @@ Type=Application
 Categories=GTK;GNOME;System;
 StartupNotify=true
 # Translators: Search terms to find this application. Do NOT translate or localise the semicolons! The list MUST also end with a semicolon!
-Keywords[ar]=إعدادات التحكم الأبوي؛ الوقت الذي يقضى بمشاهدة الشاشة؛ القيود الخاصة بالتطبيقات؛ القيود الخاصة بمتصفحات الإنترنت؛ فتح خدمة تقارير مؤتمتة؛ الاستخدام؛ حدود الاستخدام؛ الطفل؛ الطفل؛    
+Keywords[ar]=إعدادات التحكم الأبوي؛ الوقت الذي يقضى بمشاهدة الشاشة؛ القيود الخاصة بالتطبيقات؛ القيود الخاصة بمتصفحات الإنترنت؛ فتح خدمة تقارير مؤتمتة؛ الاستخدام؛ حدود الاستخدام؛ الطفل؛ الطفل؛
 Keywords[ca]=controls parentals;temps de pantalla;restriccions d'app;restriccions del navegador web;rems;ús;límit d'ús;criatura;nen;
 Keywords[cs]=rodičovská kontrola;čas u obrazovky;omezení aplikací;omezení webového prohlížeče;oars;použití;omezení použití;dítě;děti;
 Keywords[da]=forældrestyring;skærmtid;programbegrænsninger;webbrowserbegrænsninger;oars;anvendelse;anvendelsesbegrænsning;barn;børn;
