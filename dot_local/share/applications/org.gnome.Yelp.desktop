@@ -1,4 +1,5 @@
 [Desktop Entry]
+NoDisplay=true
 Name[ab]=Аилыркаа
 Name[af]=Hulp
 Name[am]=መረጃ
@@ -61,7 +62,7 @@ Name[la]=Auxilium: Help Contents=Adiuvantes Res
 Name[li]=Hulp
 Name[lt]=Žinynas
 Name[lv]=Palīdzība
-Name[mai]=मद्दति 
+Name[mai]=मद्दति
 Name[mg]=Toro-làlana
 Name[mk]=Помош
 Name[ml]=സഹായം
