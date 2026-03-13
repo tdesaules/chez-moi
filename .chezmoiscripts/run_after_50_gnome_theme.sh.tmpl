@@ -7,55 +7,71 @@
 set -euo pipefail
 
 # --- Configuration ---
-# On prend la version de data, sinon la toute dernière connue au 16 Février 2025
-{{ $version := .themes.graphite | default "" -}}
+# Ici, la version doit correspondre exactement au tag (ex: 2025-02-16)
+{{ $version := .themes.graphite | default "2025-02-16" -}}
 VERSION="{{ $version }}"
+
 THEMES_DIR="$HOME/.themes"
 MARKER="$THEMES_DIR/.graphite_version_$VERSION"
 
-_log "info" "Vérification du thème Graphite ($VERSION)..."
+error_handler() {
+    _log "critical" "Erreur lors de l'installation du thème Graphite"
+    exit 1
+}
+trap 'error_handler' ERR
 
 if [ ! -f "$MARKER" ]; then
-    _log "info" "Téléchargement de la version $VERSION..."
+    _log "info" "Téléchargement de Graphite version $VERSION..."
     mkdir -p "$THEMES_DIR"
 
-    # L'URL des tags chez vinceliuice utilise souvent la date sans le 'v'
+    # URL calquée sur ton format
     URL="https://github.com/vinceliuice/Graphite-gtk-theme/archive/refs/tags/${VERSION}.tar.gz"
     TEMP_DIR=$(mktemp -d)
 
+    # Utilisation de -L pour suivre les redirections GitHub
     if curl -sSL "$URL" -o "$TEMP_DIR/graphite.tar.gz"; then
-        tar -xf "$TEMP_DIR/graphite.tar.gz" -C "$TEMP_DIR"
 
-        # On cherche le dossier extrait (le nom peut varier légèrement)
-        cd "$TEMP_DIR"/Graphite-gtk-theme-*
+        # Vérification si le fichier est bien une archive compressée
+        if ! file "$TEMP_DIR/graphite.tar.gz" | grep -q 'gzip'; then
+            _log "error" "Le fichier téléchargé est invalide (probablement une erreur 404 de GitHub)."
+            _log "error" "Vérifie que le tag '$VERSION' existe bien sur https://github.com/vinceliuice/Graphite-gtk-theme/tags"
+            exit 1
+        fi
+
+        tar -xzf "$TEMP_DIR/graphite.tar.gz" -C "$TEMP_DIR"
+
+        # On entre dans le dossier extrait (le nom du dossier dans l'archive est Graphite-gtk-theme-VERSION)
+        cd "$TEMP_DIR/Graphite-gtk-theme-${VERSION}"
 
         _log "info" "Lancement de l'installateur..."
-        # --libadwaita est indispensable pour Bazzite
         ./install.sh --dest "$THEMES_DIR" --libadwaita --round 8px > /dev/null 2>&1
 
-        # Gestion du marqueur
+        # Nettoyage et marquage
         rm -f "$THEMES_DIR/.graphite_version_*"
         touch "$MARKER"
-        _log "success" "Graphite mis à jour en version $VERSION"
+        _log "success" "Graphite $VERSION installé avec succès."
     else
-        _log "error" "Impossible de récupérer la version $VERSION. Vérifie le tag sur GitHub."
+        _log "error" "Échec critique du téléchargement."
         exit 1
     fi
     rm -rf "$TEMP_DIR"
 else
-    _log "notice" "Graphite est déjà à la dernière version configurée ($VERSION)"
+    _log "notice" "Graphite est déjà à jour ($VERSION)."
 fi
 
 # --- Application ---
-# (Le reste du script pour gsettings et dconf reste identique)
+_log "info" "Application du thème Graphite-Dark..."
 gsettings set org.gnome.desktop.interface gtk-theme "Graphite-Dark"
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 dconf write /org/gnome/shell/extensions/user-theme/name "'Graphite-Dark'" 2>/dev/null || true
 
-# Patch GTK4
+# Patch GTK4 / Libadwaita (Indispensable pour Bazzite)
+_log "info" "Liaison du thème pour les applications GTK4..."
 mkdir -p "$HOME/.config/gtk-4.0"
-ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/assets" "$HOME/.config/gtk-4.0/assets"
-ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
-ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/gtk-dark.css"
+for f in assets gtk.css gtk-dark.css; do
+    ln -sf "$THEMES_DIR/Graphite-Dark/gtk-4.0/$f" "$HOME/.config/gtk-4.0/$f"
+done
+
+_log "success" "Thème Graphite configuré."
 
 {{- end }}

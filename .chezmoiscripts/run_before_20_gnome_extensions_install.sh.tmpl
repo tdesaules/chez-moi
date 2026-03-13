@@ -37,6 +37,7 @@ EXTENSIONS=(
 echo ""
 _log "info" "installing extensions..."
 $HOME/.local/bin/gext update --install --yes "${EXTENSIONS[@]}"
+echo ""
 _log "success" "extensions installed"
 
 _log "info" "enabling extensions..."
