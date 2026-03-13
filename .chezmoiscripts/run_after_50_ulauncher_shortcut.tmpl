@@ -26,19 +26,8 @@ if [[ $CURRENT_BINDINGS != *"custom-ulauncher"* ]]; then
     fi
 fi
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" name 'Ulauncher'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" command 'ulauncher-toggle'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" command 'ulauncher'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" binding '<Super>space'
 _log "info" "shortcut configured"
-
-_log "info" "install ulauncher theme..."
-ULAUNCHER_THEMES_DIR="$HOME/.config/ulauncher/user-themes"
-mkdir -p "$ULAUNCHER_THEMES_DIR"
-if [ ! -d "$ULAUNCHER_THEMES_DIR/ulauncher-nord" ]; then
-    _log "info" "download ulauncher theme..."
-    git clone https://github.com/ollev/ulauncher-nord.git "$ULAUNCHER_THEMES_DIR/ulauncher-nord"
-else
-    _log "warning" "theme already installed"
-fi
-_log "success" "theme installed"
 
 {{- end }}
