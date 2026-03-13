@@ -33,9 +33,9 @@ _log "info" "refresh fonts cache..."
 fc-cache -f -v ~/.local/share/fonts/
 echo ""
 _log "info" "adapt fonts"
-gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Comfortaa Bold 15'
-gsettings set org.gnome.desktop.interface font-name 'Comfortaa 15'
-gsettings set org.gnome.desktop.interface document-font-name 'Geist 15'
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Comfortaa Bold 12'
+gsettings set org.gnome.desktop.interface font-name 'Comfortaa 12'
+gsettings set org.gnome.desktop.interface document-font-name 'Geist 12'
 _log "success" "fonts applied"
 
 {{- end }}
