@@ -1,0 +1,44 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+_log "info" "configure ulauncher shortcut super + space..."
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "[]"
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "[]"
+CURRENT_BINDINGS=$(gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings)
+ULAUNCHER_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom-ulauncher/"
+if [[ $CURRENT_BINDINGS != *"custom-ulauncher"* ]]; then
+    if [ "$CURRENT_BINDINGS" = "@as []" ] || [ "$CURRENT_BINDINGS" = "[]" ]; then
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$ULAUNCHER_PATH']"
+    else
+        NEW_BINDINGS="${CURRENT_BINDINGS%]*}, '$ULAUNCHER_PATH']"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "$NEW_BINDINGS"
+    fi
+fi
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" name 'Ulauncher'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" command 'ulauncher-toggle'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$ULAUNCHER_PATH" binding '<Super>space'
+_log "info" "shortcut configured"
+
+_log "info" "install ulauncher theme..."
+ULAUNCHER_THEMES_DIR="$HOME/.config/ulauncher/user-themes"
+mkdir -p "$ULAUNCHER_THEMES_DIR"
+if [ ! -d "$ULAUNCHER_THEMES_DIR/ulauncher-nord" ]; then
+    _log "info" "download ulauncher theme..."
+    git clone https://github.com/ollev/ulauncher-nord.git "$ULAUNCHER_THEMES_DIR/ulauncher-nord"
+else
+    _log "warning" "theme already installed"
+fi
+_log "success" "theme installed"
+
+{{- end }}
