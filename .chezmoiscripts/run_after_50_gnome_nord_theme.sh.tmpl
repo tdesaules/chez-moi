@@ -37,8 +37,7 @@ fi
 
 _log "info" "apply nordic theme..."
 gsettings set org.gnome.desktop.interface gtk-theme "Nordic"
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-dconf write /org/gnome/shell/extensions/user-theme/name "'Nordic'" 2>/dev/null || true
+gsettings set org.gnome.desktop.wm.preferences theme "Nordic"
 _log "success" "nordic theme applied"
 
 {{- end }}
