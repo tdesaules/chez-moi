@@ -6,13 +6,17 @@ font-size = 10.5
 # 15% is equivalent to a 1.15 line-height
 adjust-cell-height = 15%
 
-# --- Graphite-Nordic Theme ---
-background = #1e1e1e
+# --- Nord Palette (Polar Night & Aurora Red) ---
+# Fond principal (Nord0 - correspond au window_bg_color de GTK)
+background = #2e3440
+# Texte principal (Nord4)
 foreground = #d8dee9
-selection-background = #3b4252
+
+# Couleur de sélection (Nord3 ou un rouge très sombre pour rappeler l'accent)
+selection-background = #434c5e
 selection-foreground = #eceff4
 
-# Nordic Palette
+# Palette standard Nord
 palette = 0=#3b4252
 palette = 1=#bf616a
 palette = 2=#a3be8c
@@ -31,14 +35,23 @@ palette = 14=#8fbcbb
 palette = 15=#eceff4
 
 # --- Cursor & Selection ---
-cursor-color = #88c0d0
+# On utilise l'accent Aurora (Red) pour le curseur, comme dans GTK
+cursor-color = #bf616a
+# Couleur du texte sous le curseur
+cursor-text = #eceff4
+
 cursor-style = block
 # Documentation: cursor-style-blink controls blinking
 cursor-style-blink = false
 copy-on-select = true
 
 # --- Window Appearance ---
-window-decoration = false
+# TRÈS IMPORTANT : Mettre à true pour que GNOME/GTK4 applique les coins arrondis
+window-decoration = true
+
+# Ghostty utilise GTK4 sur Linux, on lui dit d'utiliser le mode sombre par défaut
+window-theme = dark
+
 window-padding-x = 12
 window-padding-y = 12
 
@@ -52,4 +65,8 @@ split-divider-color = #4c566a
 {{ if (eq .chezmoi.os "darwin") -}}
 font-size = 13
 font-thicken = true
+# Sur Mac, on peut cacher la barre de titre tout en gardant les coins arrondis natifs
+window-decoration = false
+macos-titlebar-style = hidden
+
 {{ end -}}
