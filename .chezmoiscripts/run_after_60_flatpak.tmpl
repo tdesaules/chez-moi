@@ -42,6 +42,32 @@ echo ""
 _log "info" "clean dependencies..."
 flatpak uninstall --unused -y || sudo flatpak uninstall --unused -y
 echo ""
-_log "info" "flatpak cleaned"
+_log "success" "flatpak cleaned"
+
+FLATPAKS=(
+  "app.zen_browser.zen"
+  "com.google.Chrome"
+  "dev.zed.Zed"
+  "md.obsidian.Obsidian"
+  "io.kinvolk.Headlamp"
+  "io.github.kolunmi.Bazaar"
+  "com.rcloneui.RcloneUI"
+  "org.onlyoffice.desktopeditors"
+  "com.usebruno.Bruno"
+  "org.darktable.Darktable"
+  "org.inkscape.Inkscape"
+  "org.kde.krita"
+  "org.freecad.FreeCAD"
+  "org.librecad.librecad"
+)
+
+_log "info" "install Flatpaks..."
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+for APP in "${FLATPAKS[@]}"; do
+    if ! flatpak list --columns=application | grep -q "^$APP$"; then
+        flatpak install -y flathub "$APP"
+    fi
+done
+_log "success" "flatpak installed"
 
 {{- end }}
