@@ -26,11 +26,11 @@ if [ ! -f "$MISE_BIN" ]; then
 else
     _log "info" "check for mise update..."
     "$MISE_BIN" self-update --yes
+    echo ""
     _log "info" "update finish"
 fi
 
 _log "info" "install software managed with mise..."
-$HOME/.local/bin/mise trust "$HOME"
 $HOME/.local/bin/mise install --yes
 echo ""
 _log "success" "software installed"

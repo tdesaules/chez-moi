@@ -1,5 +1,9 @@
 [settings]
-trust_config = true
+trusted_config_paths = [
+    "~/.config/mise",
+    "/var/home/{{ .chezmoi.username }}/.config/mise"
+]
+experimental = true
 
 [tools]
 usage = "latest"
