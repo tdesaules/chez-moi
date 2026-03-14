@@ -13,6 +13,7 @@ error_handler() {
 trap 'error_handler' ERR
 
 LOGO_SOURCE="{{ .chezmoi.homeDir }}/.local/share/icons/logo-menu-custom.svg"
+sudo mkdir /etc/gdm-assets
 LOGO_DEST="/etc/gdm-assets/login-logo.svg"
 NORD_BLACK="#2E3440"
 
