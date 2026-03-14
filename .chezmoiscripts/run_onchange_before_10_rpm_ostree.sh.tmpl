@@ -21,6 +21,15 @@ if [ ! -f "$REPO_FILE" ]; then
     rpm-ostree refresh-md
 fi
 
+REPO_FILE="/etc/yum.repos.d/_copr:alternateved:keyd.repo"
+if [ ! -f "$REPO_FILE" ]; then
+    _log "info" "adding keyd copr repository..."
+    VERSION_ID=$(rpm -E %fedora)
+    curl -fsSL "https://copr.fedorainfracloud.org/coprs/alternateved/keyd/repo/fedora-${VERSION_ID}/alternateved-keyd-fedora-${VERSION_ID}.repo" | tee "$REPO_FILE" > /dev/null
+    _log "info" "refreshing rpm-ostree metadata..."
+    rpm-ostree refresh-md
+fi
+
 PACKAGES=(
     "sudo-rs"
     "git"
@@ -28,6 +37,7 @@ PACKAGES=(
     "ulauncher"
     "qemu"
     "pipx"
+    "keyd"
 )
 
 MISSING_PKGS=""

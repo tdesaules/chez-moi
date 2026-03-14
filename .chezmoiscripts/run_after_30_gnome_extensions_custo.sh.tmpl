@@ -40,6 +40,7 @@ topbar-preview-size=10
 EOF
 _log "success" "clipboard indicator configured"
 
+# dconf dump /org/gnome/shell/extensions/tilingshell/
 _log "info" "configuring tiling shell..."
 cat <<EOF | dconf load /org/gnome/shell/extensions/tilingshell/
 [/]
@@ -64,9 +65,10 @@ outer-gaps=uint32 15
 overridden-settings="{\"org.gnome.mutter.keybindings\":{\"toggle-tiled-right\":\"['<Super>Right']\",\"toggle-tiled-left\":\"['<Super>Left']\"},\"org.gnome.desktop.wm.keybindings\":{\"maximize\":\"['<Super>Up']\",\"unmaximize\":\"['<Super>Down', '<Alt>F5']\"},\"org.gnome.mutter\":{\"edge-tiling\":\"true\"}}"
 override-window-menu=true
 raise-together=true
-selected-layouts=[['15015851'], ['15015851'], ['12645543'], ['12645543']]
+selected-layouts=[['12645543'], ['12645543'], ['12645543'], ['12645543']]
 snap-assist-sync-layout=true
 span-multiple-tiles-activation-key=['0']
+span-window-all-tiles=['<Super>Return']
 tiling-system-activation-key=['0']
 tiling-system-deactivation-key=['-1']
 top-edge-maximize=true
