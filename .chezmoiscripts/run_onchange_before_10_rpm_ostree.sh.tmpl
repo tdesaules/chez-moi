@@ -16,7 +16,7 @@ REPO_FILE="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.re
 if [ ! -f "$REPO_FILE" ]; then
     _log "info" "adding ghostty copr repository..."
     VERSION_ID=$(rpm -E %fedora)
-    curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | tee "$REPO_FILE" > /dev/null
+    curl -fsSL "https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-${VERSION_ID}/scottames-ghostty-fedora-${VERSION_ID}.repo" | sudo tee "$REPO_FILE" > /dev/null
     _log "info" "refreshing rpm-ostree metadata..."
     rpm-ostree refresh-md
 fi
@@ -25,7 +25,7 @@ REPO_FILE="/etc/yum.repos.d/_copr:alternateved:keyd.repo"
 if [ ! -f "$REPO_FILE" ]; then
     _log "info" "adding keyd copr repository..."
     VERSION_ID=$(rpm -E %fedora)
-    curl -fsSL "https://copr.fedorainfracloud.org/coprs/alternateved/keyd/repo/fedora-${VERSION_ID}/alternateved-keyd-fedora-${VERSION_ID}.repo" | tee "$REPO_FILE" > /dev/null
+    curl -fsSL "https://copr.fedorainfracloud.org/coprs/alternateved/keyd/repo/fedora-${VERSION_ID}/alternateved-keyd-fedora-${VERSION_ID}.repo" | sudo tee "$REPO_FILE" > /dev/null
     _log "info" "refreshing rpm-ostree metadata..."
     rpm-ostree refresh-md
 fi
