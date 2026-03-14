@@ -26,4 +26,9 @@ else
     _log "info" "update finish"
 fi
 
+_log "info" "install software managed with mise..."
+$HOME/.local/bin/mise install --yes
+echo ""
+_log "success" "software installed"
+
 {{- end }}
