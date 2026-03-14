@@ -1,7 +1,5 @@
-[tools]
-usage = "latest"
-
 [settings]
 trust_config = true
-experimental = true
-asdf_compat = true
+
+[tools]
+usage = "latest"

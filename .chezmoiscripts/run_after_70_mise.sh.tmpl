@@ -15,6 +15,9 @@ trap 'error_handler' ERR
 BIN_DIR="$HOME/.local/bin"
 MISE_BIN="$BIN_DIR/mise"
 
+export MISE_YES=1
+export MISE_TRUSTED_CONFIG_PATHS="$HOME/.config/mise"
+
 if [ ! -f "$MISE_BIN" ]; then
     _log "info" "install mise..."
     curl https://mise.run | MISE_INSTALL_PATH="$MISE_BIN" sh
@@ -27,6 +30,7 @@ else
 fi
 
 _log "info" "install software managed with mise..."
+$HOME/.local/bin/mise trust "$HOME"
 $HOME/.local/bin/mise install --yes
 echo ""
 _log "success" "software installed"
