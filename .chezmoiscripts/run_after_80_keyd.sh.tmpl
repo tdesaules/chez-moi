@@ -28,8 +28,8 @@ if [ -f "${SOURCE_FILE}" ]; then
         sudo chmod 644 "${DEST_FILE}"
         _log "info" "reload keyd service..."
         sudo systemctl enable --now keyd
-        sudo keyd reload
-        _log "sucess" "keyd started"
+        sudo systemctl restart keyd
+        _log "success" "keyd started"
     else
         _log "info" "keyd already configured and up to date"
         if ! systemctl is-active --quiet keyd; then
