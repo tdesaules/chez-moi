@@ -17,7 +17,6 @@ readonly EXTENSIONS=(
     "3843" # Just Perfection
     "4269" # Alphabetical App Grid
     "1160" # Logo Menu
-    "1583" # Customized Workspaces
 )
 
 # --- SECTION 1: GNOME EXTENSIONS INSTALLATION ---
@@ -180,22 +179,28 @@ symbolic-icon=false
 use-custom-icon=true
 EOF
 
-_log "info" "configuring per-workspace wallpapers..."
-cat <<EOF | dconf load /org/gnome/shell/extensions/worksets/
-[/]
-enable-per-workspace-background=true
-per-workspace-background-list=['file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/0.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/1.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/2.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/3.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/4.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/5.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/6.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/7.png']
-EOF
-
 _log "success" "extensions configuration finished"
 
-# --- SECTION 3: WALLPAPER DAEMON ---
+# --- SECTION 3: WORKSPACE WALLPAPER CONFIG ---
+_log "title" "applying global desktop configuration"
 
+# Define your preferred wallpaper path
+# We use '0.png' as the default here
+readonly WALLPAPER_PATH="file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/6.png"
+
+_log "info" "setting wallpaper for light and dark modes..."
+gsettings set org.gnome.desktop.background picture-uri "$WALLPAPER_PATH"
+gsettings set org.gnome.desktop.background picture-uri-dark "$WALLPAPER_PATH"
+
+_log "success" "wallpaper set to $WALLPAPER_PATH"
+
+_log "info" "setting 8 static workspace..."
 # Disable dynamic creation
 gsettings set org.gnome.mutter dynamic-workspaces false
-
 # Set a fixed number of workspaces (e.g., 4)
 gsettings set org.gnome.desktop.wm.preferences num-workspaces 8
+
+_log "success" "8 workspace has been defined"
 
 # Reset trap
 trap - ERR
