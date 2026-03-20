@@ -5,7 +5,7 @@
 {{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
 
 # --- CHEZMOI ONCHANGE HOOKS ---
-# This script runs if the python script, the service, or this file itself changes: [cite: 1, 2]
+# This script runs if the python script, the service, or this file itself changes:
 # Python Script: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
 # Service File:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
 
@@ -28,7 +28,7 @@ readonly EXTENSIONS=(
 _log "title" "gnome extensions management"
 
 trap '_error_handler "extension manager (gext) setup"' ERR
-if ! command -v gext &> /dev/null; then [cite: 3]
+if ! command -v gext &> /dev/null; then
     _log "notice" "installing 'gext' via pipx..."
     pipx install gnome-extensions-cli
 fi
@@ -41,7 +41,6 @@ _log "info" "syncing and enabling extensions..."
 $GEXT_BIN update --install --yes "${EXTENSIONS[@]}"
 $GEXT_BIN enable "${EXTENSIONS[@]}"
 _log "success" "extensions installed and enabled"
-
 
 # --- SECTION 2: EXTENSIONS SETTINGS (DCONF) ---
 _log "title" "gnome extensions configuration"
@@ -186,7 +185,6 @@ EOF
 
 _log "success" "extensions configuration finished"
 
-
 # --- SECTION 3: WALLPAPER DAEMON ---
 _log "title" "deploy workspace wallpaper daemon"
 
@@ -199,7 +197,7 @@ _log "info" "restarting ${SERVICE_NAME} to apply changes..."
 systemctl --user enable "${SERVICE_NAME}"
 systemctl --user restart "${SERVICE_NAME}"
 
-if systemctl --user is-active --quiet "${SERVICE_NAME}"; then [cite: 4]
+if systemctl --user is-active --quiet "${SERVICE_NAME}"; then
     _log "success" "daemon is active and handling wallpapers"
 else
     _error_handler "wallpaper daemon health check (service not active)"
