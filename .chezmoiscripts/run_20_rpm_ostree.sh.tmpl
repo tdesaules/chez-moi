@@ -1,0 +1,79 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.idLike "fedora")) -}}
+
+set -euo pipefail
+
+# --- ERROR HANDLING ---
+error_handler() {
+    _log "critical" "issue during package installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+# --- CONFIGURATION ---
+readonly COPR_REPOS=(
+    "scottames/ghostty"
+    "alternateved/keyd"
+)
+
+readonly PACKAGES=(
+    "sudo-rs"
+    "git"
+    "ghostty"
+    "ulauncher"
+    "qemu"
+    "pipx"
+    "keyd"
+    "ImageMagick"
+)
+
+# --- EXECUTION ---
+
+# 1. Handle Repositories
+# Define Fedora version once to avoid repeated system calls
+readonly FEDORA_VERSION=$(rpm -E %fedora)
+
+for REPO in "${COPR_REPOS[@]}"; do
+    REPO_NAME=${REPO//\//:}
+    REPO_FILE="/etc/yum.repos.d/_copr:${REPO_NAME}.repo"
+
+    if [ ! -f "${REPO_FILE}" ]; then
+        _log "info" "adding ${REPO} COPR repository..."
+        REPO_FILENAME="${REPO/\//-}-fedora-${FEDORA_VERSION}.repo"
+
+        curl -fsSL "https://copr.fedorainfracloud.org/coprs/${REPO}/repo/fedora-${FEDORA_VERSION}/${REPO_FILENAME}" | sudo tee "${REPO_FILE}" > /dev/null
+
+        _log "info" "refreshing rpm-ostree metadata..."
+        rpm-ostree refresh-md
+    fi
+done
+
+# 2. Identify missing packages
+MISSING_PKGS=()
+_log "info" "searching for missing packages..."
+
+# Fetch currently requested packages once
+STAGED_PKGS=$(rpm-ostree status --json | jq -r '.deployments[0].["requested-packages"][]?' 2>/dev/null || true)
+
+for PKG in "${PACKAGES[@]}"; do
+    if rpm -q "${PKG}" &> /dev/null || echo "${STAGED_PKGS}" | grep -qxw "${PKG}"; then
+        _log "notice" "${PKG} is already handled"
+    else
+        _log "warning" "${PKG} is missing"
+        MISSING_PKGS+=("${PKG}")
+    fi
+done
+
+# 3. Batch Installation
+if [ ${#MISSING_PKGS[@]} -gt 0 ]; then
+    _log "info" "installing packages: ${MISSING_PKGS[*]}..."
+    rpm-ostree install --allow-replacement --assumeyes --apply-live "${MISSING_PKGS[@]}"
+    _log "success" "packages installed successfully"
+else
+    _log "success" "no new packages to install"
+fi
+
+{{- end }}

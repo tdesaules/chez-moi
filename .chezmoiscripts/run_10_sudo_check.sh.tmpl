@@ -1,0 +1,37 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if (eq .chezmoi.os "linux") -}}
+
+set -euo pipefail
+
+# --- ERROR HANDLING ---
+error_handler() {
+    _log "critical" "sudo authentication failed or session interrupted"
+    exit 1
+}
+trap 'error_handler' ERR
+
+# --- EXECUTION ---
+_log "info" "requesting sudo privileges for the entire chezmoi session..."
+
+if sudo -v; then
+    _log "notice" "sudo access validated, starting background keep-alive"
+
+    # Keep-alive loop: updates sudo timestamp every 60s
+    # It monitors $PPID (the chezmoi process) instead of $$ (this script)
+    (
+        while kill -0 "$PPID" 2>/dev/null; do
+            sudo -n true
+            sleep 60
+        done
+    ) &>/dev/null &
+
+    _log "success" "sudo privileges will remain active until chezmoi finishes"
+else
+    _log "critical" "failed to obtain sudo privileges"
+    exit 1
+fi
+
+{{- end }}

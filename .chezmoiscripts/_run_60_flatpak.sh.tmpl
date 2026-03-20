@@ -1,0 +1,75 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+FLATPAKS_TO_REMOVE=(
+  "org.gnome.Calculator"
+  "org.gnome.Calendar"
+  "org.gnome.Characters"
+  "org.gnome.Contacts"
+  "org.gnome.Logs"
+  "org.gnome.Loupe"
+  "org.gnome.NautilusPreviewer"
+  "org.gnome.Papers"
+  "org.gnome.Showtime"
+  "org.gnome.TextEditor"
+  "org.gnome.Weather"
+  "org.gnome.baobab"
+  "org.gnome.clocks"
+  "org.gnome.font-viewer"
+  "org.mozilla.firefox"
+  "io.missioncenter.MissionCenter"
+)
+
+_log "info" "clean useless flatpak apps..."
+INSTALLED_FLATPAKS=$(flatpak list --columns=application 2>/dev/null || true)
+for app in "${FLATPAKS_TO_REMOVE[@]}"; do
+    if echo "${INSTALLED_FLATPAKS:-}" | grep -q "$app"; then
+        flatpak uninstall --delete-data -y "$app" || sudo flatpak uninstall --delete-data -y "$app"
+    fi
+done
+echo ""
+_log "info" "clean dependencies..."
+flatpak uninstall --unused -y || sudo flatpak uninstall --unused -y
+echo ""
+_log "success" "flatpak cleaned"
+
+FLATPAKS=(
+  "app.zen_browser.zen"
+  "com.google.Chrome"
+  "io.kinvolk.Headlamp"
+  "io.github.kolunmi.Bazaar"
+  "com.rcloneui.RcloneUI"
+  "org.onlyoffice.desktopeditors"
+  "com.usebruno.Bruno"
+  "org.darktable.Darktable"
+  "org.inkscape.Inkscape"
+  "org.kde.krita"
+  "org.freecad.FreeCAD"
+  "org.librecad.librecad"
+)
+
+_log "info" "install Flatpaks..."
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+for APP in "${FLATPAKS[@]}"; do
+    if ! flatpak list --columns=application | grep -q "^$APP$"; then
+        flatpak install -y --user flathub "$APP"
+    fi
+done
+_log "success" "flatpak installed"
+
+_log "info" "update Flatpaks..."
+flatpak update -y
+_log "success" "flatpak updated"
+
+{{- end }}

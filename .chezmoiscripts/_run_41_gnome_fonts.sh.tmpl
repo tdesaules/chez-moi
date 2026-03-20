@@ -1,0 +1,23 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if and (eq .chezmoi.os "linux") (eq .desktop "GNOME") -}}
+
+set -euo pipefail
+
+error_handler() {
+    _log "critical" "issue during gnome extension installation"
+    exit 1
+}
+trap 'error_handler' ERR
+
+_log "info" "configure fonts..."
+fc-cache -f -v ~/.local/share/fonts/
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Comfortaa Bold 12'
+gsettings set org.gnome.desktop.interface font-name 'Comfortaa 12'
+gsettings set org.gnome.desktop.interface document-font-name 'Geist 12'
+echo ""
+_log "success" "fonts applied"
+
+{{- end }}
