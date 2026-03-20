@@ -5,7 +5,7 @@
 {{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
 
 # --- CHEZMOI ONCHANGE HOOKS ---
-# Python Script: {{ include "dot_local/bin/executable_gnome_workspace_wallpaper.py.tmpl" | sha256sum }}
+# Python Script: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
 # Service File:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
 
 set -euo pipefail
