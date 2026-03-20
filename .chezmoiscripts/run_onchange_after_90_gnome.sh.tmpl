@@ -1,0 +1,46 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
+
+# --- CHEZMOI ONCHANGE HOOKS ---
+# This script will run whenever these files change:
+# Python script hash: {{ include "dot_local/bin/executable_gnome_workspace_wallpaper.py.tmpl" | sha256sum }}
+# Service file hash:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+# --- CONFIGURATION ---
+readonly SERVICE_NAME="gnome-workspace-wallpaper.service"
+
+# --- ERROR HANDLING ---
+error_handler() {
+    _log "critical" "failed to update or restart the wallpaper daemon"
+    exit 1
+}
+trap 'error_handler' ERR
+
+# --- EXECUTION ---
+
+_log "info" "configuration change detected, updating ${SERVICE_NAME}..."
+
+# 1. Reload systemd to recognize potential changes in the .service file
+_log "info" "reloading systemd user daemon..."
+systemctl --user daemon-reload
+
+# 2. Enable and Restart
+# We use 'restart' instead of 'start' because onchange implies
+# we want to apply the NEW version of the code/config immediately.
+_log "info" "restarting ${SERVICE_NAME} to apply changes..."
+systemctl --user enable "${SERVICE_NAME}"
+systemctl --user restart "${SERVICE_NAME}"
+
+if systemctl --user is-active --quiet "${SERVICE_NAME}"; then
+    _log "success" "wallpaper daemon is up to date and running"
+else
+    _log "critical" "daemon failed to start. check logs: journalctl --user -u ${SERVICE_NAME}"
+    exit 1
+fi
+
+{{- end }}
