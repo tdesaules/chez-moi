@@ -4,12 +4,14 @@
 
 {{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
 
-# --- CHEZMOI ONCHANGE HOOKS ---
+# ---CHEZMOI ONCHANGE HOOKS ---
 # This script will run whenever these files change:
-# Python script hash: {{ include "dot_local/bin/executable-gnome-workspace-wallpaper.tmpl" | sha256sum }}
+# Python script hash: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
 # Service file hash:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
 
 set -euo pipefail
+
+_log "title" "--- run gnome script"
 
 # --- CONFIGURATION ---
 readonly SERVICE_NAME="gnome-workspace-wallpaper.service"
