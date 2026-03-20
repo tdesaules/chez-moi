@@ -4,11 +4,6 @@
 
 {{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
 
-# --- CHEZMOI ONCHANGE HOOKS ---
-# This script runs if the python script, the service, or this file itself changes:
-# Python Script: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
-# Service File:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
-
 set -euo pipefail
 
 # --- CONFIGURATION ---
@@ -22,6 +17,7 @@ readonly EXTENSIONS=(
     "3843" # Just Perfection
     "4269" # Alphabetical App Grid
     "1160" # Logo Menu
+    "1583" # Customized Workspaces
 )
 
 # --- SECTION 1: GNOME EXTENSIONS INSTALLATION ---
