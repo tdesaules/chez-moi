@@ -30,3 +30,9 @@ _log() {
     # I kept your formatting but used BOLD for the title to make it pop
     echo -e "${WHITE}[ $TIME ]${NC} ${COLOR}${BOLD}[ ${LEVEL^^} ]${NC} ${COLOR}$ICON $MSG${NC} \n"
 }
+
+_error_handler() {
+    local TASK="${1:-unknown task}"
+    _log "critical" "failed during task: ${TASK}"
+    exit 1
+}

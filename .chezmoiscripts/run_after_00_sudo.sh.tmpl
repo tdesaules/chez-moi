@@ -6,6 +6,8 @@
 
 set -euo pipefail
 
+_log "title" "run sudo script"
+
 # --- ERROR HANDLING ---
 error_handler() {
     _log "critical" "sudo authentication failed or session interrupted"

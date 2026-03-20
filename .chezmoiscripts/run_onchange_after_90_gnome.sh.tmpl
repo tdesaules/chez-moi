@@ -4,36 +4,69 @@
 
 {{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
 
-# ---CHEZMOI ONCHANGE HOOKS ---
-# This script will run whenever these files change:
-# Python script hash: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
-# Service file hash:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
+# --- CHEZMOI ONCHANGE HOOKS ---
+# This script triggers if the daemon script, service, or this file changes:
+# Python Script: {{ include "dot_local/bin/executable_gnome-workspace-wallpaper.tmpl" | sha256sum }}
+# Service File:  {{ include "dot_config/systemd/user/gnome-workspace-wallpaper.service.tmpl" | sha256sum }}
 
 set -euo pipefail
 
-_log "title" "run gnome script"
-
 # --- CONFIGURATION ---
+
+readonly GEXT_BIN="$HOME/.local/bin/gext"
 readonly SERVICE_NAME="gnome-workspace-wallpaper.service"
+readonly WALLPAPER_PATH="file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/wallpaper-nord.png"
+readonly EXTENSIONS_TO_INSTALL=(
+    "7065" # Tiling Shell
+    "779"  # Clipboard Indicator
+    "3193" # Blur my Shell
+    "3843" # Just Perfection
+    "4269" # Alphabetical App Grid
+)
 
-# --- ERROR HANDLING ---
-error_handler() {
-    _log "critical" "failed to update or restart the wallpaper daemon"
-    exit 1
-}
-trap 'error_handler' ERR
+readonly EXTENSIONS_TO_DISABLE=(
+    "615"  # AppIndicator Support
+)
 
-# --- EXECUTION ---
+# --- SECTION 1: GNOME EXTENSIONS ---
 
-_log "info" "configuration change detected, updating ${SERVICE_NAME}..."
+_log "title" "gnome extensions management"
 
-# 1. Reload systemd to recognize potential changes in the .service file
+trap '_error_handler "extension manager (gext) setup"' ERR
+
+if ! command -v gext &> /dev/null; then
+    _log "notice" "installing 'gext' via pipx..."
+    pipx install gnome-extensions-cli
+    _log "success" "'gext' installed"
+fi
+
+trap '_error_handler "gnome shell extensions configuration"' ERR
+
+if [ "$(gsettings get org.gnome.shell disable-user-extensions)" = "true" ]; then
+    _log "notice" "enabling gnome user extensions support..."
+    gsettings set org.gnome.shell disable-user-extensions false
+fi
+
+_log "info" "syncing and enabling extensions..."
+$GEXT_BIN update --install --yes "${EXTENSIONS_TO_INSTALL[@]}"
+$GEXT_BIN enable "${EXTENSIONS_TO_INSTALL[@]}"
+
+if [ ${#EXTENSIONS_TO_DISABLE[@]} -gt 0 ]; then
+    _log "info" "disabling unwanted extensions..."
+    $GEXT_BIN disable "${EXTENSIONS_TO_DISABLE[@]}"
+fi
+_log "success" "extensions setup complete"
+
+
+# --- SECTION 2: WALLPAPER DAEMON ---
+
+_log "title" "deploy workspace wallpaper daemon"
+
+trap '_error_handler "wallpaper daemon systemd configuration"' ERR
+
 _log "info" "reloading systemd user daemon..."
 systemctl --user daemon-reload
 
-# 2. Enable and Restart
-# We use 'restart' instead of 'start' because onchange implies
-# we want to apply the NEW version of the code/config immediately.
 _log "info" "restarting ${SERVICE_NAME} to apply changes..."
 systemctl --user enable "${SERVICE_NAME}"
 systemctl --user restart "${SERVICE_NAME}"
@@ -41,8 +74,24 @@ systemctl --user restart "${SERVICE_NAME}"
 if systemctl --user is-active --quiet "${SERVICE_NAME}"; then
     _log "success" "wallpaper daemon is up to date and running"
 else
-    _log "critical" "daemon failed to start. check logs: journalctl --user -u ${SERVICE_NAME}"
-    exit 1
+    _error_handler "wallpaper daemon health check (service not active)"
 fi
+
+
+# --- SECTION 3: VISUAL ENFORCEMENT ---
+
+_log "title" "configure gnome visual effects"
+
+trap '_error_handler "gnome background gsettings"' ERR
+
+_log "info" "enforcing nord wallpaper..."
+gsettings set org.gnome.desktop.background picture-uri-dark "${WALLPAPER_PATH}"
+gsettings set org.gnome.desktop.background picture-uri "${WALLPAPER_PATH}"
+gsettings set org.gnome.desktop.background picture-options 'zoom'
+
+_log "success" "gnome environment setup finished"
+
+# Reset trap
+trap - ERR
 
 {{- end }}
