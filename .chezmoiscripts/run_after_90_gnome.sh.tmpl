@@ -202,6 +202,51 @@ gsettings set org.gnome.desktop.wm.preferences num-workspaces 8
 
 _log "success" "8 workspace has been defined"
 
+# --- SECTION 4: FONTS CONFIG ---
+_log "title" "applying fonts configuration"
+
+_log "info" "configure fonts..."
+
+fc-cache -f -v ~/.local/share/fonts/
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Comfortaa Bold 12'
+gsettings set org.gnome.desktop.interface font-name 'Comfortaa 12'
+gsettings set org.gnome.desktop.interface document-font-name 'Geist 12'
+echo ""
+
+_log "success" "fonts applied"
+
+# --- SECTION 5: THEME CONFIG ---
+_log "title" "applying theme configuration"
+
+_log "info" "configure theme color..."
+
+mkdir -p "$HOME/.config/gtk-4.0"
+mkdir -p "$HOME/.config/gtk-3.0"
+ln -sf "$HOME/.config/gtk-4.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+
+_log "success" "theme color configured"
+
+# --- SECTION 6: THEME CONFIG ---
+_log "title" "applying grid configuration"
+
+_log "info" "cleaning application grid..."
+
+gsettings set org.gnome.desktop.app-folders folder-children "[]"
+
+_log "success" "application grid is now flat"
+
+# --- SECTION 6: DASH CONFIG ---
+_log "title" "applying dash configuration"
+
+_log "info" "cleaning gnome dash..."
+
+FAVORITES="['org.gnome.Settings.desktop','org.gnome.Nautilus.desktop','steam.desktop','com.mitchellh.ghostty.desktop']"
+gsettings set org.gnome.shell favorite-apps "$FAVORITES"
+
+_log "success" "dock cleaned"
+
 # Reset trap
 trap - ERR
 
