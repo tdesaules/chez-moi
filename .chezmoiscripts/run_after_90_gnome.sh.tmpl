@@ -180,6 +180,13 @@ symbolic-icon=false
 use-custom-icon=true
 EOF
 
+_log "info" "configuring per-workspace wallpapers..."
+cat <<EOF | dconf load /org/gnome/shell/extensions/worksets/
+[/]
+enable-per-workspace-background=true
+per-workspace-background-list=['file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/0.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/1.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/2.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/3.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/4.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/5.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/6.png', 'file://{{ .chezmoi.homeDir }}/.local/share/backgrounds/7.png']
+EOF
+
 _log "success" "extensions configuration finished"
 
 # --- SECTION 3: WALLPAPER DAEMON ---
