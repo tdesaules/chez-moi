@@ -190,22 +190,12 @@ EOF
 _log "success" "extensions configuration finished"
 
 # --- SECTION 3: WALLPAPER DAEMON ---
-_log "title" "deploy workspace wallpaper daemon"
 
-trap '_error_handler "wallpaper daemon systemd configuration"' ERR
+# Disable dynamic creation
+gsettings set org.gnome.mutter dynamic-workspaces false
 
-_log "info" "reloading systemd user daemon..."
-systemctl --user daemon-reload
-
-_log "info" "restarting ${SERVICE_NAME} to apply changes..."
-systemctl --user enable "${SERVICE_NAME}"
-systemctl --user restart "${SERVICE_NAME}"
-
-if systemctl --user is-active --quiet "${SERVICE_NAME}"; then
-    _log "success" "daemon is active and handling wallpapers"
-else
-    _error_handler "wallpaper daemon health check (service not active)"
-fi
+# Set a fixed number of workspaces (e.g., 4)
+gsettings set org.gnome.desktop.wm.preferences num-workspaces 4
 
 # Reset trap
 trap - ERR
