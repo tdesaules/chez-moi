@@ -30,8 +30,8 @@ for APP in "${FLATPAKS_TO_REMOVE[@]}"; do
 done
 
 _log "info" "Removing unused dependencies..."
-flatpak uninstall --unused -y --user 2> /dev/null || true
-sudo flatpak uninstall --unused -y 2> /dev/null || true
+flatpak uninstall --unused -y --user &> /dev/null || true
+sudo flatpak uninstall --unused -y &> /dev/null || true
 
 echo ""
 _log "success" "Cleanup completed"

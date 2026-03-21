@@ -1,5 +1,5 @@
 /*
- * NORD THEME - GTK 4 / LIBADWAITA OPTIMIZATION
+ * NORD THEME - GTK 4 / LIBADWAITA & GTK 3 COMPATIBILITY
  * Based on: https://www.nordtheme.com/
  * 
  * Palette Reference:
@@ -9,11 +9,12 @@
  * Aurora:      nord11 #bf616a, nord12 #d08770, nord13 #ebcb8b, nord14 #a3be8c, nord15 #b48ead
  */
 
+/* --- MODERN GTK 4 / LIBADWAITA VARIABLES --- */
+
 /* --- ACCENT COLORS (Frost - nord8) --- */
-/* Using Frost Blue for a more authentic Nord experience */
 @define-color accent_color #88c0d0;
 @define-color accent_bg_color #88c0d0;
-@define-color accent_fg_color #2e3440; /* Dark text on light blue for better contrast */
+@define-color accent_fg_color #2e3440;
 
 /* --- WINDOWS & BACKGROUNDS (Polar Night) --- */
 @define-color window_bg_color #2e3440; /* nord0: Main background */
@@ -25,46 +26,32 @@
 
 /* --- HEADERBARS --- */
 @define-color headerbar_bg_color #2e3440;
-@define-color headerbar_fg_color #eceff4; /* nord6: Brightest text for titles */
-@define-color headerbar_border_color #434c5e; /* nord2: Subtle separation */
+@define-color headerbar_fg_color #eceff4; /* nord6: Brightest text */
+@define-color headerbar_border_color #434c5e; /* nord2 */
 @define-color headerbar_backdrop_color #2e3440;
 
-/* --- SIDEBARS & CARDS (Elevated Polar Night) --- */
-/* Sidebars in Nautilus or Settings (nord1) */
-@define-color sidebar_bg_color #3b4252;
+/* --- SIDEBARS & CARDS --- */
+@define-color sidebar_bg_color #3b4252; /* nord1 */
 @define-color sidebar_fg_color #d8dee9;
 @define-color sidebar_backdrop_color #3b4252;
-
 @define-color secondary_sidebar_bg_color #3b4252;
 @define-color secondary_sidebar_fg_color #d8dee9;
 
-/* Cards and blocks in Settings (nord1) */
 @define-color card_bg_color #3b4252;
 @define-color card_fg_color #d8dee9;
 
-/* Popovers and Menus (nord1) */
 @define-color popover_bg_color #3b4252;
 @define-color popover_fg_color #eceff4;
 
-/* --- INTERACTION & SELECTION --- */
-/* Hover state: Nord8 with low opacity */
-@define-color fill_color rgba(136, 192, 208, 0.15);
-/* Selection background: Nord10 (Darker Frost) for better visibility */
-@define-color selection_bg_color rgba(94, 129, 172, 0.4);
-@define-color selection_fg_color #eceff4;
-
-/* --- STATE MESSAGES (Aurora) --- */
-/* Success (nord14 - Green) */
+/* --- STATE MESSAGES --- */
 @define-color success_color #a3be8c;
 @define-color success_bg_color #a3be8c;
 @define-color success_fg_color #2e3440;
 
-/* Warning (nord13 - Yellow) */
 @define-color warning_color #ebcb8b;
 @define-color warning_bg_color #ebcb8b;
 @define-color warning_fg_color #2e3440;
 
-/* Error & Destructive (nord11 - Red) */
 @define-color destructive_color #bf616a;
 @define-color destructive_bg_color #bf616a;
 @define-color destructive_fg_color #eceff4;
@@ -76,3 +63,22 @@
 @define-color border_color #4c566a; /* nord3 */
 @define-color separator_color rgba(76, 86, 106, 0.4);
 @define-color shade_color rgba(0, 0, 0, 0.2);
+
+/* --- GTK 3 LEGACY ALIASES (Essential for Chrome, Bruno & GTK3 Flatpaks) --- */
+/* These map the modern variables to the old GTK3 names */
+@define-color theme_bg_color @window_bg_color;
+@define-color theme_fg_color @window_fg_color;
+@define-color theme_base_color @view_bg_color;
+@define-color theme_text_color @view_fg_color;
+@define-color theme_selected_bg_color @accent_bg_color;
+@define-color theme_selected_fg_color @accent_fg_color;
+@define-color theme_view_hover_bg_color rgba(136, 192, 208, 0.15);
+@define-color theme_unfocused_bg_color @window_bg_color;
+@define-color theme_unfocused_fg_color @window_fg_color;
+@define-color theme_unfocused_selected_bg_color rgba(136, 192, 208, 0.2);
+@define-color theme_unfocused_selected_fg_color @window_fg_color;
+
+/* --- INTERACTION & SELECTION --- */
+@define-color fill_color rgba(136, 192, 208, 0.15);
+@define-color selection_bg_color rgba(94, 129, 172, 0.4);
+@define-color selection_fg_color #eceff4;
