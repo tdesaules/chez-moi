@@ -1,4 +1,9 @@
 {{- $desktop := env "XDG_CURRENT_DESKTOP" | default "none" -}}
+{{- $flatpak := false -}}
+{{- if lookPath "flatpak" -}}
+    {{- $flatpak = true -}}
+{{- end -}}
 
 [data]
     desktop = {{ $desktop | quote }}
+    flatpak = {{ $flatpak }}

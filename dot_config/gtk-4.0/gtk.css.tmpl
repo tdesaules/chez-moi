@@ -1,55 +1,70 @@
-/* --- COULEURS D'ACCENTUATION (Aurora - nord11) --- */
-@define-color accent_color #bf616a;
-@define-color accent_bg_color #bf616a;
-@define-color accent_fg_color #eceff4; /* Texte sur l'accent (nord6) */
+/*
+ * NORD THEME - GTK 4 / LIBADWAITA OPTIMIZATION
+ * Based on: https://www.nordtheme.com/
+ * 
+ * Palette Reference:
+ * Polar Night: nord0 #2e3440, nord1 #3b4252, nord2 #434c5e, nord3 #4c566a
+ * Snow Storm:  nord4 #d8dee9, nord5 #e5e9f0, nord6 #eceff4
+ * Frost:       nord7 #8fbcbb, nord8 #88c0d0, nord9 #81a1c1, nord10 #5e81ac
+ * Aurora:      nord11 #bf616a, nord12 #d08770, nord13 #ebcb8b, nord14 #a3be8c, nord15 #b48ead
+ */
 
-/* --- FONDS ET FENÊTRES (Polar Night) --- */
-/* Fond principal des fenêtres (nord0) */
-@define-color window_bg_color #2e3440;
-@define-color window_fg_color #d8dee9; /* Texte principal (nord4) */
+/* --- ACCENT COLORS (Frost - nord8) --- */
+/* Using Frost Blue for a more authentic Nord experience */
+@define-color accent_color #88c0d0;
+@define-color accent_bg_color #88c0d0;
+@define-color accent_fg_color #2e3440; /* Dark text on light blue for better contrast */
 
-/* Fond des zones de contenu comme les listes (nord0) */
+/* --- WINDOWS & BACKGROUNDS (Polar Night) --- */
+@define-color window_bg_color #2e3440; /* nord0: Main background */
+@define-color window_fg_color #d8dee9; /* nord4: Main text */
+
+/* Content areas like lists or text views */
 @define-color view_bg_color #2e3440;
 @define-color view_fg_color #d8dee9;
 
-/* --- BARRES D'EN TÊTE (Headerbar) --- */
+/* --- HEADERBARS --- */
 @define-color headerbar_bg_color #2e3440;
-@define-color headerbar_fg_color #eceff4; /* Texte plus clair pour les titres (nord6) */
-@define-color headerbar_border_color #434c5e; /* Ligne de séparation (nord2) */
+@define-color headerbar_fg_color #eceff4; /* nord6: Brightest text for titles */
+@define-color headerbar_border_color #434c5e; /* nord2: Subtle separation */
 @define-color headerbar_backdrop_color #2e3440;
 
-/* --- BARRES LATÉRALES ET CARTES (Polar Night plus clair) --- */
-/* Fonds des sidebars dans Nautilus ou Paramètres (nord1) */
+/* --- SIDEBARS & CARDS (Elevated Polar Night) --- */
+/* Sidebars in Nautilus or Settings (nord1) */
 @define-color sidebar_bg_color #3b4252;
 @define-color sidebar_fg_color #d8dee9;
 @define-color sidebar_backdrop_color #3b4252;
 
-/* Fonds des "cartes" ou blocs dans les Paramètres (nord1) */
+@define-color secondary_sidebar_bg_color #3b4252;
+@define-color secondary_sidebar_fg_color #d8dee9;
+
+/* Cards and blocks in Settings (nord1) */
 @define-color card_bg_color #3b4252;
 @define-color card_fg_color #d8dee9;
 
-/* Menus déroulants et pop-ups (nord1) */
+/* Popovers and Menus (nord1) */
 @define-color popover_bg_color #3b4252;
 @define-color popover_fg_color #eceff4;
 
-/* --- INTERACTIONS ET SÉLECTIONS --- */
-/* Survol (Hover) avec un fond très léger de l'accent (Aurora avec transparence) */
-@define-color fill_color rgba(191, 97, 106, 0.1);
-/* Éléments sélectionnés sans le focus direct */
-@define-color selection_bg_color rgba(191, 97, 106, 0.25);
+/* --- INTERACTION & SELECTION --- */
+/* Hover state: Nord8 with low opacity */
+@define-color fill_color rgba(136, 192, 208, 0.15);
+/* Selection background: Nord10 (Darker Frost) for better visibility */
+@define-color selection_bg_color rgba(94, 129, 172, 0.4);
+@define-color selection_fg_color #eceff4;
 
-/* --- MESSAGES D'ÉTAT (Aurora) --- */
-/* Succès (nord14 - Green) */
+/* --- STATE MESSAGES (Aurora) --- */
+/* Success (nord14 - Green) */
 @define-color success_color #a3be8c;
 @define-color success_bg_color #a3be8c;
 @define-color success_fg_color #2e3440;
 
-/* Avertissement (nord13 - Yellow) */
+/* Warning (nord13 - Yellow) */
 @define-color warning_color #ebcb8b;
 @define-color warning_bg_color #ebcb8b;
 @define-color warning_fg_color #2e3440;
 
-/* Erreur / Destructeur (nord11 - Red) - Se confond avec l'accent ici, ce qui est cohérent */
+/* Error & Destructive (nord11 - Red) */
 @define-color destructive_color #bf616a;
 @define-color destructive_bg_color #bf616a;
 @define-color destructive_fg_color #eceff4;
@@ -57,8 +72,7 @@
 @define-color error_bg_color #bf616a;
 @define-color error_fg_color #eceff4;
 
-/* --- BORDURES ET SÉPARATEURS (Frost & Polar Night) --- */
-/* Bordures générales (nord3) */
-@define-color border_color #4c566a;
-/* Lignes de séparation très subtiles */
-@define-color separator_color rgba(76, 86, 106, 0.5);
+/* --- BORDERS & SHADOWS --- */
+@define-color border_color #4c566a; /* nord3 */
+@define-color separator_color rgba(76, 86, 106, 0.4);
+@define-color shade_color rgba(0, 0, 0, 0.2);

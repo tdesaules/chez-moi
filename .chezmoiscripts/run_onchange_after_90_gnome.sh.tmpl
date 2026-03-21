@@ -1,0 +1,106 @@
+#!/bin/bash
+
+{{ template "functions.sh.tmpl" . }}
+
+{{ if (and (eq .chezmoi.os "linux") (eq .desktop "GNOME")) -}}
+
+# GNOME configuration hash dependencies:
+# dconf directory: {{ range (glob "dot_local/share/dconf/*") }}{{ . | include | sha256sum }}{{ end }}
+# gtk.css.tmpl: {{ include "dot_config/gtk-4.0/gtk.css.tmpl" | sha256sum }}
+# fonts directory: {{ range (glob "dot_local/share/fonts/*") }}{{ . | include | sha256sum }}{{ end }}
+# icons directory: {{ range (glob "dot_local/share/icons/*") }}{{ . | include | sha256sum }}{{ end }}
+# backgrounds directory: {{ range (glob "dot_local/share/backgrounds/*") }}{{ . | include | sha256sum }}{{ end }}
+
+set -euo pipefail
+
+# Ensure local binaries are in the PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# --- SECTION 1: EXTENSIONS INSTALLATION ---
+_log "title" "GNOME Extensions Management"
+trap '_error_handler "Extension manager (gext) setup"' ERR
+
+if ! command -v gext &> /dev/null; then
+    _log "notice" "Installing 'gext' via pipx..."
+    pipx install gnome-extensions-cli
+fi
+
+_log "info" "Enabling user extensions and syncing list..."
+gsettings set org.gnome.shell disable-user-extensions false
+
+# Install and enable extensions from the YAML list
+gext update --install --yes {{ range .gnome.extensions }}{{ . | quote }} {{ end }}
+gext enable {{ range .gnome.extensions }}{{ . | quote }} {{ end }}
+
+_log "success" "Extensions installed and enabled"
+
+# --- SECTION 2: EXTENSIONS SETTINGS (DCONF) ---
+_log "title" "GNOME Extensions Configuration"
+trap '_error_handler "Extensions dconf configuration"' ERR
+
+_log "info" "Loading dconf profiles from {{ .gnome.dconf_dir }}..."
+
+# dconf load needs the absolute path to the .ini files
+readonly DCONF_PATH="{{ .chezmoi.homeDir }}/{{ .gnome.dconf_dir }}"
+
+dconf load /org/gnome/shell/extensions/clipboard-indicator/ < "${DCONF_PATH}/clipboard-indicator.ini"
+dconf load /org/gnome/shell/extensions/tilingshell/ < "${DCONF_PATH}/tilingshell.ini"
+dconf load /org/gnome/shell/extensions/just-perfection/ < "${DCONF_PATH}/just-perfection.ini"
+dconf load /org/gnome/shell/extensions/Logo-menu/ < "${DCONF_PATH}/logo-menu.ini"
+
+_log "success" "Dconf settings applied"
+
+# --- SECTION 3: DESKTOP & WORKSPACES ---
+_log "title" "Global Desktop Configuration"
+trap '_error_handler "Desktop and workspaces configuration"' ERR
+
+_log "info" "Setting wallpaper ({{ .gnome.wallpaper }})..."
+readonly WALLPAPER_PATH="file://{{ .chezmoi.homeDir }}/{{ .gnome.wallpaper_dir }}/{{ .gnome.wallpaper }}"
+gsettings set org.gnome.desktop.background picture-uri "$WALLPAPER_PATH"
+gsettings set org.gnome.desktop.background picture-uri-dark "$WALLPAPER_PATH"
+
+_log "info" "Configuring {{ .gnome.workspaces }} static workspaces..."
+gsettings set org.gnome.mutter dynamic-workspaces false
+gsettings set org.gnome.desktop.wm.preferences num-workspaces {{ .gnome.workspaces }}
+
+_log "success" "Wallpaper and workspaces are set"
+
+# --- SECTION 4: FONTS ---
+_log "title" "Fonts Configuration"
+trap '_error_handler "Fonts configuration"' ERR
+
+_log "info" "Applying system fonts settings..."
+gsettings set org.gnome.desktop.wm.preferences titlebar-font '{{ .gnome.font_titlebar }} {{ .gnome.font_size }}'
+gsettings set org.gnome.desktop.interface font-name '{{ .gnome.font_interface }} {{ .gnome.font_size }}'
+gsettings set org.gnome.desktop.interface document-font-name '{{ .gnome.font_document }} {{ .gnome.font_size }}'
+
+# Refreshing font cache on the font directory
+fc-cache -f "{{ .chezmoi.homeDir }}/{{ .gnome.font_dir }}" &> /dev/null || true
+
+_log "success" "System fonts updated"
+
+# --- SECTION 5: INTERFACE CLEANUP ---
+_log "title" "Shell Interface Cleanup"
+trap '_error_handler "Interface cleanup"' ERR
+
+_log "info" "Cleaning application grid and setting favorite apps..."
+gsettings set org.gnome.desktop.app-folders folder-children "[]"
+
+# Generate the GSettings array format ['app1', 'app2'] from YAML list
+gsettings set org.gnome.shell favorite-apps "[{{ join ", " (quoteList .gnome.favorites_apps) }}]"
+
+# GTK theme settings for dark mode consistency
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+
+# Sync GTK 4.0 CSS to 3.0 for legacy apps
+mkdir -p "${HOME}/.config/gtk-3.0"
+ln -sf "${HOME}/.config/gtk-4.0/gtk.css" "${HOME}/.config/gtk-3.0/gtk.css"
+
+_log "success" "Shell interface is clean and favorites are updated"
+
+# --- FINAL ---
+trap - ERR
+_log "success" "GNOME environment setup complete"
+
+{{- end }}
