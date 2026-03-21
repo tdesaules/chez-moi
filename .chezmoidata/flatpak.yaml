@@ -19,7 +19,7 @@ flatpak:
     - "io.missioncenter.MissionCenter"
 
   # Chrome Theme (Nord)
-  chrome_theme_id: "honjmojpikfebagfakclmgbcchedenbo"
+  chrome_theme_id: "abehfkkfjlplnjadfcjiflnejblfmmpj"
 
   # Applications to install via Flathub
   to_install:
