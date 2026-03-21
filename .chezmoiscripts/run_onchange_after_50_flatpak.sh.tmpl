@@ -41,16 +41,16 @@ _log "title" "Flatpak Installation Management"
 trap '_error_handler "Flatpak installation failed"' ERR
 
 _log "info" "Ensuring Flathub remote is configured..."
-flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo &> /dev/null
 
 _log "info" "Synchronizing application list..."
 for APP in "${FLATPAKS_TO_INSTALL[@]}"; do
-    if ! echo "${INSTALLED_FLATPAKS:-}" | grep -qxw "${APP}"; then
-        _log "notice" "Installing ${APP}..."
-        flatpak install -y --user flathub "${APP}"
-    else
-        _log "notice" "${APP} is already installed"
-    fi
+if ! echo "${INSTALLED_FLATPAKS:-}" | grep -qxw "${APP}"; then
+_log "notice" "Installing ${APP}..."
+flatpak install -y --user flathub "${APP}" &> /dev/null
+else
+_log "notice" "${APP} is already installed"
+fi
 done
 
 _log "success" "Applications synchronized"
@@ -60,14 +60,18 @@ _log "title" "Flatpak Environment Optimization"
 trap '_error_handler "Flatpak environment setup failed"' ERR
 
 _log "info" "Granting Flatpak apps access to GTK custom themes..."
-# This allows Flatpaks to read your Nord GTK theme files
-flatpak override --user --filesystem=xdg-config/gtk-4.0:ro
-flatpak override --user --filesystem=xdg-config/gtk-3.0:ro
+# This allows Flatpaks to read your Nord GTK theme files and assets
+flatpak override --user --filesystem=xdg-config/gtk-4.0:ro &> /dev/null
+flatpak override --user --filesystem=xdg-config/gtk-3.0:ro &> /dev/null
+flatpak override --user --filesystem=xdg-data/icons:ro &> /dev/null
+flatpak override --user --filesystem=xdg-data/fonts:ro &> /dev/null
+
+# Force apps to use the dark variant to match your Nord configuration
+flatpak override --user --env=GTK_THEME=Adwaita-dark &> /dev/null
 
 _log "info" "Checking for updates..."
-flatpak update -y --user
-sudo flatpak update -y 2>/dev/null || true
-
+flatpak update -y --user &> /dev/null
+sudo flatpak update -y &> /dev/null || true
 _log "success" "Flatpak environment is up to date and themed"
 
 # Final cleanup

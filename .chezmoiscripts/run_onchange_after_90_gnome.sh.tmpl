@@ -22,15 +22,15 @@ trap '_error_handler "Extension manager (gext) setup"' ERR
 
 if ! command -v gext &> /dev/null; then
     _log "notice" "Installing 'gext' via pipx..."
-    pipx install gnome-extensions-cli
+    pipx install gnome-extensions-cli &> /dev/null
 fi
 
 _log "info" "Enabling user extensions and syncing list..."
 gsettings set org.gnome.shell disable-user-extensions false
 
 # Install and enable extensions from the YAML list
-gext update --install --yes {{ range .gnome.extensions }}{{ . | quote }} {{ end }}
-gext enable {{ range .gnome.extensions }}{{ . | quote }} {{ end }}
+gext update --install --yes {{ range .gnome.extensions }}{{ . | quote }} {{ end }} &> /dev/null
+gext enable {{ range .gnome.extensions }}{{ . | quote }} {{ end }} &> /dev/null
 
 _log "success" "Extensions installed and enabled"
 
@@ -43,10 +43,10 @@ _log "info" "Loading dconf profiles from {{ .gnome.dconf_dir }}..."
 # dconf load needs the absolute path to the .ini files
 readonly DCONF_PATH="{{ .chezmoi.homeDir }}/{{ .gnome.dconf_dir }}"
 
-dconf load /org/gnome/shell/extensions/clipboard-indicator/ < "${DCONF_PATH}/clipboard-indicator.ini"
-dconf load /org/gnome/shell/extensions/tilingshell/ < "${DCONF_PATH}/tilingshell.ini"
-dconf load /org/gnome/shell/extensions/just-perfection/ < "${DCONF_PATH}/just-perfection.ini"
-dconf load /org/gnome/shell/extensions/Logo-menu/ < "${DCONF_PATH}/logo-menu.ini"
+dconf load /org/gnome/shell/extensions/clipboard-indicator/ < "${DCONF_PATH}/clipboard-indicator.ini" &> /dev/null
+dconf load /org/gnome/shell/extensions/tilingshell/ < "${DCONF_PATH}/tilingshell.ini" &> /dev/null
+dconf load /org/gnome/shell/extensions/just-perfection/ < "${DCONF_PATH}/just-perfection.ini" &> /dev/null
+dconf load /org/gnome/shell/extensions/Logo-menu/ < "${DCONF_PATH}/logo-menu.ini" &> /dev/null
 
 _log "success" "Dconf settings applied"
 

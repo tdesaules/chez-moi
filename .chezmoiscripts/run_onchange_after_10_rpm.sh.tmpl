@@ -30,7 +30,7 @@ for REPO in "${COPR_REPOS[@]}"; do
         curl -fsSL "https://copr.fedorainfracloud.org/coprs/${REPO}/repo/fedora-${FEDORA_VERSION}/${REPO_FILENAME}" | sudo tee "${REPO_FILE}" > /dev/null
 
         _log "info" "Refreshing rpm-ostree metadata..."
-        rpm-ostree refresh-md
+        rpm-ostree refresh-md &> /dev/null
     fi
 done
 
@@ -57,7 +57,7 @@ if [ ${#MISSING_PKGS[@]} -gt 0 ]; then
     _log "info" "Installing missing packages: ${MISSING_PKGS[*]}..."
 
     # Using --apply-live to try applying changes without immediate reboot
-    rpm-ostree install --allow-replacement --assumeyes --apply-live "${MISSING_PKGS[@]}"
+    rpm-ostree install --allow-replacement --assumeyes --apply-live "${MISSING_PKGS[@]}" &> /dev/null
 
     _log "success" "Packages installed successfully"
 else
