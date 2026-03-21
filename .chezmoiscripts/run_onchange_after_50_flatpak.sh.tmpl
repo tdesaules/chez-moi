@@ -77,6 +77,27 @@ flatpak update -y --user &> /dev/null
 sudo flatpak update -y &> /dev/null || true
 _log "success" "Flatpak environment is up to date and themed"
 
+# --- SECTION 4: CHROME THEME AUTOMATION ---
+_log "title" "Chrome Theme Automation"
+readonly CHROME_CONFIG_DIR="${HOME}/.var/app/com.google.Chrome/config/google-chrome"
+
+if [ -d "${CHROME_CONFIG_DIR}" ]; then
+    _log "info" "Injecting Nord theme policy for Chrome..."
+    mkdir -p "${CHROME_CONFIG_DIR}/policies/managed"
+    
+    # Create the policy file to force-install the Nord theme
+    cat <<EOF > "${CHROME_CONFIG_DIR}/policies/managed/nord_theme.json"
+{
+  "ExtensionInstallForcelist": [
+    "{{ .flatpak.chrome_theme_id }};https://clients2.google.com/service/update2/crx"
+  ]
+}
+EOF
+    _log "success" "Chrome theme policy applied successfully"
+else
+    _log "notice" "Chrome Flatpak config not found (first launch needed?), skipping policy injection"
+fi
+
 # Final cleanup
 trap - ERR
 

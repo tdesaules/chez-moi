@@ -18,6 +18,9 @@ flatpak:
     - "org.mozilla.firefox"
     - "io.missioncenter.MissionCenter"
 
+  # Chrome Theme (Nord)
+  chrome_theme_id: "honjmojpikfebagfakclmgbcchedenbo"
+
   # Applications to install via Flathub
   to_install:
     - "app.zen_browser.zen"
