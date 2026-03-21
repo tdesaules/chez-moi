@@ -69,6 +69,9 @@ flatpak override --user --filesystem=xdg-data/fonts:ro &> /dev/null
 # Force apps to use the dark variant to match your Nord configuration
 flatpak override --user --env=GTK_THEME=Adwaita-dark &> /dev/null
 
+# Chrome/Electron specific: Force dark mode and WebUI dark mode
+flatpak override --user --env=CHROME_FLAGS="--force-dark-mode --enable-features=WebUIDarkMode" &> /dev/null
+
 _log "info" "Checking for updates..."
 flatpak update -y --user &> /dev/null
 sudo flatpak update -y &> /dev/null || true
