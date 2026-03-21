@@ -18,21 +18,22 @@ _log "title" "Flatpak Cleanup Management"
 trap '_error_handler "Flatpak cleanup failed"' ERR
 
 _log "info" "Scanning for unwanted Flatpak applications..."
-INSTALLED_FLATPAKS=$(flatpak list --columns=application 2>/dev/null || true)
+INSTALLED_FLATPAKS=$(flatpak list --columns=application 2> /dev/null || true)
 
 for APP in "${FLATPAKS_TO_REMOVE[@]}"; do
     if echo "${INSTALLED_FLATPAKS:-}" | grep -qxw "${APP}"; then
         _log "warning" "Removing ${APP}..."
         # Try user uninstall first, then fallback to system if needed
-        flatpak uninstall --delete-data -y --user "${APP}" 2>/dev/null || \
-        sudo flatpak uninstall --delete-data -y "${APP}"
+        flatpak uninstall --delete-data -y --user "${APP}" 2> /dev/null || \
+        sudo flatpak uninstall --delete-data -y "${APP}" 2> /dev/null
     fi
 done
 
 _log "info" "Removing unused dependencies..."
-flatpak uninstall --unused -y --user 2>/dev/null || true
-sudo flatpak uninstall --unused -y 2>/dev/null || true
+flatpak uninstall --unused -y --user 2> /dev/null || true
+sudo flatpak uninstall --unused -y 2> /dev/null || true
 
+echo ""
 _log "success" "Cleanup completed"
 
 # --- SECTION 2: INSTALLATION ---

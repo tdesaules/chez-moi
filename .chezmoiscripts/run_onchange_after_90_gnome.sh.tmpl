@@ -87,7 +87,7 @@ _log "info" "Cleaning application grid and setting favorite apps..."
 gsettings set org.gnome.desktop.app-folders folder-children "[]"
 
 # Generate the GSettings array format ['app1', 'app2'] from YAML list
-gsettings set org.gnome.shell favorite-apps "[{{ join ", " (quoteList .gnome.favorites_apps) }}]"
+gsettings set org.gnome.shell favorite-apps "@as [{{ join ", " (quoteList .gnome.favorites_apps) }}]"
 
 # GTK theme settings for dark mode consistency
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
