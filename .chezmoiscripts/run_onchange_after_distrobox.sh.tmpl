@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# Hash of the distrobox.ini.tmpl file to trigger script execution on changes
+# {{ include "dot_config/distrobox/distrobox.ini.tmpl" | sha256sum }}
+
+# Check if distrobox binary exists
+if command -v distrobox &> /dev/null; then
+    _log "info" "Running distrobox assemble create..."
+    if distrobox assemble create; then
+        _log "success" "Distrobox assemble create executed successfully."
+    else
+        _log "error" "Failed to execute distrobox assemble create."
+        exit 1
+    fi
+else
+    _log "error" "Distrobox binary not found. Please ensure distrobox is installed."
+    exit 1
+fi
