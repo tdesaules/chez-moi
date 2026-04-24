@@ -9,7 +9,7 @@ source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 # Check if distrobox binary exists
 if command -v distrobox &> /dev/null; then
     _log "info" "Running distrobox assemble create..."
-    if distrobox assemble create; then
+    if distrobox assemble create --file {{ .chezmoi.homeDir }}/.config/distrobox/distrobox.ini; then
         _log "success" "Distrobox assemble create executed successfully."
     else
         _log "error" "Failed to execute distrobox assemble create."
