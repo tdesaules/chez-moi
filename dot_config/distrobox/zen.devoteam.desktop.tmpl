@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Name=Zen Devoteam
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "devoteam" --name zen-devoteam @@u %u @@
-Icon={{ .chezmoi.homeDir }}/.local/share/icons/zen-devoteam-logo.svg
+Exec=zen-browser --profile "devoteam" --name zen-devoteam %u
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/zen-devoteam.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
 StartupWMClass=zen-devoteam
@@ -16,16 +16,16 @@ X-Flatpak=app.zen_browser.zen
 
 [Desktop Action new-window]
 Name=Open a New Window (Devoteam)
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "devoteam" --name zen-devoteam @@u %u @@
+Exec=zen-browser --profile "devoteam" --name zen-devoteam --new-window %u
 
 [Desktop Action new-blank-window]
 Name=Open a New Blank Window (Devoteam)
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "devoteam" --name zen-devoteam --blank-window @@u %u @@
+Exec=zen-browser --profile "devoteam" --name zen-devoteam --blank-window %u
 
 [Desktop Action new-private-window]
 Name=Open a New Private Window (Devoteam)
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen -P "devoteam" --name zen-devoteam --private-window @@u %u @@
+Exec=zen-browser --profile "devoteam" --name zen-devoteam --private-window %u
 
 [Desktop Action profilemanager]
 Name=Open the Profile Manager
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=launch-script.sh --file-forwarding app.zen_browser.zen --ProfileManager @@u %u @@
+Exec=zen-browser --ProfileManager
