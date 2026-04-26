@@ -45,6 +45,7 @@ entry=false
 hostname="steam-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terrarawhide' terra-release; fi"
-additional_packages="lsb_release pciutils pipewire-libs mangohud steam"
+additional_packages="lsb_release pciutils pipewire-libs gamescope mangohud steam"
 init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
+init_hooks="chown -R {{ .chezmoi.username }}:{{ .chezmoi.username }} /tmp/.X11-unix"
