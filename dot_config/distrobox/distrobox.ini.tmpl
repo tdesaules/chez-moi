@@ -21,3 +21,13 @@ pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="dnf copr enable --assumeyes myriad-sun/zen-browser"
 additional_packages="zen-browser"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen.perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen.devoteam.desktop"
+
+[steam-distrobox]
+image=docker.io/fedora:rawhide
+replace=true
+start_now=true
+entry=false
+hostname="steam-distrobox"
+pre_init_hooks="export SHELL='/bin/bash'"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terrarawhide' terra-release; fi"
+additional_packages=""
