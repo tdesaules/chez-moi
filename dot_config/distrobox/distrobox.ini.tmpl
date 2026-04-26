@@ -5,8 +5,8 @@ start_now=true
 entry=false
 hostname="chromium-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
-pre_init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 additional_packages="chromium"
+init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
 
 [zen-distrobox]
@@ -17,8 +17,8 @@ entry=false
 hostname="zen-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="dnf copr enable --assumeyes myriad-sun/zen-browser"
-pre_init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 additional_packages="zen-browser"
+init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen.perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen.devoteam.desktop"
 
@@ -30,8 +30,8 @@ entry=false
 hostname="zen-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="dnf copr enable --assumeyes metal3d/BrowserOS"
-pre_init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 additional_packages="browserosr"
+init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
 
 [zed-distrobox]
@@ -42,8 +42,8 @@ entry=false
 hostname="zed-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terrarawhide' terra-release; fi"
-pre_init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 additional_packages="zed"
+init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
 exported_bins="/usr/bin/zed"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
@@ -57,6 +57,6 @@ entry=false
 hostname="steam-distrobox"
 pre_init_hooks="export SHELL='/bin/bash'"
 pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terrarawhide' terra-release; fi"
-pre_init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
-additional_packages="glx-utils vulkan-tools lsb_release pciutils pipewire-libs gamemode mangohud lutris steam"
+additional_packages="lsb_release pciutils pipewire-libs mangohud steam"
+init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
