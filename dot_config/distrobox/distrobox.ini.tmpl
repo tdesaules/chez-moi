@@ -22,18 +22,6 @@ init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremov
 init_hooks="update-ca-trust"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen.perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen.devoteam.desktop"
 
-[browseros-distrobox]
-image=docker.io/fedora:rawhide
-replace=true
-start_now=true
-entry=false
-hostname="zen-distrobox"
-pre_init_hooks="export SHELL='/bin/bash'"
-pre_init_hooks="dnf copr enable --assumeyes metal3d/BrowserOS"
-additional_packages="browserosr"
-init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
-init_hooks="update-ca-trust"
-
 [zed-distrobox]
 image=docker.io/fedora:rawhide
 replace=true
