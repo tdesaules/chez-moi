@@ -39,7 +39,7 @@ layout {
 }
 
 window-rule {
-    geometry-corner-radius 10
+    geometry-corner-radius 12
     clip-to-geometry true
 }
 
@@ -52,6 +52,18 @@ workspace "gaming" {
 window-rule {
     match app-id="steam"
     open-on-workspace "gaming"
+}
+
+workspace "default" {
+    layout {
+        default-column-width { proportion 0.5; }
+    }
+}
+
+window-rule {
+    match app-id=r#"^.*$"#
+    exclude app-id=r#"steam"#
+    open-on-workspace "default"
 }
 
 binds {
