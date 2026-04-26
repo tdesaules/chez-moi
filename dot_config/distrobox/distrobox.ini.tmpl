@@ -8,6 +8,7 @@ pre_init_hooks="export SHELL='/bin/bash'"
 additional_packages="chromium"
 init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
+exported_apps="/usr/share/applications/chromium-browser.desktop"
 
 [zen-distrobox]
 image=docker.io/fedora:rawhide
@@ -49,3 +50,4 @@ additional_packages="lsb_release pciutils pipewire-libs gamescope mangohud steam
 init_hooks="dnf --assumeyes --quiet upgrade && dnf --assumeyes --quiet autoremove"
 init_hooks="update-ca-trust"
 init_hooks="chown -R {{ .chezmoi.username }}:{{ .chezmoi.username }} /tmp/.X11-unix"
+exported_apps="/usr/share/applications/steam.dekstop"
