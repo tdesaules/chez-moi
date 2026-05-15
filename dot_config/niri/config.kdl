@@ -1,9 +1,6 @@
 input {
     keyboard {
         track-layout "global"
-        xkb {
-            layout "us,kr,fr"
-        }
     }
     touchpad {
         accel-speed 0.1
