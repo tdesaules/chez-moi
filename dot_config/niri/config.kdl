@@ -1,6 +1,9 @@
 input {
     keyboard {
         track-layout "global"
+        xkb {
+            layout "us,kr,fr"
+        }
     }
     touchpad {
         accel-speed 0.1
@@ -62,10 +65,11 @@ binds {
     Mod+F4 { spawn "bash" "-c" "brightnessctl --device='asus::kbd_backlight' set $(( ( $(brightnessctl --device='asus::kbd_backlight' get 2>/dev/null) + 1 ) % $(($(brightnessctl --device='asus::kbd_backlight' max 2>/dev/null) + 1)) )) >/dev/null 2>&1"; }
     Mod+F5 { spawn "brightnessctl" "set" "5%-"; }
     Mod+F6 { spawn "brightnessctl" "set" "+5%"; }
+    Mod+F7 { spawn "niri" "msg" "action" "switch-layout" "next"; }
     Mod+F9 { spawn "pactl" "set-source-mute" "@DEFAULT_SOURCE@" "toggle"; }
     Mod+F10 { spawn "bash" "-c" "if [ \"$(cat /sys/bus/usb/devices/1-1/authorized 2>/dev/null)\" = \"1\" ]; then echo 0 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'disabled'; else echo 1 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'enabled'; fi"; }
     Mod+F11 { spawn "dms" "screenshot" "--no-file"; }
-    Mod+F12 { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
+    Super_L { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
     Mod+T { spawn "ghostty"; }
     Mod+space hotkey-overlay-title="App Launcher Toggle" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+L { spawn "loginctl" "lock-session"; }
