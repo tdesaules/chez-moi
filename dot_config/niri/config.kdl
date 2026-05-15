@@ -66,7 +66,7 @@ binds {
     Mod+F9 { spawn "pactl" "set-source-mute" "@DEFAULT_SOURCE@" "toggle"; }
     Mod+F10 { spawn "bash" "-c" "if [ \"$(cat /sys/bus/usb/devices/1-1/authorized 2>/dev/null)\" = \"1\" ]; then echo 0 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'disabled'; else echo 1 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'enabled'; fi"; }
     Mod+F11 { spawn "dms" "screenshot" "--no-file"; }
-    Mod+Super_L { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
+    Mod+F12 { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
     Mod+T { spawn "ghostty"; }
     Mod+space hotkey-overlay-title="App Launcher Toggle" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+L { spawn "loginctl" "lock-session"; }
