@@ -62,11 +62,11 @@ binds {
     Mod+F4 { spawn "bash" "-c" "brightnessctl --device='asus::kbd_backlight' set $(( ( $(brightnessctl --device='asus::kbd_backlight' get 2>/dev/null) + 1 ) % $(($(brightnessctl --device='asus::kbd_backlight' max 2>/dev/null) + 1)) )) >/dev/null 2>&1"; }
     Mod+F5 { spawn "brightnessctl" "set" "5%-"; }
     Mod+F6 { spawn "brightnessctl" "set" "+5%"; }
-    Mod+F7 { spawn "bash" "-c" "CURRENT=$(fcitx5-remote -n); if [ \"$CURRENT\" = \"keyboard-fr\" ]; then fcitx5-remote -s keyboard-kr && notify-send 'Keyboard' 'korean'; elif [ \"$CURRENT\" = \"keyboard-kr\" ]; then fcitx5-remote -s hangul && notify-send 'Keyboard' 'hangul'; else fcitx5-remote -s keyboard-fr && notify-send 'Keyboard' 'french'; fi"; }
+    Mod+F7 { spawn "bash" "-c" "CURRENT=$(fcitx5-remote -n); if [ \"$CURRENT\" = \"keyboard-fr\" ]; then fcitx5-remote -s keyboard-kr && L='korean'; elif [ \"$CURRENT\" = \"keyboard-kr\" ]; then fcitx5-remote -s hangul && L='hangul'; else fcitx5-remote -s keyboard-fr && L='french'; fi; notify-send -h boolean:transient:true -h string:x-canonical-private-synchronous:layout 'Keyboard' \"$L\""; }
     Mod+F9 { spawn "pactl" "set-source-mute" "@DEFAULT_SOURCE@" "toggle"; }
     Mod+F10 { spawn "bash" "-c" "if [ \"$(cat /sys/bus/usb/devices/1-1/authorized 2>/dev/null)\" = \"1\" ]; then echo 0 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'disabled'; else echo 1 | sudo tee /sys/bus/usb/devices/1-1/authorized >/dev/null && notify-send 'Webcam' 'enabled'; fi"; }
     Mod+F11 { spawn "dms" "screenshot" "--no-file"; }
-    Super_L { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
+    Mod+Super_L { spawn "bash" "-c" "if [ \"$(systemctl --user is-active lemonade-server.service 2>/dev/null)\" = \"active\" ]; then systemctl --user stop lemonade-server.service > /dev/null && notify-send 'AI Stack' 'stopped'; else systemctl --user start lemonade-server.service > /dev/null && notify-send 'AI Stack' 'started'; fi"; }
     Mod+T { spawn "ghostty"; }
     Mod+space hotkey-overlay-title="App Launcher Toggle" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+L { spawn "loginctl" "lock-session"; }
