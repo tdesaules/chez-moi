@@ -1,0 +1,28 @@
+[Groups/0]
+# Group Name
+Name=Default
+# Layout
+Default Layout=kr
+# Default Input Method
+DefaultIM=hangul
+
+[Groups/0/Items/0]
+# Name
+Name=keyboard-kr
+# Layout
+Layout=
+
+[Groups/0/Items/1]
+# Name
+Name=hangul
+# Layout
+Layout=
+
+[Groups/0/Items/2]
+# Name
+Name=keyboard-fr
+# Layout
+Layout=
+
+[GroupOrder]
+0=Default
