@@ -8,6 +8,11 @@
     {{- $is_fedora = true -}}
 {{- end -}}
 
+{{- $atomic_version := "" -}}
+{{- if $is_fedora -}}
+    {{- $atomic_version = output "sh" "-c" "rpm-ostree status --json | jq -r '.deployments[] | select(.booted == true) | .[\"container-image-reference\"]' | awk -F: '{print $NF}'" | trim -}}
+{{- end -}}
+
 {{- $is_mise := false -}}
 {{- if ( lookPath "mise" ) -}}
     {{- $is_mise = true -}}
@@ -23,3 +28,4 @@
     is_fedora = {{ $is_fedora }}
     is_mise = {{ $is_mise }}
     is_nushell = {{ $is_nushell }}
+    atomic_version = {{ $atomic_version }}
