@@ -1,5 +1,5 @@
 [chromium-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
@@ -13,7 +13,7 @@ exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop"
 
 [zen-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
@@ -26,7 +26,7 @@ init_hooks="update-ca-trust"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen-work.desktop"
 
 [zed-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
@@ -41,7 +41,7 @@ exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zed.desktop"
 
 [steam-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
@@ -54,7 +54,7 @@ init_hooks="update-ca-trust"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/steam.desktop"
 
 [filen-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
@@ -68,7 +68,7 @@ init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
 
 [opencode-distrobox]
-image=docker.io/fedora:rawhide
+image=quay.io/fedora/fedora:45
 replace=true
 start_now=true
 entry=false
