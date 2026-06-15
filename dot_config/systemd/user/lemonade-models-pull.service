@@ -1,0 +1,13 @@
+[Unit]
+Description=Lemonade Models Pull
+After=lemonade-server.service
+Requires=lemonade-server.service
+
+[Service]
+Type=oneshot
+ExecStartPre=-/usr/bin/bash -c "sleep 3"
+ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && /usr/bin/podman exec lemonade-server lemonade pull JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0:Q8_0"
+ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && /usr/bin/podman exec lemonade-server lemonade pull JetBrains/Mellum2-12B-A2.5B-Instruct-GGUF-Q8_0:Q8_0"
+
+[Install]
+WantedBy=lemonade-server.service

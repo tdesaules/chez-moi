@@ -1,1 +1,12 @@
-{}
+{
+  "user.Mellum-2-12B-A2.5B-Instruct": {
+    "ctx_size": 131072,
+    "llamacpp_backend": "vulkan",
+    "merge_args": true
+  },
+  "user.Mellum-2-12B-A2.5B-Thinking": {
+    "ctx_size": 131072,
+    "llamacpp_backend": "vulkan",
+    "merge_args": true
+  }
+}

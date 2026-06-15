@@ -1,1 +1,16 @@
-{}
+{
+  "Mellum-2-12B-A2.5B-Instruct": {
+    "checkpoint": "JetBrains/Mellum2-12B-A2.5B-Instruct-GGUF-Q8_0:Q8_0",
+    "labels": ["custom"],
+    "recipe": "llamacpp",
+    "size": 12.0,
+    "suggested": true
+  },
+  "Mellum-2-12B-A2.5B-Thinking": {
+    "checkpoint": "JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0:Q8_0",
+    "labels": ["custom"],
+    "recipe": "llamacpp",
+    "size": 12.0,
+    "suggested": true
+  }
+}
