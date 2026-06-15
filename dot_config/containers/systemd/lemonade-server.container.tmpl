@@ -16,9 +16,3 @@ Volume=lemonade-cache:/root/.cache/huggingface
 Volume=lemonade-llama:/opt/lemonade/llama
 Volume=lemonade-recipe:/root/.cache/lemonade
 Volume={{ .chezmoi.homeDir }}/.config/lemonade/config.json:/root/.cache/lemonade/config.json
-Volume={{ .chezmoi.homeDir }}/.config/lemonade/recipe_options.json:/root/.cache/lemonade/recipe_options.json
-Volume={{ .chezmoi.homeDir }}/.config/lemonade/user_models.json:/root/.cache/lemonade/user_models.json
-
-[Service]
-ExecStartPost=-/usr/bin/bash -c "sleep 3"
-ExecStartPost=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && /usr/bin/podman exec lemonade-server lemonade pull JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0:Q8_0"
