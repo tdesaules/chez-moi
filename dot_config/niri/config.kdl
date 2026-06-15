@@ -14,6 +14,14 @@ input {
     }
 }
 
+output "DP-2" {
+    position x=0 y=0
+}
+
+output "eDP-1" {
+    position x=0 y=1080
+}
+
 layout {
     gaps 12
     center-focused-column "never"
