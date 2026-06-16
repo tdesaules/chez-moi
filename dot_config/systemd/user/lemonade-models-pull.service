@@ -5,9 +5,8 @@ Requires=lemonade-server.service
 
 [Service]
 Type=oneshot
-ExecStartPre=-/usr/bin/bash -c "sleep 3"
-ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && /usr/bin/podman exec lemonade-server lemonade pull JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0:Q8_0"
-ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && /usr/bin/podman exec lemonade-server lemonade pull JetBrains/Mellum2-12B-A2.5B-Instruct-GGUF-Q8_0:Q8_0"
+ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && curl -X POST http://127.0.0.1:13305/v1/pull -H 'Content-Type: application/json' -d '{\"model_name\":\"user.Mellum-2-12B-A2.5B-Thinking\",\"checkpoint\":\"JetBrains/Mellum2-12B-A2.5B-Thinking-GGUF-Q8_0:Q8_0\",\"recipe\":\"llamacpp\"}'"
+ExecStart=-/usr/bin/bash -c "ping -c 1 huggingface.co > /dev/null && curl -X POST http://127.0.0.1:13305/v1/pull -H 'Content-Type: application/json' -d '{\"model_name\":\"user.Mellum-2-12B-A2.5B-Instruct\",\"checkpoint\":\"JetBrains/Mellum2-12B-A2.5B-Instruct-GGUF-Q8_0:Q8_0\",\"recipe\":\"llamacpp\"}'"
 
 [Install]
 WantedBy=lemonade-server.service
