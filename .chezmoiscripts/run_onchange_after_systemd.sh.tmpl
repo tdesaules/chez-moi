@@ -9,6 +9,7 @@ source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/lemonade-models-pull.service.tmpl" | sha256sum }}
 
 # Check if systemctl is available
 if ! command -v systemctl &> /dev/null; then
