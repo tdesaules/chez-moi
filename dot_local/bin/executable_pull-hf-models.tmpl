@@ -1,26 +1,34 @@
 #!/bin/bash
+set -euo pipefail
 
 for cmd in hf kcl jq; do
-    if ! command -v $cmd &> /dev/null; then
+    if ! command -v "$cmd" &> /dev/null; then
         echo "ERROR: Command '$cmd' not found." >&2
         exit 1
     fi
 done
 
 CONFIG_FILE="{{ .chezmoi.homeDir }}/.config/models/config.kcl"
-DOWNLOAD_DIR=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -r ".download_dir")
+CONFIG_JSON=$(kcl "$CONFIG_FILE" --format json 2>/dev/null)
 
-if [ -z "$DOWNLOAD_DIR" ]; then
-    echo "ERROR: Unable to read download_dir" >&2
+if [ -z "$CONFIG_JSON" ]; then
+    echo "ERROR: Unable to read config from $CONFIG_FILE" >&2
     exit 1
 fi
 
-TOTAL=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq '.models | length')
+DOWNLOAD_DIR=$(echo "$CONFIG_JSON" | jq -r ".download_dir")
+
+if [ -z "$DOWNLOAD_DIR" ]; then
+    echo "ERROR: download_dir is empty in $CONFIG_FILE" >&2
+    exit 1
+fi
+
+TOTAL=$(echo "$CONFIG_JSON" | jq '.models | length')
 CURRENT=0
 SUCCESS=0
 FAIL=0
 
-kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -c '.models[]' | while read -r model_json; do
+while read -r model_json; do
     CURRENT=$((CURRENT + 1))
     REPO=$(echo "$model_json" | jq -r '.repo')
     FILE=$(echo "$model_json" | jq -r '.file')
@@ -33,11 +41,12 @@ kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -c '.models[]' | while read -r
         echo "ERROR: Failed to download $FILE from $REPO" >&2
         FAIL=$((FAIL + 1))
     fi
-done
-if [ $FAIL -gt 0 ]; then
-    echo "Completed with $FAIL failures" >&2
+done < <(echo "$CONFIG_JSON" | jq -c '.models[]')
+
+if [ "$FAIL" -gt 0 ]; then
+    echo "Completed with $FAIL failures, $SUCCESS succeeded" >&2
     exit 1
 fi
 
-echo "All models updated successfully"
+echo "All models updated successfully ($SUCCESS downloaded)"
 exit 0
