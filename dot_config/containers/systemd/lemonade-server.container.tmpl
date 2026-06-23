@@ -16,3 +16,4 @@ Volume=lemonade-cache:/root/.cache/huggingface
 Volume=lemonade-llama:/opt/lemonade/llama
 Volume=lemonade-recipe:/root/.cache/lemonade
 Volume={{ .chezmoi.homeDir }}/.config/lemonade/config.json:/root/.cache/lemonade/config.json
+Volume={{ .chezmoi.homeDir }}/.local/share/huggingface/models:/opt/lemonade/models
