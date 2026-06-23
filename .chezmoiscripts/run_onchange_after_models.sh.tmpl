@@ -10,7 +10,7 @@ _log "title" "Updating Hugging Face models for Lemonade"
 
 # Paths
 CONFIG_FILE="{{ .chezmoi.homeDir }}/.config/models/config.kcl"
-DOWNLOAD_DIR=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -r ".download_dir")
+DOWNLOAD_DIR=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -r ".download_dir")
 
 # Verify download directory exists
 if [ -z "$DOWNLOAD_DIR" ]; then
@@ -32,12 +32,12 @@ done
 # Step 1: Download models listed in config
 _log "info" "Downloading models..."
 
-TOTAL=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq '.models | length')
+TOTAL=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq '.models | length')
 CURRENT=0
 SUCCESS=0
 FAIL=0
 
-kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -c '.models[]' | while read -r model_json; do
+kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -c '.models[]' | while read -r model_json; do
     CURRENT=$((CURRENT + 1))
     
     REPO=$(echo "$model_json" | jq -r '.repo')
@@ -84,7 +84,7 @@ _log "info" "Download complete: $SUCCESS succeeded, $FAIL failed"
 _log "info" "Cleaning up obsolete models..."
 
 # Get list of expected model names
-EXPECTED_MODELS=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -r '.models[].name')
+EXPECTED_MODELS=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -r '.models[].name')
 
 # List all .gguf files in download directory
 ACTUAL_FILES=$(find "$DOWNLOAD_DIR" -maxdepth 1 -name '*.gguf' -type f -printf '%f\n' 2>/dev/null)
