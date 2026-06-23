@@ -23,48 +23,17 @@ FAIL=0
 kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -c '.models[]' | while read -r model_json; do
     CURRENT=$((CURRENT + 1))
     REPO=$(echo "$model_json" | jq -r '.repo')
-    QUANT=$(echo "$model_json" | jq -r '.quantification')
-    NAME=$(echo "$model_json" | jq -r '.name')
-    
-    echo "[$CURRENT/$TOTAL] Downloading $NAME..."
-    
-    FILE=$(hf models ls "$REPO" 2>/dev/null | grep -i "$QUANT" | grep -i "\.gguf$" | head -n 1 | awk '{print $NF}')
+    FILE=$(echo "$model_json" | jq -r '.file')
 
-    if [ -n "$FILE" ]; then
-        if hf download "$REPO" "$FILE" --local-dir "$DOWNLOAD_DIR" 2>&1; then
-            OLD_PATH="$DOWNLOAD_DIR/$FILE"
-            NEW_PATH="$DOWNLOAD_DIR/${NAME}.gguf"
-            if [ -f "$OLD_PATH" ]; then
-                mv "$OLD_PATH" "$NEW_PATH"
-                SUCCESS=$((SUCCESS + 1))
-            else
-                echo "ERROR: Downloaded file not found: $FILE" >&2
-                FAIL=$((FAIL + 1))
-            fi
-        else
-            echo "ERROR: Failed to download $FILE from $REPO" >&2
-            FAIL=$((FAIL + 1))
-        fi
+    echo "[$CURRENT/$TOTAL] Downloading $FILE from $REPO..."
+
+    if hf download "$REPO" "$FILE" --local-dir "$DOWNLOAD_DIR" 2>&1; then
+        SUCCESS=$((SUCCESS + 1))
     else
-        echo "WARNING: No GGUF file found for $REPO (quant: $QUANT)" >&2
-        hf models ls "$REPO" 2>/dev/null | grep "\.gguf$" | awk '{print "    - " $NF}'
+        echo "ERROR: Failed to download $FILE from $REPO" >&2
         FAIL=$((FAIL + 1))
     fi
 done
-
-EXPECTED_MODELS=$(kcl "$CONFIG_FILE" --format json 2>/dev/null | jq -r '.models[].name')
-ACTUAL_FILES=$(find "$DOWNLOAD_DIR" -maxdepth 1 -name '*.gguf' -type f -printf '%f\n' 2>/dev/null)
-CLEANED=0
-
-for file in $ACTUAL_FILES; do
-    FILE_NAME="${file%.gguf}"
-    if ! echo "$EXPECTED_MODELS" | grep -qx "$FILE_NAME"; then
-        echo "Removing obsolete: $file"
-        rm -f "$DOWNLOAD_DIR/$file"
-        CLEANED=$((CLEANED + 1))
-    fi
-done
-
 if [ $FAIL -gt 0 ]; then
     echo "Completed with $FAIL failures" >&2
     exit 1
