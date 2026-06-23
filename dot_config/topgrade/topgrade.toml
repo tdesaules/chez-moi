@@ -1,0 +1,10 @@
+[misc]
+assume_yes = true
+cleanup = true
+no_self_update = true
+disable = ["mise","chezmoi"]
+
+[commands]
+"Mise" = "/usr/bin/mise install --quiet --yes"
+"Chezmoi" = "/usr/bin/chezmoi update --force --refresh-externals"
+"HuggingFace" = "{{ .chezmoi.homeDir }}/.local/bin/pull-hf-models"
