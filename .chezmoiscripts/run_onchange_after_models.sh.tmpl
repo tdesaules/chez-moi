@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# Hash of config.kcl.tmpl to trigger on modification
+# {{ include "dot_config/models/config.kcl.tmpl" | sha256sum }}
+
+_log "title" "Updating Hugging Face models for Lemonade"
+
+# Paths
+CONFIG_FILE="{{ .chezmoi.homeDir }}/.config/models/config.kcl"
+DOWNLOAD_DIR=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -r ".download_dir")
+
+# Verify download directory exists
+if [ -z "$DOWNLOAD_DIR" ]; then
+    _log "error" "Unable to read download_dir from $CONFIG_FILE"
+    exit 1
+fi
+
+mkdir -p "$DOWNLOAD_DIR"
+_log "info" "Download directory: $DOWNLOAD_DIR"
+
+# Verify dependencies
+for cmd in hf kcl jq; do
+    if ! command -v $cmd &> /dev/null; then
+        _log "error" "Command '$cmd' not found. Please install it first."
+        exit 1
+    fi
+done
+
+# Step 1: Download models listed in config
+_log "info" "Downloading models..."
+
+TOTAL=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq '.models | length')
+CURRENT=0
+SUCCESS=0
+FAIL=0
+
+kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -c '.models[]' | while read -r model_json; do
+    CURRENT=$((CURRENT + 1))
+    
+    REPO=$(echo "$model_json" | jq -r '.repo')
+    QUANT=$(echo "$model_json" | jq -r '.quantification')
+    NAME=$(echo "$model_json" | jq -r '.name')
+
+    _log "info" "[$CURRENT/$TOTAL] Processing $REPO (quant: $QUANT, name: $NAME)"
+
+    # List files in repo and find the one matching the quantification
+    FILE=$(hf models ls "$REPO" 2>/dev/null | grep -i "$QUANT" | grep -i "\.gguf$" | head -n 1 | awk '{print $NF}')
+
+    if [ -n "$FILE" ]; then
+        _log "info" "  File found: $FILE"
+
+        # Download the file
+        if hf download "$REPO" "$FILE" --local-dir "$DOWNLOAD_DIR" 2>&1; then
+            # Rename the downloaded file
+            OLD_PATH="$DOWNLOAD_DIR/$FILE"
+            NEW_PATH="$DOWNLOAD_DIR/${NAME}.gguf"
+
+            if [ -f "$OLD_PATH" ]; then
+                mv "$OLD_PATH" "$NEW_PATH"
+                _log "success" "  Downloaded and renamed: $NAME.gguf"
+                SUCCESS=$((SUCCESS + 1))
+            else
+                _log "error" "  Downloaded file not found: $OLD_PATH"
+                FAIL=$((FAIL + 1))
+            fi
+        else
+            _log "error" "  Failed to download $FILE"
+            FAIL=$((FAIL + 1))
+        fi
+    else
+        _log "warning" "  No GGUF file found for $REPO (quant: $QUANT)"
+        _log "info" "  Available files:"
+        hf models ls "$REPO" 2>/dev/null | grep "\.gguf$" | awk '{print "    - " $NF}'
+        FAIL=$((FAIL + 1))
+    fi
+done
+
+_log "info" "Download complete: $SUCCESS succeeded, $FAIL failed"
+
+# Step 2: Clean up models not listed in config
+_log "info" "Cleaning up obsolete models..."
+
+# Get list of expected model names
+EXPECTED_MODELS=$(kcl run "$CONFIG_FILE" -o json 2>/dev/null | jq -r '.models[].name')
+
+# List all .gguf files in download directory
+ACTUAL_FILES=$(find "$DOWNLOAD_DIR" -maxdepth 1 -name '*.gguf' -type f -printf '%f\n' 2>/dev/null)
+
+CLEANED=0
+for file in $ACTUAL_FILES; do
+    # Extract name without extension
+    FILE_NAME="${file%.gguf}"
+
+    # Check if this model is in the expected list
+    if ! echo "$EXPECTED_MODELS" | grep -qx "$FILE_NAME"; then
+        _log "info" "  Removing $file (not listed in config)"
+        rm -f "$DOWNLOAD_DIR/$file"
+        CLEANED=$((CLEANED + 1))
+    fi
+done
+
+_log "success" "Cleanup complete: $CLEANED files removed"
+
+# Final summary
+_log "success" "Models update complete: $SUCCESS downloaded, $FAIL failed, $CLEANED cleaned"
