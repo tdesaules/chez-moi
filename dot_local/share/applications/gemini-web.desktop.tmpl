@@ -1,7 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Name=Gemini (Web)
-Exec=chromium-browser --profile-directory=gemini --app=https://gemini.google.com
+Exec=chromium-browser --class=gemini-web --profile-directory=gemini --app=https://gemini.google.com
+StartupWMClass=gemini-web
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/gemini.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
