@@ -10,3 +10,9 @@
     url = "https://github.com/LazyVim/starter/archive/main.tar.gz"
     exact = true
     stripComponents = 1
+
+[".config/DankMaterialShell/plugins/gopass-dank"]
+    type = "archive"
+    url = "https://github.com/tdesaules/gopass-dank/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
