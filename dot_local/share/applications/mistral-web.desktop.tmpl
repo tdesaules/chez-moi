@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Name=Mistral (Web)
-Exec=chromium-browser --profile-directory=mistral --app=https://chat.mistral.ai
+Exec=chromium-browser --class=chromium-mistral --profile-directory=mistral --app=https://chat.mistral.ai
+StartupWMClass=chromium-mistral
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/mistral.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
-StartupWMClass=chromium-mistral
 Categories=Network;WebBrowser;
 StartupNotify=true
 Terminal=false

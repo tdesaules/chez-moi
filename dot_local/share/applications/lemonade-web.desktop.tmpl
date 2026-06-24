@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Name=Lemonade (Web)
-Exec=chromium-browser --profile-directory=lemonade --app=http://localhost:13305
+Exec=chromium-browser --class=chromium-lemonade --profile-directory=lemonade --app=http://localhost:13305
+StartupWMClass=chromium-lemonade
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/lemonade.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
-StartupWMClass=chromium-lemonade
 Categories=Network;WebBrowser;
 StartupNotify=true
 Terminal=false

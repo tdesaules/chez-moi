@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Name=Chromium (Perso)
-Exec=chromium-browser --profile-directory=Perso %u
+Exec=chromium-browser --class=chromium-perso --profile-directory=Perso %u
+StartupWMClass=chromium-perso
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/chromium.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
-StartupWMClass=chromium-perso
 Categories=Network;WebBrowser;
 StartupNotify=true
 Terminal=false
