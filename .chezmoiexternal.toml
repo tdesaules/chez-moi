@@ -10,9 +10,3 @@
     url = "https://github.com/LazyVim/starter/archive/main.tar.gz"
     exact = true
     stripComponents = 1
-
-[".config/DankMaterialShell/plugins/DankVault"]
-    type = "archive"
-    url = "https://github.com/alcxyz/DankVault/archive/main.tar.gz"
-    exact = true
-    stripComponents = 1
