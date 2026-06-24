@@ -6,6 +6,16 @@ source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 # Hash of the distrobox.ini.tmpl file to trigger script execution on changes
 # {{ include "dot_config/distrobox/distrobox.ini.tmpl" | sha256sum }}
 
+# Hash of exported desktop files to trigger re-export on changes
+# {{ include "dot_config/distrobox/chromium-perso.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/chromium-work.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/zen-perso.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/zen-work.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/zed.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/steam.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/filen.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/opencode.desktop.tmpl" | sha256sum }}
+
 # Check if distrobox binary exists
 if command -v distrobox &> /dev/null; then
     _log "info" "Running distrobox assemble create..."
@@ -18,4 +28,12 @@ if command -v distrobox &> /dev/null; then
 else
     _log "error" "Distrobox binary not found. Please ensure distrobox is installed."
     exit 1
+fi
+
+# Update desktop database
+APPLICATIONS_DIR="{{ .chezmoi.homeDir }}/.local/share/applications"
+if [ -d "$APPLICATIONS_DIR" ] && command -v update-desktop-database &> /dev/null; then
+    _log "info" "Updating desktop database..."
+    update-desktop-database "$APPLICATIONS_DIR"
+    _log "success" "Desktop database updated."
 fi
