@@ -72,15 +72,15 @@ window-rule {
 window-rule {
     match title="Gopass passphrase"
     open-floating true
-    default-column-width { fixed 460; }
-    default-window-height { fixed 260; }
+    default-column-width { fixed 620; }
+    default-window-height { fixed 160; }
 }
 
 window-rule {
     match title="Edit gopass secret"
     open-floating true
-    default-column-width { fixed 640; }
-    default-window-height { fixed 520; }
+    default-column-width { fixed 620; }
+    default-window-height { fixed 310; }
 }
 
 binds {
