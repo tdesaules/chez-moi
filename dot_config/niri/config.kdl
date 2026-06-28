@@ -69,6 +69,20 @@ window-rule {
     open-on-workspace "gaming"
 }
 
+window-rule {
+    match title="Gopass passphrase"
+    open-floating true
+    default-column-width { fixed 460; }
+    default-window-height { fixed 260; }
+}
+
+window-rule {
+    match title="Edit gopass secret"
+    open-floating true
+    default-column-width { fixed 640; }
+    default-window-height { fixed 520; }
+}
+
 binds {
     Mod+F1 { spawn "pactl" "set-sink-mute" "@DEFAULT_SINK@" "toggle"; }
     Mod+F2 { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "-1%"; }
