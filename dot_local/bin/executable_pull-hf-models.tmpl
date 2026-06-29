@@ -25,70 +25,118 @@ if [ -z "$DOWNLOAD_DIR" ]; then
     exit 1
 fi
 
+CACHE_DIR="$DOWNLOAD_DIR/.hf-cache"
+mkdir -p "$CACHE_DIR"
+
 TOTAL=$(echo "$CONFIG_JSON" | jq '.models | length')
 CURRENT=0
 SUCCESS=0
 FAIL=0
+SKIP=0
+MAX_RETRIES=3
+RETRY_DELAY=5
 
 while read -r model_json; do
     CURRENT=$((CURRENT + 1))
     REPO=$(echo "$model_json" | jq -r '.repo')
     FILE=$(echo "$model_json" | jq -r '.file')
 
-    echo "[$CURRENT/$TOTAL] Downloading $FILE from $REPO..."
+    echo "[$CURRENT/$TOTAL] $FILE from $REPO"
+
+    if [ -L "$DOWNLOAD_DIR/$FILE" ] && [ ! -e "$DOWNLOAD_DIR/$FILE" ]; then
+        rm -f "$DOWNLOAD_DIR/$FILE"
+    fi
+
+    if [ -e "$DOWNLOAD_DIR/$FILE" ]; then
+        echo "  Already exists, skipping."
+        SKIP=$((SKIP + 1))
+        continue
+    fi
 
     rm -f "$DOWNLOAD_DIR/.cache/huggingface/download/$FILE.lock"
 
-    if hf download "$REPO" "$FILE" --local-dir "$DOWNLOAD_DIR" 2>&1; then
-        SUCCESS=$((SUCCESS + 1))
+    ATTEMPT=0
+    DOWNLOADED=false
+    while [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; do
+        ATTEMPT=$((ATTEMPT + 1))
+        if [ "$ATTEMPT" -gt 1 ]; then
+            echo "  Retry $ATTEMPT/$MAX_RETRIES for $FILE..."
+            sleep "$RETRY_DELAY"
+        fi
+        if hf download "$REPO" "$FILE" --cache-dir "$CACHE_DIR" 2>&1; then
+            DOWNLOADED=true
+            break
+        fi
+        echo "  Attempt $ATTEMPT failed for $FILE" >&2
+    done
+
+    if [ "$DOWNLOADED" = true ]; then
+        REPO_CACHE_NAME="models--$(echo "$REPO" | sed 's/\//--/g')"
+        SNAPSHOT_HASH=$(ls "$CACHE_DIR/$REPO_CACHE_NAME/snapshots/" 2>/dev/null | head -1)
+        if [ -n "$SNAPSHOT_HASH" ] && [ -e "$CACHE_DIR/$REPO_CACHE_NAME/snapshots/$SNAPSHOT_HASH/$FILE" ]; then
+            ln -sf ".hf-cache/$REPO_CACHE_NAME/snapshots/$SNAPSHOT_HASH/$FILE" "$DOWNLOAD_DIR/$FILE"
+            echo "  Downloaded and symlinked."
+            SUCCESS=$((SUCCESS + 1))
+        else
+            echo "ERROR: Download succeeded but snapshot not found for $FILE" >&2
+            FAIL=$((FAIL + 1))
+        fi
     else
-        echo "ERROR: Failed to download $FILE from $REPO" >&2
+        echo "ERROR: Failed to download $FILE after $MAX_RETRIES attempts" >&2
         FAIL=$((FAIL + 1))
     fi
 done < <(echo "$CONFIG_JSON" | jq -c '.models[]')
 
-# --- Cleanup: remove models no longer in the config ---
+echo ""
 echo "Cleaning up orphaned models in $DOWNLOAD_DIR..."
 
 EXPECTED_FILES=$(echo "$CONFIG_JSON" | jq -r '.models[].file' | sort -u)
+EXPECTED_REPOS=$(echo "$CONFIG_JSON" | jq -r '.models[].repo' | sort -u)
 
-ORPHAN_MAIN=0
+ORPHAN_FLAT=0
 while read -r filepath; do
     [ -z "$filepath" ] && continue
     f=$(basename "$filepath")
     if ! grep -qxF "$f" <<< "$EXPECTED_FILES"; then
-        echo "  Removing orphan model: $f"
+        echo "  Removing orphan file: $f"
         rm -f "$filepath"
-        ORPHAN_MAIN=$((ORPHAN_MAIN + 1))
+        ORPHAN_FLAT=$((ORPHAN_FLAT + 1))
     fi
-done < <(find "$DOWNLOAD_DIR" -maxdepth 1 -type f)
+done < <(find "$DOWNLOAD_DIR" -maxdepth 1 \( -type f -o -type l \))
 
-AUX_DIR="$DOWNLOAD_DIR/.cache/huggingface/download"
-ORPHAN_AUX=0
-if [ -d "$AUX_DIR" ]; then
-    while read -r auxpath; do
-        [ -z "$auxpath" ] && continue
-        auxname=$(basename "$auxpath")
-        base="${auxname%.metadata}"
-        base="${base%.lock}"
-        if ! grep -qxF "$base" <<< "$EXPECTED_FILES"; then
-            echo "  Removing orphan auxiliary: $auxname"
-            rm -f "$auxpath"
-            ORPHAN_AUX=$((ORPHAN_AUX + 1))
-        fi
-    done < <(find "$AUX_DIR" -maxdepth 1 -type f \( -name '*.metadata' -o -name '*.lock' \))
+BROKEN=0
+while read -r brokenlink; do
+    [ -z "$brokenlink" ] && continue
+    echo "  Removing broken symlink: $(basename "$brokenlink")"
+    rm -f "$brokenlink"
+    BROKEN=$((BROKEN + 1))
+done < <(find "$DOWNLOAD_DIR" -maxdepth 1 -type l ! -exec test -e {} \; -print)
+
+OLD_CACHE_DIR="$DOWNLOAD_DIR/.cache"
+if [ -d "$OLD_CACHE_DIR" ]; then
+    echo "  Removing old --local-dir cache..."
+    rm -rf "$OLD_CACHE_DIR"
 fi
 
-if [ "$ORPHAN_MAIN" -gt 0 ] || [ "$ORPHAN_AUX" -gt 0 ]; then
-    echo "Cleanup complete: $ORPHAN_MAIN model file(s), $ORPHAN_AUX auxiliary file(s) removed."
-else
-    echo "No orphaned models found."
-fi
+ORPHAN_CACHE=0
+CACHED_REPOS=$(hf cache list --cache-dir "$CACHE_DIR" --format quiet 2>/dev/null || true)
+for cached_repo in $CACHED_REPOS; do
+    repo_id="${cached_repo#model/}"
+    if ! grep -qxF "$repo_id" <<< "$EXPECTED_REPOS"; then
+        echo "  Removing orphan cache repo: $repo_id"
+        hf cache rm "$cached_repo" --cache-dir "$CACHE_DIR" -y 2>/dev/null || true
+        ORPHAN_CACHE=$((ORPHAN_CACHE + 1))
+    fi
+done
+
+hf cache prune --cache-dir "$CACHE_DIR" -y 2>/dev/null || true
+
+echo ""
+echo "Cleanup complete: $ORPHAN_FLAT orphan file(s), $BROKEN broken symlink(s), $ORPHAN_CACHE orphan cache repo(s)."
+echo "Summary: $SUCCESS downloaded, $SKIP skipped, $FAIL failed."
 
 if [ "$FAIL" -gt 0 ]; then
-    echo "Completed with $FAIL failures, $SUCCESS succeeded" >&2
     exit 1
 fi
 
-echo "All models updated successfully ($SUCCESS downloaded)"
 exit 0
