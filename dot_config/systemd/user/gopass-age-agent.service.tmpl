@@ -5,14 +5,8 @@ PartOf=graphical-session.target
 
 [Service]
 Type=simple
-# Clear any previously auto-spawned agent so this daemon owns the socket cleanly.
 ExecStartPre=-{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent stop
 ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent start
-# The agent starts "unlocked" but with NO identities loaded, so the gopass client
-# never populates it (decrypt fails with a non-"locked" error → silent fallback
-# to pinentry on every call). Locking it once the socket is up forces the first
-# consumer to trigger the lazy unlock flow: one pinentry prompt, then identities
-# stay cached in the daemon for the whole session.
 ExecStartPost=/bin/sh -c 'for i in $(seq 1 50); do {{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent status >/dev/null 2>&1 && break; sleep 0.1; done; {{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent lock >/dev/null 2>&1 || true'
 Restart=on-failure
 RestartSec=3
