@@ -4,3 +4,4 @@
     hash = 5a173d7d3305d411a2831df2c766f35ddf431ed19cee36bb82b2962d27fde0a3
 [age]
     agent-enabled = true
+    agent-timeout = 172800
