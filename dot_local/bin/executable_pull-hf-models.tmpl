@@ -37,6 +37,8 @@ while read -r model_json; do
 
     echo "[$CURRENT/$TOTAL] Downloading $FILE from $REPO..."
 
+    rm -f "$DOWNLOAD_DIR/.cache/huggingface/download/$FILE.lock"
+
     if hf download "$REPO" "$FILE" --local-dir "$DOWNLOAD_DIR" 2>&1; then
         SUCCESS=$((SUCCESS + 1))
     else
