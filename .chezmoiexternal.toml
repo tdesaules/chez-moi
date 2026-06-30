@@ -11,10 +11,9 @@
     exact = true
     stripComponents = 1
 
-{{- $gopass_dank_version := (gitHubLatestRelease "tdesaules/gopass-dank").TagName -}}
 [".config/DankMaterialShell/plugins/gopass-dank"]
     type = "archive"
-    url = "https://github.com/tdesaules/gopass-dank/archive/{{ $gopass_dank_version }}.tar.gz"
+    url = 'https://github.com/tdesaules/gopass-dank/archive/{{ (gitHubLatestRelease "tdesaules/gopass-dank").TagName }}.tar.gz'
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
