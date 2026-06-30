@@ -5,3 +5,4 @@
 [age]
     agent-enabled = true
     agent-timeout = 172800
+    pinentry = pinentry-tty
