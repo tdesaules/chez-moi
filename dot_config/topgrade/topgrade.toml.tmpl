@@ -1,0 +1,13 @@
+[misc]
+assume_yes = true
+cleanup = true
+no_self_update = true
+disable = ["firmware","chezmoi","mise","pip3","node","pipx"]
+
+[commands]
+"Chezmoi" = "/usr/bin/chezmoi update --force --refresh-externals"
+"Mise" = "/usr/bin/mise install --quiet --yes && /usr/bin/mise upgrade --quiet --yes"
+"HuggingFace" = "{{ .chezmoi.homeDir }}/.local/bin/pull-hf-models"
+
+[linux]
+rpm_ostree = true
