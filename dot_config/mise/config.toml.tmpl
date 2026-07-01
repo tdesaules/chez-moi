@@ -5,6 +5,9 @@ trusted_config_paths = [
 ]
 experimental = true
 
+[env]
+GITHUB_TOKEN = { value = "{{ gopass "perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f05c5dfff5" | trim }}", redact = true }
+
 [tools]
 rust = "latest"
 python = "latest"
