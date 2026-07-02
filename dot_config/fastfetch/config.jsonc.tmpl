@@ -1,11 +1,11 @@
 {
   "logo": {
     "type": "command-raw",
-    "source": "timg -pq -g38x38 /usr/share/icons/niri-tonic-os/png/logo.png",
+    "source": "timg -pq -g34x34 /usr/share/icons/niri-tonic-os/png/logo.png",
     "padding": {
       "top": 1,
-      "left": 2,
-      "right": 4
+      "left": 1,
+      "right": 1
     }
   },
   "display": {
@@ -60,12 +60,14 @@
     {
       "type": "disk",
       "key": "disk",
-      "keyColor": "#A3BE8C"
+      "keyColor": "#A3BE8C",
+      "folders": "/var"
     },
     {
       "type": "display",
       "key": "display",
-      "keyColor": "#8FBCBB"
+      "keyColor": "#8FBCBB",
+      "format": "{width}x{height} @ {scale-factor}x in {inch}\", {refresh-rate} Hz"
     },
     {
       "type": "battery",
