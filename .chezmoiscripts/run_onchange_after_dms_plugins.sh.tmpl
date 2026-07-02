@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Source the functions from the template
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# DMS plugins are chezmoi externals (downloaded archives), not source files, so
+# the include+sha256sum hash pattern cannot detect their changes. Trigger on the
+# resolved release tag instead. Chezmoi applies externals before running
+# .chezmoiscripts/ (verified), so refreshed plugin files are on disk when DMS
+# is restarted here.
+# {{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}
+# {{ (gitHubLatestRelease "tdesaules/gopass-dms").TagName }}
+
+PLUGINS_DIR="{{ .chezmoi.homeDir }}/.config/DankMaterialShell/plugins"
+
+# Skip silently when systemctl, the dms unit, or the plugins dir is absent
+if ! command -v systemctl &> /dev/null; then
+    exit 0
+fi
+
+if ! systemctl --user cat dms.service > /dev/null 2>&1; then
+    exit 0
+fi
+
+if [ ! -d "$PLUGINS_DIR" ]; then
+    exit 0
+fi
+
+_log "info" "DMS plugin change detected, restarting dms.service..."
+if systemctl --user restart dms.service; then
+    _log "success" "dms.service restarted, plugins reloaded"
+else
+    _log "error" "Failed to restart dms.service"
+    exit 1
+fi
