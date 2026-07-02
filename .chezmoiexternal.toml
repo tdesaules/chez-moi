@@ -11,9 +11,14 @@
     exact = true
     stripComponents = 1
 
-[".config/DankMaterialShell/plugins/gopass-dank"]
+[".config/DankMaterialShell/plugins/gopass-dms"]
     type = "archive"
-    url = 'https://github.com/tdesaules/gopass-dank/archive/{{ (gitHubLatestRelease "tdesaules/gopass-dank").TagName }}.tar.gz'
+    url = 'https://github.com/tdesaules/gopass-dms/archive/{{ (gitHubLatestRelease "tdesaules/gopass-dms").TagName }}.tar.gz'
     exact = true
     stripComponents = 1
-    refreshPeriod = "168h"
+
+[".config/DankMaterialShell/plugins/pinentry-dms"]
+    type = "archive"
+    url = 'https://github.com/tdesaules/pinentry-dms/releases/download/{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}/pinentry-dms-plugin-{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName | trimPrefix "v" }}.tar.gz'
+    exact = true
+    stripComponents = 1

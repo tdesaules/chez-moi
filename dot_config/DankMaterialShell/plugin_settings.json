@@ -1,5 +1,8 @@
 {
   "gopassDms": {
     "enabled": true
+  },
+  "pinentryDms": {
+    "enabled": true
   }
 }
