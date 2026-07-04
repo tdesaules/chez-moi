@@ -1,0 +1,15 @@
+[Unit]
+Description=gopass age agent (in-memory passphrase cache)
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStartPre=-{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent stop
+ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent start
+ExecStartPost=/bin/sh -c 'for i in $(seq 1 50); do {{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent status >/dev/null 2>&1 && break; sleep 0.1; done; {{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass age agent lock >/dev/null 2>&1 || true'
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

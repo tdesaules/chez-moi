@@ -6,6 +6,7 @@ source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 # Hash des fichiers .service, .socket, .path et .container pour déclencher sur ajout/modification/suppression
 # {{ include "dot_config/systemd/user/x11-unix.service.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/filen-sync.service.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/gopass-age-agent.service.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
