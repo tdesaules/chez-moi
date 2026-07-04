@@ -1,0 +1,37 @@
+#!/bin/bash
+
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+DEVICE="/dev/disk/by-label/AGE"
+MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"
+IDENTITY_USB="$MOUNT_POINT/identities"
+IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
+GOPASS="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass"
+
+case "$1" in
+    start)
+        if ! mountpoint -q "$MOUNT_POINT" 2>/dev/null; then
+            _log "info" "Mounting AGE USB key (read-only)..."
+            /usr/bin/udisksctl mount -b "$DEVICE" --no-user-interaction 2>/dev/null
+        fi
+        for i in $(seq 1 10); do
+            [ -f "$IDENTITY_USB" ] && break
+            sleep 0.5
+        done
+        if [ -f "$IDENTITY_USB" ]; then
+            ln -sf "$IDENTITY_USB" "$IDENTITY_LOCAL"
+            _log "success" "Symlink created"
+        else
+            _log "error" "Identity file not found on AGE USB key"
+        fi
+        _log "info" "Watching for AGE USB key removal..."
+        exec sleep infinity
+        ;;
+    stop)
+        _log "info" "AGE USB key removed, cleaning up..."
+        rm -f "$IDENTITY_LOCAL"
+        _log "success" "Symlink removed"
+        "$GOPASS" age agent lock
+        _log "success" "gopass age agent locked"
+        ;;
+esac

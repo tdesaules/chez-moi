@@ -3,13 +3,15 @@
 # Source the functions from the template
 source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 
-# Hash des fichiers .service, .socket et .container pour déclencher sur ajout/modification/suppression
+# Hash des fichiers .service, .socket, .path et .container pour déclencher sur ajout/modification/suppression
 # {{ include "dot_config/systemd/user/x11-unix.service.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/filen-sync.service.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-agent.service.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/gopass-age-usb-handler.path.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/gopass-age-usb-handler.service.tmpl" | sha256sum }}
 
 # Check if systemctl is available
 if ! command -v systemctl &> /dev/null; then
@@ -33,8 +35,8 @@ USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/.config/containers/systemd"
 # Podman quadlet .container files are handled by daemon-reload only
 _log "info" "Podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
 
-# Get list of .service and .socket files (podman quadlets don't need enable/start)
-services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*.socket' \) -printf '%f\n' 2>/dev/null)
+# Get list of .service, .socket and .path files (podman quadlets don't need enable/start)
+services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*.socket' -o -name '*.path' \) -printf '%f\n' 2>/dev/null)
 
 if [ -z "$services" ]; then
     _log "info" "No systemd user service/socket files found."

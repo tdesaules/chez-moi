@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch for AGE USB key insertion
+StartLimitIntervalSec=0
+
+[Path]
+PathExists=/dev/disk/by-label/AGE
+Unit=gopass-age-usb-handler.service
+
+[Install]
+WantedBy=paths.target

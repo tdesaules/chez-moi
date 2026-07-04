@@ -1,0 +1,28 @@
+#!/bin/bash
+
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+# {{ include "dot_local/share/udisks2/mount_options.conf" | sha256sum }}
+
+DEST="/etc/udisks2/mount_options.conf"
+SRC="{{ .chezmoi.homeDir }}/.local/share/udisks2/mount_options.conf"
+
+_log "info" "Deploying udisks2 mount_options.conf to $DEST..."
+
+if [ ! -f "$SRC" ]; then
+    _log "error" "Source file not found: $SRC"
+    exit 1
+fi
+
+if [ -f "$DEST" ] && diff -q "$SRC" "$DEST" >/dev/null 2>&1; then
+    _log "info" "mount_options.conf already up to date, skipping"
+    exit 0
+fi
+
+sudo cp "$SRC" "$DEST" 2>/dev/null
+if [ $? -eq 0 ]; then
+    _log "success" "Deployed mount_options.conf to $DEST"
+else
+    _log "error" "Failed to deploy (requires sudo)"
+    exit 1
+fi

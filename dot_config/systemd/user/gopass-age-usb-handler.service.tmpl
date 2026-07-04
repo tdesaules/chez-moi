@@ -1,0 +1,12 @@
+[Unit]
+Description=Handle AGE USB key insert/remove (mount + symlink + lock/unlock)
+After=dms.service
+PartOf=graphical-session.target
+BindsTo=dev-disk-by\x2dlabel-AGE.device
+After=dev-disk-by\x2dlabel-AGE.device
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart={{ .chezmoi.homeDir }}/.local/bin/gopass-age-usb-handler start
+ExecStopPost={{ .chezmoi.homeDir }}/.local/bin/gopass-age-usb-handler stop
