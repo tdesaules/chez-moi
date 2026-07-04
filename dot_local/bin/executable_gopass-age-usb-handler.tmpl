@@ -7,6 +7,7 @@ MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"
 IDENTITY_USB="$MOUNT_POINT/identities"
 IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
 GOPASS="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass"
+AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
 
 case "$1" in
     start)
@@ -34,14 +35,13 @@ case "$1" in
         ;;
     stop)
         _log "info" "AGE USB key removed, cleaning up..."
-        rm -f "$IDENTITY_LOCAL"
-        _log "success" "Symlink removed"
-        AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
         if [ -S "$AGENT_SOCKET" ]; then
-            "$GOPASS" age agent lock
-            _log "success" "gopass age agent locked"
+            "$GOPASS" age agent lock 2>/dev/null || true
+            _log "success" "gopass age agent locked (secrets purged)"
         else
             _log "info" "Agent not running, skipping lock"
         fi
+        rm -f "$IDENTITY_LOCAL"
+        _log "success" "Symlink removed"
         ;;
 esac
