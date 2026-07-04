@@ -31,7 +31,12 @@ case "$1" in
         _log "info" "AGE USB key removed, cleaning up..."
         rm -f "$IDENTITY_LOCAL"
         _log "success" "Symlink removed"
-        "$GOPASS" age agent lock
-        _log "success" "gopass age agent locked"
+        AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
+        if [ -S "$AGENT_SOCKET" ]; then
+            "$GOPASS" age agent lock
+            _log "success" "gopass age agent locked"
+        else
+            _log "info" "Agent not running, skipping lock"
+        fi
         ;;
 esac
