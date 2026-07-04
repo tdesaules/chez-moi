@@ -24,6 +24,11 @@ case "$1" in
         else
             _log "error" "Identity file not found on AGE USB key"
         fi
+        if systemctl --user is-active --quiet gopass-age-agent.service 2>/dev/null; then
+            _log "info" "Restarting gopass-age-agent service for clean state..."
+            systemctl --user restart gopass-age-agent.service
+            _log "success" "gopass-age-agent service restarted"
+        fi
         _log "info" "Watching for AGE USB key removal..."
         exec sleep infinity
         ;;
