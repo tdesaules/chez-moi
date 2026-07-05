@@ -5,13 +5,7 @@
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 _log "info" "installing gopass and gh via mise..."
-mkdir -p "{{ .chezmoi.homeDir }}/.config/mise"
-cat > "{{ .chezmoi.homeDir }}/.config/mise/config.toml" << 'MISE_EOF'
-[settings.github]
-github_attestations = false
-MISE_EOF
-
-if ! output=$(mise install --yes {{ range .gopass.tools }}{{ . }} {{ end }}2>&1); then
+if ! output=$(mise use -g github:gopasspw/gopass@latest github:cli/cli@latest 2>&1); then
     echo "$output"
     _error_handler "mise tools installation"
 fi
