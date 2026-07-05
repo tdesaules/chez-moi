@@ -1,0 +1,93 @@
+#!/bin/bash
+
+source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+
+MISE=$(command -v mise 2>/dev/null || echo "/usr/bin/mise")
+GOPASS="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass"
+GH="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh"
+SSH_KEY="{{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub"
+STORE_PATH="{{ .chezmoi.homeDir }}/.local/share/gopass/stores/root"
+STORE_URL="git@github.com:tdesaules/gopass.git"
+DEVICE="/dev/disk/by-label/AGE"
+MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"
+IDENTITY_USB="$MOUNT_POINT/identities"
+IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
+
+_log "title" "gopass bootstrap"
+
+# 1. Install minimum dependencies (gopass + gh)
+_log "info" "installing gopass and gh via mise..."
+mkdir -p "{{ .chezmoi.homeDir }}/.config/mise"
+cat > "{{ .chezmoi.homeDir }}/.config/mise/config.toml" << 'MISE_EOF'
+[settings.github]
+github_attestations = false
+MISE_EOF
+$MISE install gopass@latest gh@latest
+_log "success" "gopass and gh installed"
+
+# 2. GitHub authentication via device flow
+if ! $GH auth status >/dev/null 2>&1; then
+    _log "info" "github authentication required"
+    _log "notice" "open https://github.com/login/device on another device and enter the code"
+    $GH auth login -h github.com -p ssh --skip-ssh-key
+    _log "success" "authenticated to github"
+else
+    _log "info" "already authenticated to github"
+fi
+
+# 3. Upload SSH key to GitHub
+SSH_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY" 2>/dev/null | awk '{print $2}')
+if $GH ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
+    _log "info" "ssh key already on github"
+else
+    _log "info" "uploading ssh key to github..."
+    $GH ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}"
+    _log "success" "ssh key uploaded"
+fi
+
+# 4. Add GitHub host key to known_hosts
+_log "info" "adding github.com to known_hosts..."
+mkdir -p "{{ .chezmoi.homeDir }}/.ssh"
+ssh-keyscan github.com >> "{{ .chezmoi.homeDir }}/.ssh/known_hosts" 2>/dev/null
+
+# 5. Wait for AGE USB key insertion
+if [ ! -e "$DEVICE" ]; then
+    _log "warning" "please insert the AGE USB key..."
+    while [ ! -e "$DEVICE" ]; do
+        sleep 2
+    done
+fi
+_log "info" "mounting AGE USB key..."
+/usr/bin/udisksctl mount -b "$DEVICE" --no-user-interaction 2>/dev/null
+
+for i in $(seq 1 10); do
+    [ -f "$IDENTITY_USB" ] && break
+    sleep 0.5
+done
+
+if [ ! -f "$IDENTITY_USB" ]; then
+    _log "error" "identity file not found on AGE USB key"
+    exit 1
+fi
+
+# 6. Create identity symlink
+mkdir -p "{{ .chezmoi.homeDir }}/.config/gopass/age"
+ln -sf "$IDENTITY_USB" "$IDENTITY_LOCAL"
+_log "success" "identity symlink created"
+
+# 7. Clone gopass store
+if [ ! -d "$STORE_PATH/.git" ]; then
+    _log "info" "cloning gopass store..."
+    $GOPASS clone --crypto age "$STORE_URL"
+    _log "success" "gopass store cloned"
+else
+    _log "info" "gopass store already exists, skipping clone"
+fi
+
+# 8. Unlock age agent
+_log "info" "unlocking gopass age agent..."
+$GOPASS age agent start 2>/dev/null || true
+$GOPASS age agent unlock
+_log "success" "age agent unlocked"
+
+_log "success" "gopass bootstrap complete"
