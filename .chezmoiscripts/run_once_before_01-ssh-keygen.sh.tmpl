@@ -16,4 +16,5 @@ else
     chmod {{ .ssh.key.mode }} "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}"
     _log "success" "ssh key generated successfully."
 fi
+
 {{- end }}

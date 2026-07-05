@@ -1,107 +1,102 @@
 #!/bin/bash
 
+{{- if and .is_mise .is_ssh }}
+
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-MISE=$(command -v mise 2>/dev/null || echo "/usr/bin/mise")
-SSH_KEY="{{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub"
-STORE_PATH="{{ .chezmoi.homeDir }}/.local/share/gopass/stores/root"
-STORE_URL="git@github.com:tdesaules/gopass.git"
-DEVICE="/dev/disk/by-label/AGE"
-MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"
-IDENTITY_USB="$MOUNT_POINT/identities"
-IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
-
-_log "title" "gopass bootstrap"
-
-# 1. Install minimum dependencies (gopass + gh) via mise CLI
 _log "info" "installing gopass and gh via mise..."
 mkdir -p "{{ .chezmoi.homeDir }}/.config/mise"
 cat > "{{ .chezmoi.homeDir }}/.config/mise/config.toml" << 'MISE_EOF'
 [settings.github]
 github_attestations = false
 MISE_EOF
-$MISE install --quiet --yes github:gopasspw/gopass@latest github:cli/cli@latest
 
-# Resolve direct binary paths (bypass mise shims to avoid GITHUB_TOKEN injection)
-# Tool binaries may be at <install>/bin/<name> or <install>/<name> depending on the tool
-_find_bin() {
-    local install_path=$($MISE where "$1" 2>/dev/null)
-    if [ -x "$install_path/bin/$2" ]; then
-        echo "$install_path/bin/$2"
-    elif [ -x "$install_path/$2" ]; then
-        echo "$install_path/$2"
-    fi
-}
-GOPASS=$(_find_bin "github:gopasspw/gopass" "gopass")
-GH=$(_find_bin "github:cli/cli" "gh")
+if ! output=$(mise install --yes {{ range .gopass.tools }}{{ . }} {{ end }}2>&1); then
+    echo "$output"
+    _error_handler "mise tools installation"
+fi
+
 _log "success" "gopass and gh installed"
 
-# 2. GitHub authentication via device flow
-# Use env -u to ensure gh doesn't pick up GITHUB_TOKEN from the environment
-# (on a fresh machine GITHUB_TOKEN doesn't exist yet, but this is a safety net)
-if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth status >/dev/null 2>&1; then
+if ! "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth status >/dev/null 2>&1; then
     _log "info" "github authentication required"
     _log "notice" "scan the QR code with your phone or open https://github.com/login/device"
     curl -s "qrenco.de/https://github.com/login/device" 2>/dev/null || true
-    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key --web
+    if ! "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key --web; then
+        _error_handler "github authentication"
+    fi
     _log "success" "authenticated to github"
 else
     _log "info" "already authenticated to github"
 fi
 
-# 3. Upload SSH key to GitHub
-SSH_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY" 2>/dev/null | awk '{print $2}')
-if env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
+SSH_FINGERPRINT=$(ssh-keygen -lf "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" 2>/dev/null | awk '{print $2}')
+if "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
     _log "info" "ssh key already on github"
 else
     _log "info" "uploading ssh key to github..."
-    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}" > /dev/null 2>&1
+    if ! OUTPUT=$("{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" ssh-key add "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" --title "chezmoi-{{ .chezmoi.hostname }}" 2>&1); then
+        echo "$OUTPUT"
+        _error_handler "ssh key upload to github"
+    fi
     _log "success" "ssh key uploaded"
 fi
 
-# 4. Add GitHub host key to known_hosts
 _log "info" "adding github.com to known_hosts..."
-mkdir -p "{{ .chezmoi.homeDir }}/.ssh"
-ssh-keyscan github.com >> "{{ .chezmoi.homeDir }}/.ssh/known_hosts" 2>/dev/null
+mkdir -p "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}"
+ssh-keyscan github.com >> "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/known_hosts" 2>/dev/null
 
-# 5. Wait for AGE USB key insertion
-if [ ! -e "$DEVICE" ]; then
+if [ ! -e "{{ .gopass.age.device }}" ]; then
     _log "warning" "please insert the AGE USB key..."
-    while [ ! -e "$DEVICE" ]; do
+    while [ ! -e "{{ .gopass.age.device }}" ]; do
         sleep 2
     done
 fi
 _log "info" "mounting AGE USB key..."
-/usr/bin/udisksctl mount -b "$DEVICE" --no-user-interaction 2>/dev/null
+if ! output=$(/usr/bin/udisksctl mount -b "{{ .gopass.age.device }}" --no-user-interaction 2>&1); then
+    echo "$output"
+    _log "warning" "udisksctl mount failed (may already be mounted)"
+fi
 
 for i in $(seq 1 10); do
-    [ -f "$IDENTITY_USB" ] && break
+    [ -f "/run/media/{{ .chezmoi.username }}/{{ .gopass.age.label }}/identities" ] && break
     sleep 0.5
 done
 
-if [ ! -f "$IDENTITY_USB" ]; then
-    _log "error" "identity file not found on AGE USB key"
-    exit 1
+if [ ! -f "/run/media/{{ .chezmoi.username }}/{{ .gopass.age.label }}/identities" ]; then
+    _error_handler "AGE USB identity retrieval"
 fi
 
-# 6. Create identity symlink
 mkdir -p "{{ .chezmoi.homeDir }}/.config/gopass/age"
-ln -sf "$IDENTITY_USB" "$IDENTITY_LOCAL"
+ln -sf "/run/media/{{ .chezmoi.username }}/{{ .gopass.age.label }}/identities" "{{ .chezmoi.homeDir }}/{{ .gopass.age.identity }}"
 _log "success" "identity symlink created"
 
-# 7. Clone gopass store
-if [ ! -d "$STORE_PATH/.git" ]; then
+_log "info" "age identity is passphrase-protected, passphrase required"
+read -s -r GOPASS_AGE_PASSWORD < /dev/tty
+echo
+export GOPASS_AGE_PASSWORD
+
+if [ ! -d "{{ .chezmoi.homeDir }}/{{ .gopass.store.path }}/.git" ]; then
     _log "info" "cloning gopass store..."
-    "$GOPASS" clone --crypto age "$STORE_URL"
+    if ! OUTPUT=$("{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" clone --crypto age "{{ .gopass.store.url }}" 2>&1); then
+        echo "$OUTPUT"
+        _error_handler "gopass store clone"
+    fi
     _log "success" "gopass store cloned"
 else
     _log "info" "gopass store already exists, skipping clone"
 fi
 
-# 8. Unlock age agent
 _log "info" "unlocking gopass age agent..."
-"$GOPASS" age agent start > /dev/null 2>&1 || true
-"$GOPASS" age agent unlock > /dev/null 2>&1
+"{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" age agent start > /dev/null 2>&1 || true
+if ! OUTPUT=$("{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" age agent unlock 2>&1); then
+    echo "$OUTPUT"
+    _error_handler "gopass age agent unlock"
+fi
 _log "success" "age agent unlocked"
 
+unset GOPASS_AGE_PASSWORD
+
 _log "success" "gopass bootstrap complete"
+
+{{- end }}

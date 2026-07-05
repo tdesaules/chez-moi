@@ -1,0 +1,11 @@
+gopass:
+  store:
+    url: git@github.com:tdesaules/gopass.git
+    path: .local/share/gopass/stores/root
+  age:
+    device: /dev/disk/by-label/AGE
+    label: AGE
+    identity: .config/gopass/age/identities
+  tools:
+    - github:gopasspw/gopass@latest
+    - github:cli/cli@latest
