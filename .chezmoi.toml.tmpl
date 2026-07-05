@@ -23,9 +23,15 @@
     {{- $is_nushell = true -}}
 {{- end -}}
 
+{{- $is_ssh := false -}}
+{{- if ( lookPath "ssh-keygen" ) -}}
+    {{- $is_ssh = true -}}
+{{- end -}}
+
 [data]
     is_linux = {{ $is_linux }}
     is_fedora = {{ $is_fedora }}
     is_mise = {{ $is_mise }}
     is_nushell = {{ $is_nushell }}
+    is_ssh = {{ $is_ssh }}
     atomic_version = {{ $atomic_version }}

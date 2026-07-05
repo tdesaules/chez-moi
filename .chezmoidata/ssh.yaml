@@ -1,0 +1,6 @@
+ssh:
+  dir: .ssh
+  key:
+    type: ed25519
+    name: id_ed25519
+    mode: "600"

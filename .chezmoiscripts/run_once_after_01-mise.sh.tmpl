@@ -1,18 +1,13 @@
 #!/bin/bash
+#
+{{- if .is_mise }}
 
-# Source the functions from the template
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-# Check if mise binary exists
-if command -v mise &> /dev/null; then
-    _log "info" "Installing mise tools..."
-    if mise install --quiet --yes; then
-        _log "success" "Mise executed successfully."
-    else
-        _log "error" "Failed to install mise tools."
-        exit 1
-    fi
-else
-    _log "error" "Mise binary not found. Please ensure mise is installed."
-    exit 1
+_log "info" "installing mise tools..."
+if ! OUTPUT=$(mise install --yes 2>&1); then
+    echo "$OUTPUT"
+    _error_handler "mise tools installation"
 fi
+_log "success" "mise executed successfully."
+{{- end }}
