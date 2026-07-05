@@ -20,7 +20,7 @@ cat > "{{ .chezmoi.homeDir }}/.config/mise/config.toml" << 'MISE_EOF'
 [settings.github]
 github_attestations = false
 MISE_EOF
-$MISE install github:gopasspw/gopass@latest github:cli/cli@latest
+$MISE install --quiet --yes github:gopasspw/gopass@latest github:cli/cli@latest
 
 # Resolve direct binary paths (bypass mise shims to avoid GITHUB_TOKEN injection)
 # Tool binaries may be at <install>/bin/<name> or <install>/<name> depending on the tool
@@ -55,7 +55,7 @@ if env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key list 2>/dev/null | grep -q "$SS
     _log "info" "ssh key already on github"
 else
     _log "info" "uploading ssh key to github..."
-    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}"
+    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}" > /dev/null 2>&1
     _log "success" "ssh key uploaded"
 fi
 
@@ -100,8 +100,8 @@ fi
 
 # 8. Unlock age agent
 _log "info" "unlocking gopass age agent..."
-"$GOPASS" age agent start 2>/dev/null || true
-"$GOPASS" age agent unlock
+"$GOPASS" age agent start > /dev/null 2>&1 || true
+"$GOPASS" age agent unlock > /dev/null 2>&1
 _log "success" "age agent unlocked"
 
 _log "success" "gopass bootstrap complete"

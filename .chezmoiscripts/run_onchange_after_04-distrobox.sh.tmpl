@@ -6,6 +6,9 @@
 # Hash of the distrobox.ini.tmpl file to trigger script execution on changes
 # {{ include "dot_config/distrobox/distrobox.ini.tmpl" | sha256sum }}
 
+# Hash of containers.conf to trigger distrobox recreation when podman log driver changes
+# {{ include "dot_config/containers/containers.conf" | sha256sum }}
+
 # Hash of exported desktop files to trigger re-export on changes
 # {{ include "dot_config/distrobox/chromium-perso.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/chromium-work.desktop.tmpl" | sha256sum }}
