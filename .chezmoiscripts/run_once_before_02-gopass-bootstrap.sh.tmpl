@@ -41,8 +41,9 @@ _log "success" "gopass and gh installed"
 # (on a fresh machine GITHUB_TOKEN doesn't exist yet, but this is a safety net)
 if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth status >/dev/null 2>&1; then
     _log "info" "github authentication required"
-    _log "notice" "open https://github.com/login/device on another device and enter the code"
-    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key
+    _log "notice" "scan the QR code with your phone or open https://github.com/login/device"
+    curl -s "qrenco.de/https://github.com/login/device" 2>/dev/null || true
+    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key --web
     _log "success" "authenticated to github"
 else
     _log "info" "already authenticated to github"
