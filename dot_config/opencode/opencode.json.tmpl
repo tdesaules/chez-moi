@@ -3,7 +3,7 @@
   "shell": "/usr/bin/bash",
   "enabled_providers": [
     "mistral",
-    "opencode-go",
+    "openrouter",
     "zai-coding-plan",
     "umans",
     "lemonade"
@@ -39,6 +39,22 @@
           "id": "umans-glm-5.2",
           "name": "GLM 5.2",
           "modalities": { "input": ["text"], "output": ["text"] }
+        }
+      }
+    },
+    "openrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OpenRouter",
+      "options": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{{ gopass "perso/token/openrouter.ai/d6f9ca52-d763-4622-9124-d9fda0f25212" | trim }}"
+      },
+      "models": {
+        "z-ai/glm-5.2": {
+          "name": "GLM 5.2"
+        },
+        "moonshotai/kimi-k2.7-code": {
+          "name": "Kimi K2.7 Code"
         }
       }
     }

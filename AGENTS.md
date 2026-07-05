@@ -99,7 +99,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 ## opencode
 
 - Provider config: `dot_config/opencode/opencode.json.tmpl`. Enabled providers:
-  `mistral`, `opencode-go`, `zai-coding-plan`, `umans`, `lemonade` (local,
+  `mistral`, `openrouter`, `zai-coding-plan`, `umans`, `lemonade` (local,
   `http://127.0.0.1:13305/v1`).
 - Per-provider API keys: `dot_local/share/opencode/auth.json.tmpl` (gopass-backed).
 
