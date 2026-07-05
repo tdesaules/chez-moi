@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+{{ include ".chezmoitemplates/functions.tmpl" }}
 
 DEVICE="/dev/disk/by-label/AGE"
 MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"

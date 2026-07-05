@@ -1,6 +1,6 @@
 #!/bin/bash
 
-{{ include ".chezmoitemplates/functions.sh.tmpl" }}
+{{ include ".chezmoitemplates/functions.tmpl" }}
 
 MISE=$(command -v mise 2>/dev/null || echo "/usr/bin/mise")
 SSH_KEY="{{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub"

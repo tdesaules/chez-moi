@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source the functions from the template
-{{ include ".chezmoitemplates/functions.sh.tmpl" }}
+{{ include ".chezmoitemplates/functions.tmpl" }}
 
 # Check if ssh-keygen binary exists
 if command -v ssh-keygen &> /dev/null; then

@@ -35,7 +35,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `run_onchange_after_dms_plugins.sh.tmpl` hashes the resolved release tag:
   `{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}`.
 - Shared logging helper: every script does
-  `source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"`
+  `{{ include ".chezmoitemplates/functions.tmpl" }}`
   then calls `_log "<level>" "<msg>"` (levels: info/success/error/warning/...).
   Use it for consistency; do not hand-roll `echo`.
 
