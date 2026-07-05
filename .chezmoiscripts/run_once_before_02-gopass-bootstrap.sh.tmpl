@@ -3,8 +3,6 @@
 source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
 
 MISE=$(command -v mise 2>/dev/null || echo "/usr/bin/mise")
-GOPASS="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass"
-GH="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh"
 SSH_KEY="{{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub"
 STORE_PATH="{{ .chezmoi.homeDir }}/.local/share/gopass/stores/root"
 STORE_URL="git@github.com:tdesaules/gopass.git"
@@ -15,21 +13,36 @@ IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
 
 _log "title" "gopass bootstrap"
 
-# 1. Install minimum dependencies (gopass + gh)
+# 1. Install minimum dependencies (gopass + gh) via mise CLI
 _log "info" "installing gopass and gh via mise..."
 mkdir -p "{{ .chezmoi.homeDir }}/.config/mise"
 cat > "{{ .chezmoi.homeDir }}/.config/mise/config.toml" << 'MISE_EOF'
 [settings.github]
 github_attestations = false
 MISE_EOF
-$MISE install gopass@latest gh@latest
+$MISE install github:gopasspw/gopass@latest github:cli/cli@latest
+
+# Resolve direct binary paths (bypass mise shims to avoid GITHUB_TOKEN injection)
+# Tool binaries may be at <install>/bin/<name> or <install>/<name> depending on the tool
+_find_bin() {
+    local install_path=$($MISE where "$1" 2>/dev/null)
+    if [ -x "$install_path/bin/$2" ]; then
+        echo "$install_path/bin/$2"
+    elif [ -x "$install_path/$2" ]; then
+        echo "$install_path/$2"
+    fi
+}
+GOPASS=$(_find_bin "github:gopasspw/gopass" "gopass")
+GH=$(_find_bin "github:cli/cli" "gh")
 _log "success" "gopass and gh installed"
 
 # 2. GitHub authentication via device flow
-if ! $GH auth status >/dev/null 2>&1; then
+# Use env -u to ensure gh doesn't pick up GITHUB_TOKEN from the environment
+# (on a fresh machine GITHUB_TOKEN doesn't exist yet, but this is a safety net)
+if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth status >/dev/null 2>&1; then
     _log "info" "github authentication required"
     _log "notice" "open https://github.com/login/device on another device and enter the code"
-    $GH auth login -h github.com -p ssh --skip-ssh-key
+    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key
     _log "success" "authenticated to github"
 else
     _log "info" "already authenticated to github"
@@ -37,11 +50,11 @@ fi
 
 # 3. Upload SSH key to GitHub
 SSH_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY" 2>/dev/null | awk '{print $2}')
-if $GH ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
+if env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
     _log "info" "ssh key already on github"
 else
     _log "info" "uploading ssh key to github..."
-    $GH ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}"
+    env -u GITHUB_TOKEN -u GH_TOKEN "$GH" ssh-key add "$SSH_KEY" --title "chezmoi-{{ .chezmoi.hostname }}"
     _log "success" "ssh key uploaded"
 fi
 
@@ -78,7 +91,7 @@ _log "success" "identity symlink created"
 # 7. Clone gopass store
 if [ ! -d "$STORE_PATH/.git" ]; then
     _log "info" "cloning gopass store..."
-    $GOPASS clone --crypto age "$STORE_URL"
+    "$GOPASS" clone --crypto age "$STORE_URL"
     _log "success" "gopass store cloned"
 else
     _log "info" "gopass store already exists, skipping clone"
@@ -86,8 +99,8 @@ fi
 
 # 8. Unlock age agent
 _log "info" "unlocking gopass age agent..."
-$GOPASS age agent start 2>/dev/null || true
-$GOPASS age agent unlock
+"$GOPASS" age agent start 2>/dev/null || true
+"$GOPASS" age agent unlock
 _log "success" "age agent unlocked"
 
 _log "success" "gopass bootstrap complete"
