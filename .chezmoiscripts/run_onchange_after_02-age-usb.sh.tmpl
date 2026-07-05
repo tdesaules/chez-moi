@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+{{ include ".chezmoitemplates/functions.sh.tmpl" }}
 
 # {{ include "dot_local/share/udisks2/mount_options.conf" | sha256sum }}
 

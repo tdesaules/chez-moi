@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source the functions from the template
-source "{{ .chezmoi.sourceDir }}/.chezmoitemplates/functions.sh.tmpl"
+{{ include ".chezmoitemplates/functions.sh.tmpl" }}
 
 # Check if mise binary exists
 if command -v mise &> /dev/null; then
