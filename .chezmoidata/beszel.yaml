@@ -1,0 +1,4 @@
+beszel:
+  port: 8090
+  data_volume: beszel-data
+  socket_volume: beszel-socket

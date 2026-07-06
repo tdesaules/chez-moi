@@ -1,0 +1,12 @@
+[Unit]
+Description=Beszel Hub
+After=network.target
+
+[Container]
+Image=docker.io/henrygd/beszel:latest
+ContainerName=beszel
+Network=ai.network
+PublishPort=127.0.0.1:{{ .beszel.port }}:{{ .beszel.port }}
+Volume={{ .beszel.data_volume }}:/beszel_data
+Volume={{ .beszel.socket_volume }}:/beszel_socket
+Environment=APP_URL=http://localhost:{{ .beszel.port }}

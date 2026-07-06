@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Name=Beszel (Web)
+Exec=chromium-browser --profile-directory=beszel --app=http://localhost:{{ .beszel.port }}
+StartupWMClass=chrome-localhost__-beszel
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/beszel.svg
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
+Categories=Network;WebBrowser;
+StartupNotify=true
+Terminal=false
+X-MultipleArgs=false
+Keywords=Internet;WWW;Browser;Web;Explorer;
+Actions=new-window;new-blank-window;new-private-window;profilemanager;
