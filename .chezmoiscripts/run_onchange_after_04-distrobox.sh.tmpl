@@ -4,7 +4,6 @@
 
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-# Hash des fichiers distrobox.ini, containers.conf et .desktop pour déclencher sur modification
 # {{ include "dot_config/distrobox/distrobox.ini.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/containers.conf" | sha256sum }}
 # {{ include "dot_config/distrobox/chromium-perso.desktop.tmpl" | sha256sum }}
