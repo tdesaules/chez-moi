@@ -1,0 +1,3 @@
+dms:
+  plugins_dir: .config/DankMaterialShell/plugins
+  service: dms.service

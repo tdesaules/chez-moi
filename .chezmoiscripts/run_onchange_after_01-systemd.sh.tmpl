@@ -1,6 +1,7 @@
 #!/bin/bash
-#
+
 {{- if .is_systemd }}
+
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 # Hash des fichiers .service, .socket, .path et .container pour déclencher sur ajout/modification/suppression
@@ -13,8 +14,8 @@
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.path.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.service.tmpl" | sha256sum }}
 
-USER_SYSTEMD_DIR="{{ .chezmoi.homeDir }}/.config/systemd/user"
-USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/.config/containers/systemd"
+USER_SYSTEMD_DIR="{{ .chezmoi.homeDir }}/{{ .systemd.user_dir }}"
+USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/{{ .systemd.containers_dir }}"
 
 _log "info" "reloading systemd user daemon..."
 if ! output=$(systemctl --user daemon-reload 2>&1); then
@@ -43,4 +44,5 @@ for service in $services; do
 done
 
 _log "success" "all systemd user services processed. Podman quadlet containers will be started by systemd."
+
 {{- end }}

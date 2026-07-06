@@ -1,0 +1,3 @@
+udisks2:
+  src: .local/share/udisks2/mount_options.conf
+  dest: /etc/udisks2/mount_options.conf

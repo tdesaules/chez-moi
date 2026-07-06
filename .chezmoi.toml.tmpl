@@ -33,6 +33,11 @@
     {{- $is_systemd = true -}}
 {{- end -}}
 
+{{- $is_distrobox := false -}}
+{{- if ( lookPath "distrobox" ) -}}
+    {{- $is_distrobox = true -}}
+{{- end -}}
+
 [data]
     is_linux = {{ $is_linux }}
     is_fedora = {{ $is_fedora }}
@@ -40,4 +45,5 @@
     is_nushell = {{ $is_nushell }}
     is_ssh = {{ $is_ssh }}
     is_systemd = {{ $is_systemd }}
+    is_distrobox = {{ $is_distrobox }}
     atomic_version = {{ $atomic_version }}

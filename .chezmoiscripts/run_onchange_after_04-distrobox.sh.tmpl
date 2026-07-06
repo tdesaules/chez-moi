@@ -1,15 +1,12 @@
 #!/bin/bash
 
-# Source the functions from the template
+{{- if .is_distrobox }}
+
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-# Hash of the distrobox.ini.tmpl file to trigger script execution on changes
+# Hash des fichiers distrobox.ini, containers.conf et .desktop pour déclencher sur modification
 # {{ include "dot_config/distrobox/distrobox.ini.tmpl" | sha256sum }}
-
-# Hash of containers.conf to trigger distrobox recreation when podman log driver changes
 # {{ include "dot_config/containers/containers.conf" | sha256sum }}
-
-# Hash of exported desktop files to trigger re-export on changes
 # {{ include "dot_config/distrobox/chromium-perso.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/chromium-work.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/zen-perso.desktop.tmpl" | sha256sum }}
@@ -19,24 +16,22 @@
 # {{ include "dot_config/distrobox/filen.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/opencode.desktop.tmpl" | sha256sum }}
 
-# Check if distrobox binary exists
-if command -v distrobox &> /dev/null; then
-    _log "info" "Running distrobox assemble create..."
-    if distrobox assemble create --file {{ .chezmoi.homeDir }}/.config/distrobox/distrobox.ini > /dev/null 2>&1; then
-        _log "success" "Distrobox assemble create executed successfully."
+_log "info" "running distrobox assemble create..."
+if ! output=$(distrobox assemble create --file "{{ .chezmoi.homeDir }}/{{ .distrobox.ini }}" 2>&1); then
+    echo "$output"
+    _error_handler "distrobox assemble create"
+fi
+_log "success" "distrobox assemble create executed successfully."
+
+APPLICATIONS_DIR="{{ .chezmoi.homeDir }}/{{ .distrobox.applications_dir }}"
+if [ -d "$APPLICATIONS_DIR" ] && command -v update-desktop-database &> /dev/null; then
+    _log "info" "updating desktop database..."
+    if ! output=$(update-desktop-database "$APPLICATIONS_DIR" 2>&1); then
+        echo "$output"
+        _log "warning" "failed to update desktop database"
     else
-        _log "error" "Failed to execute distrobox assemble create."
-        exit 1
+        _log "success" "desktop database updated."
     fi
-else
-    _log "error" "Distrobox binary not found. Please ensure distrobox is installed."
-    exit 1
 fi
 
-# Update desktop database
-APPLICATIONS_DIR="{{ .chezmoi.homeDir }}/.local/share/applications"
-if [ -d "$APPLICATIONS_DIR" ] && command -v update-desktop-database &> /dev/null; then
-    _log "info" "Updating desktop database..."
-    update-desktop-database "$APPLICATIONS_DIR"
-    _log "success" "Desktop database updated."
-fi
+{{- end }}

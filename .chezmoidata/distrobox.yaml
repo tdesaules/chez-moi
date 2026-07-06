@@ -1,0 +1,3 @@
+distrobox:
+  ini: .config/distrobox/distrobox.ini
+  applications_dir: .local/share/applications

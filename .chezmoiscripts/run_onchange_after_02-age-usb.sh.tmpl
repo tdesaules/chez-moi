@@ -1,17 +1,16 @@
 #!/bin/bash
 
+{{- if .is_fedora }}
+
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 # {{ include "dot_local/share/udisks2/mount_options.conf" | sha256sum }}
 
-DEST="/etc/udisks2/mount_options.conf"
-SRC="{{ .chezmoi.homeDir }}/.local/share/udisks2/mount_options.conf"
-
-_log "info" "Deploying udisks2 mount_options.conf to $DEST..."
+SRC="{{ .chezmoi.homeDir }}/{{ .udisks2.src }}"
+DEST="{{ .udisks2.dest }}"
 
 if [ ! -f "$SRC" ]; then
-    _log "error" "Source file not found: $SRC"
-    exit 1
+    _error_handler "udisks2 mount_options.conf source not found"
 fi
 
 if [ -f "$DEST" ] && diff -q "$SRC" "$DEST" >/dev/null 2>&1; then
@@ -19,10 +18,11 @@ if [ -f "$DEST" ] && diff -q "$SRC" "$DEST" >/dev/null 2>&1; then
     exit 0
 fi
 
-sudo cp "$SRC" "$DEST" 2>/dev/null
-if [ $? -eq 0 ]; then
-    _log "success" "Deployed mount_options.conf to $DEST"
-else
-    _log "error" "Failed to deploy (requires sudo)"
-    exit 1
+_log "info" "deploying udisks2 mount_options.conf to $DEST..."
+if ! output=$(sudo cp "$SRC" "$DEST" 2>&1); then
+    echo "$output"
+    _error_handler "udisks2 mount_options.conf deployment"
 fi
+_log "success" "deployed mount_options.conf to $DEST"
+
+{{- end }}
