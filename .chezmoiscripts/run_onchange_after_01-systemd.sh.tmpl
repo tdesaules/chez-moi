@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# Source the functions from the template
+#
+{{- if .is_systemd }}
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 # Hash des fichiers .service, .socket, .path et .container pour déclencher sur ajout/modification/suppression
@@ -13,43 +13,34 @@
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.path.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.service.tmpl" | sha256sum }}
 
-# Check if systemctl is available
-if ! command -v systemctl &> /dev/null; then
-    _log "error" "systemctl not found. Cannot manage systemd user services."
-    exit 1
-fi
-
-# Reload systemd user daemon
-_log "info" "Reloading systemd user daemon..."
-if systemctl --user daemon-reload > /dev/null 2>&1; then
-    _log "success" "systemd user daemon reloaded."
-else
-    _log "error" "Failed to reload systemd user daemon."
-    exit 1
-fi
-
-# Directories to scan
 USER_SYSTEMD_DIR="{{ .chezmoi.homeDir }}/.config/systemd/user"
 USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/.config/containers/systemd"
 
-# Podman quadlet .container files are handled by daemon-reload only
-_log "info" "Podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
+_log "info" "reloading systemd user daemon..."
+if ! output=$(systemctl --user daemon-reload 2>&1); then
+    echo "$output"
+    _error_handler "systemd user daemon reload"
+fi
+_log "success" "systemd user daemon reloaded."
 
-# Get list of .service, .socket and .path files (podman quadlets don't need enable/start)
+_log "info" "podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
+
 services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*.socket' -o -name '*.path' \) -printf '%f\n' 2>/dev/null)
 
 if [ -z "$services" ]; then
-    _log "info" "No systemd user service/socket files found."
+    _log "info" "no systemd user service/socket files found."
     exit 0
 fi
 
 for service in $services; do
-    _log "info" "Enabling and starting $service..."
-    if systemctl --user enable --now "$service" > /dev/null 2>&1; then
-        _log "success" "Enabled and started $service"
+    _log "info" "enabling and starting $service..."
+    if ! output=$(systemctl --user enable --now "$service" 2>&1); then
+        echo "$output"
+        _log "error" "failed to enable/start $service"
     else
-        _log "error" "Failed to enable/start $service"
+        _log "success" "enabled and started $service"
     fi
 done
 
-_log "success" "All systemd user services processed. Podman quadlet containers will be started by systemd."
+_log "success" "all systemd user services processed. Podman quadlet containers will be started by systemd."
+{{- end }}

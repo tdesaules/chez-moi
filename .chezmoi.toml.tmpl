@@ -28,10 +28,16 @@
     {{- $is_ssh = true -}}
 {{- end -}}
 
+{{- $is_systemd := false -}}
+{{- if ( lookPath "systemctl" ) -}}
+    {{- $is_systemd = true -}}
+{{- end -}}
+
 [data]
     is_linux = {{ $is_linux }}
     is_fedora = {{ $is_fedora }}
     is_mise = {{ $is_mise }}
     is_nushell = {{ $is_nushell }}
     is_ssh = {{ $is_ssh }}
+    is_systemd = {{ $is_systemd }}
     atomic_version = {{ $atomic_version }}
