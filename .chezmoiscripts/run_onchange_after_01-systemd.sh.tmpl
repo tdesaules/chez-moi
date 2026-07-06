@@ -30,19 +30,37 @@ services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*
 
 if [ -z "$services" ]; then
     _log "info" "no systemd user service/socket files found."
-    exit 0
+else
+    for service in $services; do
+        _log "info" "enabling and starting $service..."
+        if ! output=$(systemctl --user enable --now "$service" 2>&1); then
+            echo "$output"
+            _log "error" "failed to enable/start $service"
+        else
+            _log "success" "enabled and started $service"
+        fi
+    done
 fi
 
-for service in $services; do
+containers=$(find "$USER_CONTAINERS_DIR" -maxdepth 1 -name '*.container' -printf '%f\n' 2>/dev/null)
+WANTS_DIR="$USER_SYSTEMD_DIR/default.target.wants"
+
+for container in $containers; do
+    if ! grep -q "^\[Install\]" "${USER_CONTAINERS_DIR}/${container}" 2>/dev/null; then
+        continue
+    fi
+    service="${container%.container}.service"
     _log "info" "enabling and starting $service..."
-    if ! output=$(systemctl --user enable --now "$service" 2>&1); then
+    mkdir -p "$WANTS_DIR"
+    ln -sf "/run/user/$(id -u)/systemd/generator/${service}" "${WANTS_DIR}/${service}"
+    if ! output=$(systemctl --user start "$service" 2>&1); then
         echo "$output"
-        _log "error" "failed to enable/start $service"
+        _log "error" "failed to start $service"
     else
         _log "success" "enabled and started $service"
     fi
 done
 
-_log "success" "all systemd user services processed. Podman quadlet containers will be started by systemd."
+_log "success" "all systemd user services and quadlet containers processed."
 
 {{- end }}

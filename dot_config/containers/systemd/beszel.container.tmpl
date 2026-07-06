@@ -1,5 +1,5 @@
 [Unit]
-Description=Beszel Hub
+Description=Beszel Server
 After=network.target
 
 [Container]
@@ -10,3 +10,6 @@ PublishPort=127.0.0.1:{{ .beszel.port }}:{{ .beszel.port }}
 Volume={{ .beszel.data_volume }}:/beszel_data
 Volume={{ .beszel.socket_volume }}:/beszel_socket
 Environment=APP_URL=http://localhost:{{ .beszel.port }}
+
+[Install]
+WantedBy=default.target
