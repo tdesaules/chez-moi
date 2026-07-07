@@ -10,6 +10,7 @@
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/beszel.container.tmpl" | sha256sum }}
+# {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
 # {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.path.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.service.tmpl" | sha256sum }}
@@ -53,7 +54,7 @@ for container in $containers; do
     _log "info" "enabling and starting $service..."
     mkdir -p "$WANTS_DIR"
     ln -sf "/run/user/$(id -u)/systemd/generator/${service}" "${WANTS_DIR}/${service}"
-    if ! output=$(systemctl --user start "$service" 2>&1); then
+    if ! output=$(systemctl --user restart "$service" 2>&1); then
         echo "$output"
         _log "error" "failed to start $service"
     else

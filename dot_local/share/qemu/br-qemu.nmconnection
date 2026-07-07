@@ -1,0 +1,15 @@
+[connection]
+id=br-qemu
+type=bridge
+autoconnect=false
+interface-name=br-qemu
+
+[bridge]
+stp=false
+priority=12800
+
+[ipv4]
+method=shared
+
+[ipv6]
+method=disabled
