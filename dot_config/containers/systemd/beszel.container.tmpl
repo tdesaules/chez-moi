@@ -10,6 +10,9 @@ PublishPort=127.0.0.1:{{ .beszel.port }}:{{ .beszel.port }}
 Volume={{ .beszel.data_volume }}:/beszel_data
 Volume={{ .beszel.socket_volume }}:/beszel_socket
 Environment=APP_URL=http://localhost:{{ .beszel.port }}
+Environment=USER_EMAIL={{ .beszel.email }}
+Environment=USER_PASSWORD={{ .beszel.password }}
+Environment=AUTO_LOGIN={{ .beszel.email }}
 
 [Install]
 WantedBy=default.target
