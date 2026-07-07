@@ -1,4 +1,5 @@
 qemu:
+  connection: br-qemu
   nm_src: .local/share/qemu/br-qemu.nmconnection
   nm_dest: /etc/NetworkManager/system-connections/br-qemu.nmconnection
   bridge_src: .local/share/qemu/bridge.conf

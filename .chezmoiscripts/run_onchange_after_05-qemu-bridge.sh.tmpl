@@ -21,6 +21,13 @@ else
     fi
     sudo chmod 600 "$NM_CONN_DEST"
     sudo nmcli connection reload 2>/dev/null || true
+    # Restart the connection if currently active to apply new settings
+    if nmcli -t -f NAME connection show --active 2>/dev/null | grep -q "^{{ .qemu.connection }}$"; then
+        _log "info" "restarting {{ .qemu.connection }} connection to apply changes..."
+        sudo nmcli connection down "{{ .qemu.connection }}" 2>/dev/null || true
+        sudo nmcli connection up "{{ .qemu.connection }}" 2>/dev/null || true
+        _log "success" "{{ .qemu.connection }} connection restarted"
+    fi
     _log "success" "deployed br-qemu.nmconnection"
 fi
 
