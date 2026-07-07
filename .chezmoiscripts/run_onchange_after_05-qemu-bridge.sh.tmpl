@@ -41,4 +41,14 @@ else
     fi
     _log "success" "deployed bridge.conf"
 fi
+
+# Allow mDNS in nm-shared zone (for br-qemu bridge mDNS resolution)
+if ! sudo firewall-cmd --zone=nm-shared --list-services 2>/dev/null | grep -qw mdns; then
+    _log "info" "adding mdns service to nm-shared firewalld zone..."
+    sudo firewall-cmd --zone=nm-shared --add-service=mdns --permanent
+    sudo firewall-cmd --reload
+    _log "success" "mdns service added to nm-shared zone"
+else
+    _log "info" "mdns service already in nm-shared zone, skipping"
+fi
 {{- end }}
