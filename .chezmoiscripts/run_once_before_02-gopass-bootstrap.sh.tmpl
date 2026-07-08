@@ -12,30 +12,34 @@ fi
 
 _log "success" "gopass and gh installed"
 
-if ! env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth status >/dev/null 2>&1; then
+GH_BIN=$(mise which gh 2>/dev/null)
+if [ -z "$GH_BIN" ] || [ ! -x "$GH_BIN" ]; then
+    _error_handler "gh binary resolution"
+fi
+
+if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH_BIN" auth status >/dev/null 2>&1; then
     _log "info" "github authentication required"
     _log "notice" "scan the QR code with your phone or open https://github.com/login/device"
     curl -s "qrenco.de/https://github.com/login/device" 2>/dev/null || true
-    if ! env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key --web; then
+    if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH_BIN" auth login -h github.com -p ssh --skip-ssh-key -s admin:public_key --web; then
         _error_handler "github authentication"
     fi
-    _log "success" "authenticated to github"
-elif env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth status 2>&1 | grep -q 'admin:public_key'; then
-    _log "info" "already authenticated to github"
 else
-    _log "info" "refreshing github token to add admin:public_key scope..."
-    if ! env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth refresh -h github.com -s admin:public_key; then
-        _error_handler "github token scope refresh"
+    _log "info" "refreshing github authentication via OAuth..."
+    _log "notice" "scan the QR code with your phone or open https://github.com/login/device"
+    curl -s "qrenco.de/https://github.com/login/device" 2>/dev/null || true
+    if ! env -u GITHUB_TOKEN -u GH_TOKEN "$GH_BIN" auth refresh -h github.com -s admin:public_key; then
+        _error_handler "github token refresh"
     fi
-    _log "success" "github token scope refreshed"
 fi
+_log "success" "authenticated to github via OAuth"
 
 SSH_FINGERPRINT=$(ssh-keygen -lf "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" 2>/dev/null | awk '{print $2}')
-if env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
+if env -u GITHUB_TOKEN -u GH_TOKEN "$GH_BIN" ssh-key list 2>/dev/null | grep -q "$SSH_FINGERPRINT"; then
     _log "info" "ssh key already on github"
 else
     _log "info" "uploading ssh key to github..."
-    if ! OUTPUT=$(env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" ssh-key add "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" --title "chezmoi-{{ .chezmoi.hostname }}" 2>&1); then
+    if ! OUTPUT=$(env -u GITHUB_TOKEN -u GH_TOKEN "$GH_BIN" ssh-key add "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" --title "chezmoi-{{ .chezmoi.hostname }}" 2>&1); then
         echo "$OUTPUT"
         _error_handler "ssh key upload to github"
     fi
