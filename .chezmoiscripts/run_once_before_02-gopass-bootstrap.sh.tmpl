@@ -20,8 +20,14 @@ if ! env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/s
         _error_handler "github authentication"
     fi
     _log "success" "authenticated to github"
-else
+elif env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth status 2>&1 | grep -q 'admin:public_key'; then
     _log "info" "already authenticated to github"
+else
+    _log "info" "refreshing github token to add admin:public_key scope..."
+    if ! env -u GITHUB_TOKEN -u GH_TOKEN "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gh" auth refresh -h github.com -s admin:public_key; then
+        _error_handler "github token scope refresh"
+    fi
+    _log "success" "github token scope refreshed"
 fi
 
 SSH_FINGERPRINT=$(ssh-keygen -lf "{{ .chezmoi.homeDir }}/{{ .ssh.dir }}/{{ .ssh.key.name }}.pub" 2>/dev/null | awk '{print $2}')
