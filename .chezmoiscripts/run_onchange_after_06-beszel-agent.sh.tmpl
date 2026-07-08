@@ -127,8 +127,8 @@ _log "info" "host system status: $SYSTEM_STATUS"
 # 9. Take action based on status
 NEEDS_RESTART=false
 case "$SYSTEM_STATUS" in
-    "online")
-        _log "success" "host is registered and online, nothing to do"
+    "up"|"online")
+        _log "success" "host is registered and up, nothing to do"
         ;;
     "not_registered")
         _log "info" "host not registered, will start agent..."
@@ -160,16 +160,16 @@ if items:
 else:
     print('not_registered')
 " 2>/dev/null)
-        if [ "$STATUS" = "online" ]; then
+        if [ "$STATUS" = "up" ] || [ "$STATUS" = "online" ]; then
             REGISTERED=true
             break
         fi
     done
 
     if [ "$REGISTERED" = true ]; then
-        _log "success" "agent registered and online"
+        _log "success" "agent registered and up"
     else
-        _log "warning" "agent not yet online (status: $STATUS), may need more time"
+        _log "warning" "agent not yet up (status: $STATUS), may need more time"
     fi
 fi
 
