@@ -21,7 +21,6 @@ else
     fi
     sudo chmod 600 "$NM_CONN_DEST"
     sudo nmcli connection reload 2>/dev/null || true
-    # Restart the connection if currently active to apply new settings
     if nmcli -t -f NAME connection show --active 2>/dev/null | grep -q "^{{ .qemu.connection }}$"; then
         _log "info" "restarting {{ .qemu.connection }} connection to apply changes..."
         sudo nmcli connection down "{{ .qemu.connection }}" 2>/dev/null || true
@@ -42,14 +41,22 @@ else
     _log "success" "deployed bridge.conf"
 fi
 
-# Allow mDNS in nm-shared zone (for br-qemu bridge mDNS resolution)
 if ! sudo firewall-cmd --zone=nm-shared --list-services 2>/dev/null | grep -qw mdns; then
     _log "info" "adding mdns service to nm-shared firewalld zone..."
     sudo firewall-cmd --zone=nm-shared --add-service=mdns --permanent
-    sudo firewall-cmd --zone=nm-shared --add-port=8090/tcp --permanent
     sudo firewall-cmd --reload
     _log "success" "mdns service added to nm-shared zone"
 else
     _log "info" "mdns service already in nm-shared zone, skipping"
 fi
+
+if ! sudo firewall-cmd --zone=nm-shared --list-ports 2>/dev/null | grep -qw "8090/tcp"; then
+    _log "info" "adding port 8090/tcp to nm-shared firewalld zone..."
+    sudo firewall-cmd --zone=nm-shared --add-port=8090/tcp --permanent
+    sudo firewall-cmd --reload
+    _log "success" "port 8090/tcp added to nm-shared zone"
+else
+    _log "info" "port 8090/tcp already in nm-shared zone, skipping"
+fi
+
 {{- end }}
