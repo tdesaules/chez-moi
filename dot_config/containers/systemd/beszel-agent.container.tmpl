@@ -1,0 +1,14 @@
+[Unit]
+Description=Beszel Agent
+After=network.target beszel.service
+
+[Container]
+Image=docker.io/henrygd/beszel-agent:latest
+ContainerName=beszel-agent
+Network=host
+EnvironmentFile={{ .chezmoi.homeDir }}/.config/beszel/agent.env
+Volume=beszel-agent-data:/var/lib/beszel-agent
+Volume=/run/user/1000/podman/podman.sock:/run/podman/podman.sock:ro
+
+[Install]
+WantedBy=default.target

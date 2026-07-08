@@ -1,0 +1,177 @@
+#!/bin/bash
+#
+{{- if and .is_systemd .is_fedora }}
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# {{ include "dot_config/containers/systemd/beszel.container.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/beszel-agent.container.tmpl" | sha256sum }}
+# {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
+
+BESZEL_HUB="http://localhost:{{ .beszel.port }}"
+BESZEL_EMAIL="{{ .beszel.email }}"
+BESZEL_PASSWORD="{{ .beszel.password }}"
+AGENT_NAME="{{ .beszel.agent_name }}"
+AGENT_ENV_FILE="{{ .chezmoi.homeDir }}/.config/beszel/agent.env"
+AGENT_ENV_DIR="$(dirname "$AGENT_ENV_FILE")"
+HUB_DATA_VOLUME="{{ .chezmoi.homeDir }}/.local/share/containers/storage/volumes/beszel-data/_data"
+
+# 1. Wait for hub to be available
+_log "info" "waiting for beszel hub..."
+HUB_READY=false
+for i in $(seq 1 30); do
+    if curl -s "$BESZEL_HUB/api/health" 2>/dev/null | grep -q "healthy"; then
+        HUB_READY=true
+        break
+    fi
+    sleep 1
+done
+
+if [ "$HUB_READY" = false ]; then
+    _log "warning" "beszel hub not available, skipping agent setup"
+    exit 0
+fi
+_log "success" "beszel hub is ready"
+
+# 2. Sync superuser password (USER_PASSWORD env var doesn't update existing users)
+_log "info" "syncing superuser password..."
+if ! output=$(podman exec beszel /beszel superuser upsert "$BESZEL_EMAIL" "$BESZEL_PASSWORD" 2>&1); then
+    echo "$output"
+    _log "warning" "failed to sync superuser password"
+fi
+
+# 3. Authenticate as superuser
+_log "info" "authenticating to hub..."
+SUPER_TOKEN=$(curl -s -X POST "$BESZEL_HUB/api/collections/_superusers/auth-with-password" \
+    -H "Content-Type: application/json" \
+    -d "{\"identity\":\"$BESZEL_EMAIL\",\"password\":\"$BESZEL_PASSWORD\"}" 2>/dev/null \
+    | python3 -c "import json,sys;print(json.load(sys.stdin).get('token',''))" 2>/dev/null)
+
+if [ -z "$SUPER_TOKEN" ]; then
+    _error_handler "hub authentication"
+fi
+_log "success" "authenticated as superuser"
+
+# 4. Sync user password (for AUTO_LOGIN to keep working)
+_log "info" "syncing user password..."
+USER_ID=$(curl -s "$BESZEL_HUB/api/collections/users/records" \
+    -H "Authorization: Bearer $SUPER_TOKEN" 2>/dev/null \
+    | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['items'][0]['id'] if d.get('items') else '')" 2>/dev/null)
+
+if [ -n "$USER_ID" ]; then
+    curl -s -X PATCH "$BESZEL_HUB/api/collections/users/records/$USER_ID" \
+        -H "Authorization: Bearer $SUPER_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"password\":\"$BESZEL_PASSWORD\"}" >/dev/null 2>&1
+fi
+
+# 5. Check/create universal token
+_log "info" "checking universal token..."
+TOKENS_JSON=$(curl -s "$BESZEL_HUB/api/collections/universal_tokens/records" \
+    -H "Authorization: Bearer $SUPER_TOKEN" 2>/dev/null)
+TOKEN_COUNT=$(echo "$TOKENS_JSON" | python3 -c "import json,sys;print(json.load(sys.stdin).get('totalItems',0))" 2>/dev/null)
+
+if [ "$TOKEN_COUNT" = "0" ]; then
+    _log "info" "creating universal token..."
+    UNIVERSAL_TOKEN=$(openssl rand -hex 16)
+    curl -s -X POST "$BESZEL_HUB/api/collections/universal_tokens/records" \
+        -H "Authorization: Bearer $SUPER_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"user\":\"$USER_ID\",\"token\":\"$UNIVERSAL_TOKEN\"}" >/dev/null 2>&1
+else
+    UNIVERSAL_TOKEN=$(echo "$TOKENS_JSON" | python3 -c "import json,sys;print(json.load(sys.stdin)['items'][0]['token'])" 2>/dev/null)
+fi
+
+if [ -z "$UNIVERSAL_TOKEN" ]; then
+    _error_handler "universal token retrieval"
+fi
+_log "success" "universal token ready"
+
+# 6. Get hub SSH public key
+_log "info" "retrieving hub SSH key..."
+AGENT_KEY=$(ssh-keygen -y -f "$HUB_DATA_VOLUME/id_ed25519" 2>/dev/null)
+
+if [ -z "$AGENT_KEY" ]; then
+    _error_handler "hub SSH key retrieval"
+fi
+
+# 7. Write agent env file (not in repo — dynamic)
+_log "info" "writing agent environment file..."
+mkdir -p "$AGENT_ENV_DIR"
+cat > "$AGENT_ENV_FILE" << EOF
+TOKEN=$UNIVERSAL_TOKEN
+KEY=$AGENT_KEY
+HUB_URL=$BESZEL_HUB
+SYSTEM_NAME=$AGENT_NAME
+DISABLE_SSH=true
+DOCKER_HOST=unix:///run/podman/podman.sock
+EOF
+chmod 600 "$AGENT_ENV_FILE"
+_log "success" "agent environment file written"
+
+# 8. Check host system registration status
+_log "info" "checking host system registration..."
+SYSTEMS_JSON=$(curl -s "$BESZEL_HUB/api/collections/systems/records" \
+    -H "Authorization: Bearer $SUPER_TOKEN" 2>/dev/null)
+SYSTEM_STATUS=$(echo "$SYSTEMS_JSON" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+items = [i for i in d.get('items',[]) if i.get('name') == '$AGENT_NAME']
+if items:
+    print(items[0].get('status','unknown'))
+else:
+    print('not_registered')
+" 2>/dev/null)
+
+_log "info" "host system status: $SYSTEM_STATUS"
+
+# 9. Take action based on status
+NEEDS_RESTART=false
+case "$SYSTEM_STATUS" in
+    "online")
+        _log "success" "host is registered and online, nothing to do"
+        ;;
+    "not_registered")
+        _log "info" "host not registered, will start agent..."
+        NEEDS_RESTART=true
+        ;;
+    *)
+        _log "warning" "host registered but status is $SYSTEM_STATUS, will restart agent..."
+        NEEDS_RESTART=true
+        ;;
+esac
+
+if [ "$NEEDS_RESTART" = true ]; then
+    _log "info" "restarting beszel-agent..."
+    systemctl --user restart beszel-agent.service 2>/dev/null || true
+
+    # 10. Wait for agent registration
+    _log "info" "waiting for agent registration..."
+    REGISTERED=false
+    for i in $(seq 1 30); do
+        sleep 2
+        SYSTEMS_JSON=$(curl -s "$BESZEL_HUB/api/collections/systems/records" \
+            -H "Authorization: Bearer $SUPER_TOKEN" 2>/dev/null)
+        STATUS=$(echo "$SYSTEMS_JSON" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+items = [i for i in d.get('items',[]) if i.get('name') == '$AGENT_NAME']
+if items:
+    print(items[0].get('status','unknown'))
+else:
+    print('not_registered')
+" 2>/dev/null)
+        if [ "$STATUS" = "online" ]; then
+            REGISTERED=true
+            break
+        fi
+    done
+
+    if [ "$REGISTERED" = true ]; then
+        _log "success" "agent registered and online"
+    else
+        _log "warning" "agent not yet online (status: $STATUS), may need more time"
+    fi
+fi
+
+_log "success" "beszel agent setup complete"
+{{- end }}
