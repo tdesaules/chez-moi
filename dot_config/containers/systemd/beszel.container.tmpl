@@ -9,9 +9,9 @@ Network=ai.network
 PublishPort=0.0.0.0:{{ .beszel.port }}:{{ .beszel.port }}
 Volume={{ .beszel.data_volume }}:/beszel_data
 Environment=APP_URL=http://localhost:{{ .beszel.port }}
-Environment=USER_EMAIL={{ .beszel.email }}
-Environment=USER_PASSWORD={{ .beszel.password }}
-Environment=AUTO_LOGIN={{ .beszel.email }}
+Environment=USER_EMAIL={{ output "gopass" "show" "perso/web/beszel.desaules.in/thibault@desaules.me" "username" | trim }}
+Environment=USER_PASSWORD={{ gopass "perso/web/beszel.desaules.in/thibault@desaules.me" | trim }}
+Environment=AUTO_LOGIN={{ output "gopass" "show" "perso/web/beszel.desaules.in/thibault@desaules.me" "username" | trim }}
 
 [Install]
 WantedBy=default.target

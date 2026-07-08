@@ -8,8 +8,8 @@
 # {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
 
 BESZEL_HUB="http://localhost:{{ .beszel.port }}"
-BESZEL_EMAIL="{{ .beszel.email }}"
-BESZEL_PASSWORD="{{ .beszel.password }}"
+BESZEL_EMAIL="{{ output "gopass" "show" "perso/web/beszel.desaules.in/thibault@desaules.me" "username" | trim }}"
+BESZEL_PASSWORD="{{ gopass "perso/web/beszel.desaules.in/thibault@desaules.me" | trim }}"
 AGENT_NAME="{{ .beszel.agent_name }}"
 AGENT_ENV_FILE="{{ .chezmoi.homeDir }}/.config/beszel/agent.env"
 AGENT_ENV_DIR="$(dirname "$AGENT_ENV_FILE")"

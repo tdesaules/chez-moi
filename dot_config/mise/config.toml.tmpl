@@ -11,6 +11,8 @@ github_attestations = false
 
 [env]
 GITHUB_TOKEN = { value = "{{ gopass "perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f05c5dfff5" | trim }}", redact = true }
+BESZEL_USER = { value = "{{ output "gopass" "show" "perso/web/beszel.desaules.in/thibault@desaules.me" "username" | trim }}", redact = true }
+BESZEL_PASSWORD = { value = "{{ gopass "perso/web/beszel.desaules.in/thibault@desaules.me" | trim }}", redact = true }
 
 [tools]
 rust = "latest"
