@@ -20,6 +20,12 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - If a deployed file was modified outside chezmoi (e.g. `mise settings set`), apply with
   `--force` to overwrite: `chezmoi apply --force --source <repo> <path>`.
 
+## Git workflow
+
+- **Commit changes locally** using [conventional commits](https://www.conventionalcommits.org/)
+  (e.g. `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
+- **Never push** — pushing to the remote is done manually by the user.
+
 ## Chezmoi template facts
 
 - chezmoi 2.70.0. Functions and `{{ }}` syntax are chezmoi's, not mise's.
