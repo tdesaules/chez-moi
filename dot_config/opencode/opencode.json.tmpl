@@ -3,6 +3,7 @@
   "shell": "/usr/bin/bash",
   "enabled_providers": [
     "openrouter",
+    "poolside",
     "zai-coding-plan",
     "umans",
     "lemonade"
@@ -21,6 +22,12 @@
         },
         "user.ornith-1.0-9b-Q8_0": {
           "name": "Ornith-9B"
+        },
+        "user.Laguna-XS-2.1-Q4_K_M": {
+          "name": "Laguna-XS-2.1"
+        },
+        "user.Laguna-S-2.1-Q3_K_S": {
+          "name": "Laguna-S-2.1"
         }
       }
     },
@@ -57,6 +64,22 @@
         },
         "moonshotai/kimi-k2.7-code": {
           "name": "Kimi-K2.7-Code"
+        }
+      }
+    },
+    "poolside": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Poolside",
+      "options": {
+        "baseURL": "https://inference.poolside.ai/v1",
+        "apiKey": "{{ gopass "perso/token/platform.poolside.ai/41ec3914-d42a-43e1-b2a5-d5c69706cb27" | trim }}"
+      },
+      "models": {
+        "poolside/laguna-xs-2.1": {
+          "name": "Laguna-XS-2.1"
+        },
+        "poolside/laguna-s-2.1": {
+          "name": "Laguna-S-2.1"
         }
       }
     }
