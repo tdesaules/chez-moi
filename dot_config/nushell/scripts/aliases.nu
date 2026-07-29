@@ -44,6 +44,10 @@ export def --wrapped pass [...args: string] {
     gopass ...$args
 }
 
+export def passgen [] {
+    motus random -c 24 -n
+}
+
 export def --wrapped top [...args: string] {
     btop ...$args
 }
