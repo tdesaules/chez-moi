@@ -89,6 +89,13 @@ window-rule {
 }
 
 window-rule {
+    match title="Gopass View Secret"
+    open-floating true
+    default-column-width { fixed 620; }
+    default-window-height { fixed 310; }
+}
+
+window-rule {
     match title="Gopass Confirm"
     open-floating true
     default-column-width { fixed 620; }
