@@ -31,7 +31,7 @@ kubectl = "latest"
 "github:eza-community/eza" = "latest"
 "github:aristocratos/btop" = "latest"
 "github:jesseduffield/lazygit" = "latest"
-"github:mikefarah/yq" = "latest"
+"github:mikefarah/yq" = { version = "latest", postinstall = "ln -sf yq_{{ .chezmoi.os }}_{{ .chezmoi.arch }} \"$MISE_TOOL_INSTALL_PATH/yq\"" }
 "github:jqlang/jq" = "latest"
 "github:sharkdp/vivid" = "latest"
 "github:FiloSottile/age" = "latest"

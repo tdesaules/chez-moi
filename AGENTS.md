@@ -132,11 +132,17 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 ## opencode
 
 - Provider config: `dot_config/opencode/opencode.json.tmpl`. Enabled providers:
-  `mistral`, `openrouter`, `zai-coding-plan`, `umans`, `lemonade` (local,
+  `anthropic`, `openrouter`, `poolside`, `scaleway`, `zai-coding-plan`,
+  `ollama-cloud` (Ollama Cloud API, `https://ollama.com/v1`), `lemonade` (local,
   `http://127.0.0.1:13305/v1`).
-- `lemonade`, `umans`, and `openrouter` are defined inline in `opencode.json.tmpl` with
-  gopass-backed API keys. `mistral` and `zai-coding-plan` get their keys from
-  `dot_local/share/opencode/auth.json.tmpl`.
+- `anthropic` authenticates via `/connect` (Claude Pro/Max OAuth) — token stored
+  in `auth.json` at runtime. Do NOT `chezmoi apply` `auth.json.tmpl` without
+  `--keep` or the OAuth token will be lost.
+- `lemonade`, `openrouter`, and `poolside` are defined inline in
+  `opencode.json.tmpl` with gopass-backed API keys. `ollama-cloud`,
+  `zai-coding-plan`, and `scaleway` get their keys from
+  `dot_local/share/opencode/auth.json.tmpl`. `ollama-cloud` is a built-in
+  provider (models.dev).
 
 ## Verify before commit
 

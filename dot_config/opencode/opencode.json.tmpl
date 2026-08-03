@@ -2,11 +2,12 @@
   "$schema": "https://opencode.ai/config.json",
   "shell": "/usr/bin/bash",
   "enabled_providers": [
+    "anthropic",
     "openrouter",
     "poolside",
     "scaleway",
     "zai-coding-plan",
-    "umans",
+    "ollama-cloud",
     "lemonade"
   ],
   "provider": {
@@ -29,26 +30,6 @@
         },
         "user.Laguna-S-2.1-Q3_K_S": {
           "name": "Laguna-S-2.1"
-        }
-      }
-    },
-    "umans": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Umans AI",
-      "options": {
-        "baseURL": "https://api.code.umans.ai/v1",
-        "apiKey": "{{ gopass "perso/token/umans.ai/e7564783-7052-48cf-acdf-15b53811a6e2" | trim }}"
-      },
-      "models": {
-        "umans-kimi-k2.7": {
-          "id": "umans-kimi-k2.7",
-          "name": "Kimi-K2.7-Code",
-          "modalities": { "input": ["text", "image"], "output": ["text"] }
-        },
-        "umans-glm-5.2": {
-          "id": "umans-glm-5.2",
-          "name": "GLM-5.2",
-          "modalities": { "input": ["text"], "output": ["text"] }
         }
       }
     },
