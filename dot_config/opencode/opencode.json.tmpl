@@ -10,13 +10,22 @@
     "ollama-cloud",
     "lemonade"
   ],
+  "plugin": [
+    "opencode-claude-auth@latest"
+  ],
   "provider": {
+    "anthropic": {
+      "options": {
+        "baseURL": "http://127.0.0.1:3456",
+        "apiKey": "dummy"
+      }
+    },
     "lemonade": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Lemonade",
       "options": {
         "baseURL": "http://127.0.0.1:13305/v1",
-        "apiKey": "empty"
+        "apiKey": "dummy"
       },
       "models": {
         "user.ornith-1.0-35b-Q8_0": {
