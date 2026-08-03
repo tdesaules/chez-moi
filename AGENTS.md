@@ -132,17 +132,27 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 ## opencode
 
 - Provider config: `dot_config/opencode/opencode.json.tmpl`. Enabled providers:
-  `anthropic`, `openrouter`, `poolside`, `scaleway`, `zai-coding-plan`,
-  `ollama-cloud` (Ollama Cloud API, `https://ollama.com/v1`), `lemonade` (local,
-  `http://127.0.0.1:13305/v1`).
-- `anthropic` authenticates via `/connect` (Claude Pro/Max OAuth) — token stored
-  in `auth.json` at runtime. Do NOT `chezmoi apply` `auth.json.tmpl` without
-  `--keep` or the OAuth token will be lost.
-- `lemonade`, `openrouter`, and `poolside` are defined inline in
-  `opencode.json.tmpl` with gopass-backed API keys. `ollama-cloud`,
-  `zai-coding-plan`, and `scaleway` get their keys from
-  `dot_local/share/opencode/auth.json.tmpl`. `ollama-cloud` is a built-in
-  provider (models.dev).
+  `opencode-go` (OpenCode Go subscription, built-in), `openrouter`, `poolside`,
+  `scaleway`, `zai-coding-plan`, `ollama-cloud` (Ollama Cloud API,
+  `https://ollama.com/v1`), `lemonade` (local, `http://127.0.0.1:13305/v1`).
+- OpenCode Zen (`opencode`) has been replaced by OpenCode Go (`opencode-go`).
+- Each provider uses a `whitelist` to show only curated models in `/models`:
+  - `opencode-go`: `kimi-k3`, `kimi-k2.7-code`, `deepseek-v4-flash`, `glm-5.2`
+  - `ollama-cloud`: same four as `opencode-go`
+  - `openrouter`: `moonshotai/kimi-k3`, `moonshotai/kimi-k2.7-code`,
+    `deepseek/deepseek-v4-flash`, `z-ai/glm-5.2`
+  - `poolside`: `poolside/laguna-s-2.1`, `poolside/laguna-xs-2.1`
+  - `scaleway`: `glm-5.2`, `mistral-medium-3.5-128b`
+  - `zai-coding-plan`: `glm-5.2`
+  - `lemonade`: `user.Laguna-S-2.1-Q3_K_S`, `user.Laguna-XS-2.1-Q4_K_M`
+    (Ornith GGUFs removed from disk and config).
+- `openrouter` and `poolside` are defined inline in `opencode.json.tmpl` with
+  gopass-backed API keys. `ollama-cloud`, `zai-coding-plan`, and `scaleway` get
+  their keys from `dot_local/share/opencode/auth.json.tmpl`. `opencode-go`,
+  `ollama-cloud`, `scaleway`, and `zai-coding-plan` are built-in providers
+  (models.dev).
+- The `opencode-claude-auth` plugin (removed in OpenCode 1.3.0) is no longer
+  referenced. Anthropic Pro/Max OAuth routing is not supported per Anthropic ToS.
 
 ## Verify before commit
 

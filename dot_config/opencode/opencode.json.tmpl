@@ -2,7 +2,7 @@
   "$schema": "https://opencode.ai/config.json",
   "shell": "/usr/bin/bash",
   "enabled_providers": [
-    "opencode",
+    "opencode-go",
     "openrouter",
     "poolside",
     "scaleway",
@@ -11,25 +11,47 @@
     "lemonade"
   ],
   "provider": {
-    "lemonade": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Lemonade",
-      "options": {
-        "baseURL": "http://127.0.0.1:13305/v1",
-        "apiKey": "dummy"
-      },
+    "opencode-go": {
+      "whitelist": [
+        "kimi-k3",
+        "kimi-k2.7-code",
+        "deepseek-v4-flash",
+        "glm-5.2"
+      ],
       "models": {
-        "user.ornith-1.0-35b-Q8_0": {
-          "name": "Ornith-35B"
+        "kimi-k3": {
+          "name": "kimi-k3"
         },
-        "user.ornith-1.0-9b-Q8_0": {
-          "name": "Ornith-9B"
+        "kimi-k2.7-code": {
+          "name": "kimi-k2.7-code"
         },
-        "user.Laguna-XS-2.1-Q4_K_M": {
-          "name": "Laguna-XS-2.1"
+        "deepseek-v4-flash": {
+          "name": "deepseek-v4-flash"
         },
-        "user.Laguna-S-2.1-Q3_K_S": {
-          "name": "Laguna-S-2.1"
+        "glm-5.2": {
+          "name": "glm-5.2"
+        }
+      }
+    },
+    "ollama-cloud": {
+      "whitelist": [
+        "kimi-k3",
+        "kimi-k2.7-code",
+        "deepseek-v4-flash",
+        "glm-5.2"
+      ],
+      "models": {
+        "kimi-k3": {
+          "name": "kimi-k3"
+        },
+        "kimi-k2.7-code": {
+          "name": "kimi-k2.7-code"
+        },
+        "deepseek-v4-flash": {
+          "name": "deepseek-v4-flash"
+        },
+        "glm-5.2": {
+          "name": "glm-5.2"
         }
       }
     },
@@ -40,12 +62,24 @@
         "baseURL": "https://openrouter.ai/api/v1",
         "apiKey": "{{ gopass "perso/token/openrouter.ai/eb7fa3a0-eb5a-4c16-b493-0110051ae05c" | trim }}"
       },
+      "whitelist": [
+        "moonshotai/kimi-k3",
+        "moonshotai/kimi-k2.7-code",
+        "deepseek/deepseek-v4-flash",
+        "z-ai/glm-5.2"
+      ],
       "models": {
-        "z-ai/glm-5.2": {
-          "name": "GLM-5.2"
+        "moonshotai/kimi-k3": {
+          "name": "kimi-k33"
         },
         "moonshotai/kimi-k2.7-code": {
-          "name": "Kimi-K2.7-Code"
+          "name": "kimi-k2.7-code"
+        },
+        "deepseek/deepseek-v4-flash": {
+          "name": "deepseek-v4-flash"
+        },
+        "z-ai/glm-5.2": {
+          "name": "glm-5.2"
         }
       }
     },
@@ -56,12 +90,60 @@
         "baseURL": "https://inference.poolside.ai/v1",
         "apiKey": "{{ gopass "perso/token/platform.poolside.ai/41ec3914-d42a-43e1-b2a5-d5c69706cb27" | trim }}"
       },
+      "whitelist": [
+        "poolside/laguna-s-2.1",
+        "poolside/laguna-xs-2.1"
+      ],
       "models": {
-        "poolside/laguna-xs-2.1": {
-          "name": "Laguna-XS-2.1"
-        },
         "poolside/laguna-s-2.1": {
-          "name": "Laguna-S-2.1"
+          "name": "laguna-s-2.1"
+        },
+        "poolside/laguna-xs-2.1": {
+          "name": "laguna-xs-2.1"
+        }
+      }
+    },
+    "scaleway": {
+      "whitelist": [
+        "glm-5.2",
+        "mistral-medium-3.5-128b"
+      ],
+      "models": {
+        "glm-5.2": {
+          "name": "glm-5.2"
+        },
+        "mistral-medium-3.5-128b": {
+          "name": "mistral-medium-3.5"
+        }
+      }
+    },
+    "zai-coding-plan": {
+      "whitelist": [
+        "glm-5.2"
+      ],
+      "models": {
+        "glm-5.2": {
+          "name": "glm-5.2"
+        }
+      }
+    },
+    "lemonade": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Lemonade",
+      "options": {
+        "baseURL": "http://127.0.0.1:13305/v1",
+        "apiKey": "empty"
+      },
+      "whitelist": [
+        "user.Laguna-S-2.1-Q3_K_S",
+        "user.Laguna-XS-2.1-Q4_K_M"
+      ],
+      "models": {
+        "user.Laguna-S-2.1-Q3_K_S": {
+          "name": "laguna-s-2.1"
+        },
+        "user.Laguna-XS-2.1-Q4_K_M": {
+          "name": "laguna-xs-2.1"
         }
       }
     }
