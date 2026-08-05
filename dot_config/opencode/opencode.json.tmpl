@@ -8,7 +8,8 @@
     "scaleway",
     "zai-coding-plan",
     "ollama-cloud",
-    "lemonade"
+    "lemonade",
+    "llmgateway"
   ],
   "plugin": ["opencode-gemini-auth@latest"],
   "provider": {
@@ -145,6 +146,40 @@
         },
         "user.Laguna-XS-2.1-Q4_K_M": {
           "name": "laguna-xs-2.1"
+        }
+      }
+    },
+    "llmgateway": {
+      "whitelist": [
+        "qwen3.8-max",
+        "qwen3.7-flash",
+        "kimi-k3",
+        "muse-spark-1.1",
+        "glm-5.2",
+        "deepseek-v4-pro",
+        "deepseek-v4-flash"
+      ],
+      "models": {
+        "qwen3.8-max": {
+          "name": "Qwen3.8 Max"
+        },
+        "qwen3.7-flash": {
+          "name": "Qwen3.7 Flash"
+        },
+        "kimi-k3": {
+          "name": "Kimi K3"
+        },
+        "muse-spark-1.1": {
+          "name": "Muse Spark 1.1"
+        },
+        "glm-5.2": {
+          "name": "GLM-5.2"
+        },
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro"
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash"
         }
       }
     }
