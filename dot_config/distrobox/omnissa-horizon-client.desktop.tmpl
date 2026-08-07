@@ -1,9 +1,10 @@
 [Desktop Entry]
 Name=Omnissa Horizon Client
-Exec=/usr/bin/vmware-view %U
+Exec=/usr/bin/horizon-client %u
 Terminal=false
 Type=Application
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/omnissa-horizon.svg
-StartupWMClass=vmware-view
+StartupWMClass=horizon-client
+MimeType=x-scheme-handler/horizon-client;x-scheme-handler/vmware-view;
 Comment=Omnissa Horizon Client for remote desktop access
 Categories=Network;
