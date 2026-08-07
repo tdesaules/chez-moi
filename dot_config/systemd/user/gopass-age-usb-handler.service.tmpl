@@ -2,8 +2,6 @@
 Description=Handle AGE USB key insert/remove (mount + symlink + vault lock)
 After=dms.service
 PartOf=graphical-session.target
-BindsTo=dev-disk-by\x2dlabel-AGE.device
-After=dev-disk-by\x2dlabel-AGE.device
 StartLimitIntervalSec=0
 
 [Service]
