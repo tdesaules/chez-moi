@@ -9,7 +9,7 @@ additional_packages="chromium"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_bins="/usr/bin/chromium-browser"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop {{ .chezmoi.homeDir }}/.config/distrobox/omnissa-horizon-thales.desktop"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop"
 
 [zen-distrobox]
 image=quay.io/fedora/fedora:{{ .atomic_version }}
