@@ -63,6 +63,19 @@ init_hooks="curl -L https://github.com/FilenCloudDienste/filen-desktop/releases/
 init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
 
+[omnissa-horizon-client-distrobox]
+image=quay.io/fedora/fedora:{{ .atomic_version }}
+replace=true
+start_now=true
+entry=false
+hostname="omnissa-horizon-client-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+init_hooks="curl -L https://download3.omnissa.com/software/CART27FQ1_LIN64_RPMPKG_2603/Omnissa-Horizon-Client-2603-8.18.0-24120621798.x64.rpm -o /tmp/omnissa-horizon.rpm"
+init_hooks="dnf --assumeyes install /tmp/omnissa-horizon.rpm"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/omnissa-horizon-client.desktop"
+
 [opencode-distrobox]
 image=quay.io/fedora/fedora:{{ .atomic_version }}
 replace=true
