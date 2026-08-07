@@ -9,7 +9,7 @@ additional_packages="chromium"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_bins="/usr/bin/chromium-browser"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop {{ .chezmoi.homeDir }}/.config/distrobox/omnissa-horizon-thales.desktop"
 
 [zen-distrobox]
 image=quay.io/fedora/fedora:{{ .atomic_version }}
@@ -62,20 +62,6 @@ pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --no
 init_hooks="curl -L https://github.com/FilenCloudDienste/filen-desktop/releases/download/{{ $filen_version }}/Filen_linux_x86_64.rpm -o /tmp/filen.rpm"
 init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
-
-[omnissa-horizon-client-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
-replace=true
-start_now=true
-entry=false
-hostname="omnissa-horizon-client-distrobox"
-{{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
-additional_packages="desktop-file-utils gtk3 atk at-spi2-atk cairo pango gdk-pixbuf2 harfbuzz freetype libpng pixman libXtst pulseaudio-libs libxkbfile"
-{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-init_hooks="curl -L https://download3.omnissa.com/software/CART27FQ1_LIN64_RPMPKG_2603/Omnissa-Horizon-Client-2603-8.18.0-24120621798.x64.rpm -o /tmp/omnissa-horizon.rpm"
-init_hooks="dnf --assumeyes install /tmp/omnissa-horizon.rpm || true"
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/omnissa-horizon-client.desktop"
 
 [opencode-distrobox]
 image=quay.io/fedora/fedora:{{ .atomic_version }}
