@@ -46,6 +46,10 @@ Applies that read secrets need the age agent unlocked:
 gopass age agent unlock
 ```
 
+The agent caches the unlocked identity for 2h idle (`age.agent-timeout`); the
+cache is purged at boot, on AGE USB key removal, and on agent restart. See
+`AGENTS.md` for the full caching lifecycle.
+
 Externals hit GitHub's rate limit — use an authenticated token:
 
 ```bash

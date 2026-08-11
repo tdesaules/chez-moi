@@ -69,6 +69,19 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `~/.local/share/gopass/stores/root`.
 - The age agent is **locked at boot** (`gopass-age-agent.service` `ExecStartPost` locks it).
   `chezmoi apply` that reads a secret needs `gopass age agent unlock` first.
+- **Passphrase caching**: the agent caches the *unlocked identity* in memory
+  (not the passphrase). `age.agent-timeout` (in `dot_config/gopass/config`,
+  7200s = 2h) is an **idle** timeout — each successful `gopass show` resets the
+  timer, so regular use keeps the cache alive indefinitely. The cache is purged
+  by: boot (`ExecStartPost lock`), **AGE USB key removal** (the
+  `gopass-age-usb-handler` polls the device in-process and locks the agent +
+  removes the identity symlink), and agent restart / host shutdown. Screen
+  lock and suspend do **not** purge the cache in this setup. Do **not** enable
+  `age.usekeychain` (would persist the passphrase across reboots via the OS
+  keyring).
+- Changing `agent-timeout` takes effect on the next agent unlock (the value is
+  pushed to the running agent via `set-timeout`); run `gopass age agent lock`
+  once after the change to activate it immediately.
 - gopass binaries run through mise shims:
   `~/.local/share/mise/shims/gopass`. All systemd unit `ExecStart` lines use this path.
 
