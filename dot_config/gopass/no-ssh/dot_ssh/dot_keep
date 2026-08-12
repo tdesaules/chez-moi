@@ -1,0 +1,6 @@
+Keep this directory (and its parent) free of any *.pub key.
+GOPASS_SSH_DIR points at the parent dir so gopass's age backend finds zero SSH
+identities here instead of scanning ~/.ssh (workaround for gopasspw/gopass#3509
+on gopass <= 1.16.1: an SSH identity sent to the age agent breaks SendIdentities
+~50% of the time due to Go map iteration order, leaving the agent empty and
+re-prompting on every call).

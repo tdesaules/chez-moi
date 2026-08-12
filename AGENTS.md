@@ -82,6 +82,18 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - Changing `agent-timeout` takes effect on the next agent unlock (the value is
   pushed to the running agent via `set-timeout`); run `gopass age agent lock`
   once after the change to activate it immediately.
+- **Expected cache behavior (spec)**: one pinentry prompt after each lock, then
+  the agent serves every decrypt until the idle timeout or a lock event.
+  Prompts on *every* `gopass` call = bug, not design.
+- **gopass ≤ 1.16.1 is buggy** (fixed upstream, unreleased): gopasspw/gopass#3509
+  (SSH identities from `~/.ssh` are included in `SendIdentities`, can't be
+  re-parsed by the agent, and Go map iteration order makes it a coin flip) +
+  #3488 (an empty-but-unlocked agent never self-heals → prompt on every call,
+  even with the correct passphrase). **Workaround**: `GOPASS_SSH_DIR` in mise
+  `[env]` points to `~/.config/gopass/no-ssh` (contains an empty `.ssh/`, see
+  `dot_config/gopass/no-ssh/`) so gopass scans zero SSH identities and only the
+  native identity reaches the agent. **Remove it once a gopass release ships
+  #3488 + #3509** (check release notes > v1.16.1 / v1.17.0-rc.2).
 - gopass binaries run through mise shims:
   `~/.local/share/mise/shims/gopass`. All systemd unit `ExecStart` lines use this path.
 
