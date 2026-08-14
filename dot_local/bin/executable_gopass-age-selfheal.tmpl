@@ -1,0 +1,79 @@
+#!/bin/bash
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# Self-heal the gopass age agent when it is stuck "unlocked but empty".
+#
+# gopass <= 1.16.1 bug (gopasspw/gopass#3488): decryptWithAgent only reloads
+# identities when the agent answers "agent is locked". A fresh/unlocked agent
+# holding no identity answers "no identities specified", which is treated as a
+# hard failure: every gopass call silently falls back to direct decryption and
+# prompts for the passphrase, and the fallback never forwards the identity to
+# the agent, so the agent stays empty and unused for its whole lifetime.
+#
+# This script probes the agent and, when it is unlocked yet holds no identity,
+# locks it so the next gopass access takes the working "agent is locked"
+# recovery path: prompt once, load the identity into the agent, then cache
+# until the idle timeout or the next lock event.
+#
+# Idempotent and safe at any time; a no-op when the agent is healthy or
+# already locked. Invoked by gopass-age-usb-handler when the AGE key is
+# inserted. Remove once a gopass release ships #3488 (+ #3509).
+
+AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
+PYTHON="/usr/bin/python3"
+
+# Fixed dummy age ciphertext, encrypted to a throwaway recipient that matches
+# no real identity. It only serves to distinguish "unlocked + has identities"
+# (decrypt fails with a matching error) from "unlocked + empty" (decrypt fails
+# with "no identities specified"). Note: any decrypt attempt resets the
+# agent's idle timer, which is why this runs on key insertion, not on a timer.
+DUMMY_B64="YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5dEZNZ1BZc1lSR2NNMzVDZlpvbmM2MUw3YkNsRm5BZ2hDWWNmRlUvTWdNCnlETWRRaDVXN0hDQmVlVlNUanFhWk5sYnB4NFNDSmduWnJENHQ2LzVmNFkKLS0tIDFERFptWkkvdkJObktjR1hRSW5RNzhpYjBGVEsyZ1hWbGllalNDRm1pZm8KMWN5yTKKA32DTXoXlWwZr0gt/apbgo5JAwO6I7UG4q/eiyqt0koEKM0u8xRM0Y4="
+
+[ -S "$AGENT_SOCKET" ] || exit 0
+[ -x "$PYTHON" ] || exit 0
+
+"$PYTHON" - "$AGENT_SOCKET" "$DUMMY_B64" <<'PY'
+import socket
+import sys
+
+sock_path, dummy = sys.argv[1], sys.argv[2]
+
+
+def send(cmd):
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(5)
+    try:
+        s.connect(sock_path)
+        s.sendall((cmd + "\n").encode())
+        buf = b""
+        while b"\n" not in buf:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            buf += chunk
+        return buf.decode(errors="replace").strip()
+    except OSError:
+        return ""
+    finally:
+        s.close()
+
+
+status = send("status")
+if not status.startswith("OK"):
+    sys.exit(0)  # agent not running / unreachable
+if "locked" in status:
+    sys.exit(0)  # locked: gopass recovery path works, nothing to do
+# Unlocked: check whether it holds any identity.
+if "no identities specified" in send("decrypt " + dummy):
+    send("lock")
+    sys.exit(7)  # was stuck unlocked-but-empty; now locked
+sys.exit(0)
+PY
+rc=$?
+
+if [ "$rc" -eq 7 ]; then
+    _log "warning" "age agent was unlocked but empty: locked it, recovery will run on next access"
+fi
+
+exit 0

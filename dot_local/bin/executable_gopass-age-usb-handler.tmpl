@@ -7,6 +7,7 @@ MOUNT_POINT="/run/media/{{ .chezmoi.username }}/AGE"
 IDENTITY_USB="$MOUNT_POINT/identities"
 IDENTITY_LOCAL="{{ .chezmoi.homeDir }}/.config/gopass/age/identities"
 GOPASS="{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass"
+SELFHEAL="{{ .chezmoi.homeDir }}/.local/bin/gopass-age-selfheal"
 AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
 
 # Purge the cached identity: lock the gopass age agent (drops the unlocked
@@ -42,6 +43,12 @@ case "$1" in
             _log "info" "Starting gopass-age-agent service..."
             systemctl --user start gopass-age-agent.service
             _log "success" "gopass-age-agent service started"
+        fi
+        # Now that the identity is reachable, heal the agent if it is stuck
+        # unlocked-but-empty (gopass <= 1.16.1 bug #3488) so the next access
+        # recovers instead of prompting on every call.
+        if [ -x "$SELFHEAL" ]; then
+            "$SELFHEAL"
         fi
         _log "info" "Watching for AGE USB key removal..."
         # Poll the device in-process: a systemd .path unit does NOT stop a

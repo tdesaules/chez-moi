@@ -67,15 +67,24 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   (`/dev/disk/by-label/AGE`), symlinked to `~/.config/gopass/age/identities`.
   The store is a git repo cloned from `git@github.com:tdesaules/gopass.git` to
   `~/.local/share/gopass/stores/root`.
-- The age agent is **locked at boot** (`gopass-age-agent.service` `ExecStartPost` locks it).
-  `chezmoi apply` that reads a secret needs `gopass age agent unlock` first.
+- The age agent is **not** locked at boot anymore: a fresh agent holds no
+  identities, so the former `ExecStartPost` lock was a no-op security-wise, and
+  any pre-insertion `gopass` call would unlock-and-fail during recovery,
+  leaving the agent stuck unlocked-but-empty. Note `gopass age agent unlock`
+  on ≤ 1.16.1 is itself buggy (sets `locked=false` without loading identities,
+  gopasspw/gopass#3430) — avoid calling it. On AGE key insertion the
+  `gopass-age-usb-handler` runs `~/.local/bin/gopass-age-selfheal`, which
+  locks the agent if it is unlocked-but-empty so the next access takes the
+  working recovery path. If prompts repeat on every call, run
+  `gopass-age-selfheal` (or `gopass age agent lock`) once.
 - **Passphrase caching**: the agent caches the *unlocked identity* in memory
   (not the passphrase). `age.agent-timeout` (in `dot_config/gopass/config`,
   7200s = 2h) is an **idle** timeout — each successful `gopass show` resets the
   timer, so regular use keeps the cache alive indefinitely. The cache is purged
-  by: boot (`ExecStartPost lock`), **AGE USB key removal** (the
-  `gopass-age-usb-handler` polls the device in-process and locks the agent +
-  removes the identity symlink), and agent restart / host shutdown. Screen
+  by: **AGE USB key removal** (the `gopass-age-usb-handler` polls the device
+  in-process and locks the agent + removes the identity symlink), the idle
+  timeout, and agent restart / host shutdown (a fresh agent starts empty).
+  Screen
   lock and suspend do **not** purge the cache in this setup. Do **not** enable
   `age.usekeychain` (would persist the passphrase across reboots via the OS
   keyring).
@@ -89,11 +98,14 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   (SSH identities from `~/.ssh` are included in `SendIdentities`, can't be
   re-parsed by the agent, and Go map iteration order makes it a coin flip) +
   #3488 (an empty-but-unlocked agent never self-heals → prompt on every call,
-  even with the correct passphrase). **Workaround**: `GOPASS_SSH_DIR` in mise
+  even with the correct passphrase). **Workaround 1**: `GOPASS_SSH_DIR` in mise
   `[env]` points to `~/.config/gopass/no-ssh` (contains an empty `.ssh/`, see
   `dot_config/gopass/no-ssh/`) so gopass scans zero SSH identities and only the
-  native identity reaches the agent. **Remove it once a gopass release ships
-  #3488 + #3509** (check release notes > v1.16.1 / v1.17.0-rc.2).
+  native identity reaches the agent. **Workaround 2**: `gopass-age-selfheal`
+  (`dot_local/bin/executable_gopass-age-selfheal.tmpl`) probes the agent and
+  locks it when it is unlocked-but-empty, so the next access recovers; it is
+  invoked by the USB handler on key insertion. **Remove both once a gopass
+  release ships #3488 + #3509** (check release notes > v1.16.1 / v1.17.0-rc.2).
 - gopass binaries run through mise shims:
   `~/.local/share/mise/shims/gopass`. All systemd unit `ExecStart` lines use this path.
 
