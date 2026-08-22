@@ -1,0 +1,4 @@
+udev:
+  steam_controller:
+    src: .config/udev/rules.d/71-steam-controller.rules
+    dest: /etc/udev/rules.d/71-steam-controller.rules

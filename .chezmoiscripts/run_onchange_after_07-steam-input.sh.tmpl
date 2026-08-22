@@ -1,0 +1,35 @@
+#!/bin/bash
+
+{{- if .is_fedora }}
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# {{ include "dot_config/udev/rules.d/71-steam-controller.rules" | sha256sum }}
+
+SRC="{{ .chezmoi.homeDir }}/{{ .udev.steam_controller.src }}"
+DEST="{{ .udev.steam_controller.dest }}"
+
+if [ ! -f "$SRC" ]; then
+    _error_handler "steam controller udev rule source not found"
+fi
+
+if [ -f "$DEST" ] && diff -q "$SRC" "$DEST" >/dev/null 2>&1; then
+    _log "info" "steam controller udev rule already up to date, skipping"
+    exit 0
+fi
+
+_log "info" "deploying steam controller udev rule to $DEST..."
+if ! output=$(sudo cp "$SRC" "$DEST" 2>&1); then
+    echo "$output"
+    _error_handler "steam controller udev rule deployment"
+fi
+_log "success" "deployed steam controller udev rule to $DEST"
+
+_log "info" "reloading udev rules and triggering hidraw/usb subsystems..."
+if ! output=$(sudo udevadm control --reload-rules && sudo udevadm trigger --subsystem-match=hidraw --subsystem-match=usb 2>&1); then
+    echo "$output"
+    _error_handler "udev reload/trigger"
+fi
+_log "success" "udev rules reloaded and devices triggered"
+
+{{- end }}

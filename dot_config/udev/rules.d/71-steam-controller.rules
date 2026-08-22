@@ -1,0 +1,2 @@
+# Valve Software devices (Steam Controller, Index, accessories)
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
