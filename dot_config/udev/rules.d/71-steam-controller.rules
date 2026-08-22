@@ -1,2 +1,5 @@
-# Valve Software devices (Steam Controller, Index, accessories)
+# Valve hidraw interfaces (Steam Controller, Index, accessories)
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
+
+# Valve raw USB devices (firmware update / bootloader mode)
+SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
