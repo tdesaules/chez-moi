@@ -3,3 +3,6 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0660", GR
 
 # Valve raw USB devices (firmware update / bootloader mode)
 SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
+
+# Valve serial port (bootloader CDC ACM — /dev/ttyACM*)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="28de", MODE="0660", GROUP="dialout", TAG+="uaccess"

@@ -25,8 +25,8 @@ if ! output=$(sudo cp "$SRC" "$DEST" 2>&1); then
 fi
 _log "success" "deployed steam controller udev rule to $DEST"
 
-_log "info" "reloading udev rules and triggering hidraw/usb subsystems..."
-if ! output=$(sudo udevadm control --reload-rules && sudo udevadm trigger --subsystem-match=hidraw --subsystem-match=usb 2>&1); then
+_log "info" "reloading udev rules and triggering hidraw/usb/tty subsystems..."
+if ! output=$(sudo udevadm control --reload-rules && sudo udevadm trigger --subsystem-match=hidraw --subsystem-match=usb --subsystem-match=tty 2>&1); then
     echo "$output"
     _error_handler "udev reload/trigger"
 fi
