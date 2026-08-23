@@ -58,6 +58,18 @@ GITHUB_TOKEN=$(gopass show -o perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f
 
 ## Steam
 
+### Launch options
+
+Pour les jeux clavier/souris (gamescope active le fullscreen + cursor grab) :
+
 ```bash
-gamescope -f -W 1920 -H 1200 -w 2880 -h 1800 -- mangohud %command%
+gamescope -f -w 2880 -h 1800 -W 2880 -H 1800 --force-grab-cursor -- mangohud %command%
+```
+
+Pour les jeux à la manette — **ne pas utiliser gamescope** (bug connu :
+ValveSoftware/gamescope#1180, #1687, #2080 — gamescope en mode nested ne
+forward pas les events gamepad via Steam Input) :
+
+```bash
+mangohud %command%
 ```
