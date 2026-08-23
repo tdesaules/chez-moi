@@ -1,8 +1,14 @@
 # Valve hidraw interfaces (Steam Controller, Index, accessories)
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
 
+# Valve input/event devices (Steam Controller mouse/keyboard emulation)
+KERNEL=="event*", SUBSYSTEM=="input", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
+
 # Valve raw USB devices (firmware update / bootloader mode)
 SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0660", GROUP="input", TAG+="uaccess"
 
 # Valve serial port (bootloader CDC ACM — /dev/ttyACM*)
 SUBSYSTEM=="tty", ATTRS{idVendor}=="28de", MODE="0660", GROUP="dialout", TAG+="uaccess"
+
+# uinput (Steam Input creates virtual gamepad devices)
+KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="input", TAG+="uaccess"
