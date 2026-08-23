@@ -1,0 +1,41 @@
+#!/bin/bash
+
+{{- if .is_fedora }}
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# {{ include ".chezmoidata/firewalld.yaml" | sha256sum }}
+
+ZONE="{{ .firewalld.zone }}"
+{{- range .firewalld.steam_services }}
+SERVICE_{{ . | replace "-" "_" | upper }}="{{ . }}"
+{{- end }}
+
+CHANGED=false
+
+{{- range .firewalld.steam_services }}
+if sudo firewall-cmd --zone="$ZONE" --list-services 2>/dev/null | grep -qw "{{ . }}"; then
+    _log "info" "service {{ . }} already enabled in zone $ZONE"
+else
+    _log "info" "adding service {{ . }} to zone $ZONE..."
+    if ! output=$(sudo firewall-cmd --zone="$ZONE" --add-service="{{ . }}" --permanent 2>&1); then
+        echo "$output"
+        _error_handler "firewalld service {{ . }} deployment"
+    fi
+    _log "success" "service {{ . }} added to zone $ZONE"
+    CHANGED=true
+fi
+{{- end }}
+
+if [ "$CHANGED" = true ]; then
+    _log "info" "reloading firewalld..."
+    if ! output=$(sudo firewall-cmd --reload 2>&1); then
+        echo "$output"
+        _error_handler "firewalld reload"
+    fi
+    _log "success" "firewalld reloaded"
+else
+    _log "info" "no firewalld changes needed"
+fi
+
+{{- end }}

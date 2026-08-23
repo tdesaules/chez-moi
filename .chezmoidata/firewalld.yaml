@@ -1,0 +1,5 @@
+firewalld:
+  zone: public
+  steam_services:
+    - steam-streaming
+    - steam-lan-transfer
