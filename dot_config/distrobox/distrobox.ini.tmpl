@@ -85,7 +85,7 @@ entry=false
 hostname="orcaslicer-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers"
+additional_packages="mesa-dri-drivers mesa-libGL mesa-libGLU mesa-vulkan-drivers libglvnd-opengl webkit2gtk4.1"
 additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
 {{- $orsa_version := "v2.4.2" }}
 init_hooks="curl -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/{{ $orsa_version }}/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage -o /usr/local/bin/orcaslicer"
