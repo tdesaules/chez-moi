@@ -1,0 +1,35 @@
+#!/bin/bash
+
+{{- if .is_fedora }}
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# {{ include "dot_config/udev/rules.d/90-orcaslicer-3dprinter.rules" | sha256sum }}
+
+SRC="{{ .chezmoi.homeDir }}/{{ .udev.orcaslicer_3dprinter.src }}"
+DEST="{{ .udev.orcaslicer_3dprinter.dest }}"
+
+if [ ! -f "$SRC" ]; then
+    _error_handler "orcaslicer 3d printer udev rule source not found"
+fi
+
+if [ -f "$DEST" ] && diff -q "$SRC" "$DEST" >/dev/null 2>&1; then
+    _log "info" "orcaslicer 3d printer udev rule already up to date, skipping"
+    exit 0
+fi
+
+_log "info" "deploying orcaslicer 3d printer udev rule to $DEST..."
+if ! output=$(sudo cp "$SRC" "$DEST" 2>&1); then
+    echo "$output"
+    _error_handler "orcaslicer 3d printer udev rule deployment"
+fi
+_log "success" "deployed orcaslicer 3d printer udev rule to $DEST"
+
+_log "info" "reloading udev rules and triggering tty/usb subsystems..."
+if ! output=$(sudo udevadm control --reload-rules && sudo udevadm trigger --subsystem-match=tty --subsystem-match=usb 2>&1); then
+    echo "$output"
+    _error_handler "udev reload/trigger"
+fi
+_log "success" "udev rules reloaded and devices triggered"
+
+{{- end }}

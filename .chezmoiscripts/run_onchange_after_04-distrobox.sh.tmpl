@@ -14,6 +14,9 @@
 # {{ include "dot_config/distrobox/steam.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/filen.desktop.tmpl" | sha256sum }}
 # {{ include "dot_config/distrobox/opencode.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/orcaslicer.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/freecad.desktop.tmpl" | sha256sum }}
+# {{ include "dot_config/distrobox/librecad.desktop.tmpl" | sha256sum }}
 
 _log "info" "running distrobox assemble create..."
 if ! output=$(distrobox assemble create --file "{{ .chezmoi.homeDir }}/{{ .distrobox.ini }}" 2>&1); then

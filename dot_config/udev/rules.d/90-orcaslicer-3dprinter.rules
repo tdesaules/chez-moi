@@ -1,0 +1,5 @@
+# 3D printer serial interfaces (CDC ACM — /dev/ttyACM*, most FDM/Resin printers)
+KERNEL=="ttyACM*", SUBSYSTEM=="tty", MODE="0660", GROUP="dialout", TAG+="uaccess"
+
+# USB serial adapters (FTDI / CH340 / CP210x — /dev/ttyUSB*)
+KERNEL=="ttyUSB*", SUBSYSTEM=="tty", MODE="0660", GROUP="dialout", TAG+="uaccess"

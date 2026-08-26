@@ -165,6 +165,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   firewall rules (**needs sudo**).
 - `run_onchange_after_06-beszel-agent.sh.tmpl` — sets up Beszel monitoring agent via API
   calls to local hub (`localhost:8090`).
+- `run_onchange_after_09-orcaslicer-udev.sh.tmpl` — deploys the 3D-printer serial udev
+  rule (`90-orcaslicer-3dprinter.rules`, `/dev/ttyACM*` + `/dev/ttyUSB*` access) to
+  `/etc/udev/rules.d/` and reloads udev (**needs sudo**). Driven by
+  `dot_config/udev/rules.d/90-orcaslicer-3dprinter.rules` + `.chezmoidata/udev.yaml`.
 
 ## opencode
 

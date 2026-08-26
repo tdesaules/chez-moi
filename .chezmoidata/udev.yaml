@@ -2,3 +2,6 @@ udev:
   steam_controller:
     src: .config/udev/rules.d/71-steam-controller.rules
     dest: /etc/udev/rules.d/71-steam-controller.rules
+  orcaslicer_3dprinter:
+    src: .config/udev/rules.d/90-orcaslicer-3dprinter.rules
+    dest: /etc/udev/rules.d/90-orcaslicer-3dprinter.rules

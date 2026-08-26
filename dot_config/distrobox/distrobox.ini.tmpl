@@ -76,3 +76,54 @@ pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --no
 init_hooks="curl -L https://github.com/anomalyco/opencode/releases/download/{{ $opencode_version }}/opencode-desktop-linux-x86_64.rpm -o /tmp/opencode.rpm"
 init_hooks="dnf --assumeyes install /tmp/opencode.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/opencode.desktop"
+
+[orcaslicer-distrobox]
+image=quay.io/fedora/fedora:{{ .atomic_version }}
+replace=true
+start_now=true
+entry=false
+hostname="orcaslicer-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers"
+additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+{{- $orsa_version := "v2.4.2" }}
+init_hooks="curl -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/{{ $orsa_version }}/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage -o /usr/local/bin/orcaslicer"
+init_hooks="chmod +x /usr/local/bin/orcaslicer"
+exported_bins="/usr/local/bin/orcaslicer"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/orcaslicer.desktop"
+
+[freecad-distrobox]
+image=quay.io/fedora/fedora:{{ .atomic_version }}
+replace=true
+start_now=true
+entry=false
+hostname="freecad-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
+additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+{{- $fcad_version := "1.1.3" }}
+init_hooks="curl -L https://github.com/FreeCAD/FreeCAD/releases/download/{{ $fcad_version }}/FreeCAD_1.1.3-Linux-x86_64-py311.AppImage -o /usr/local/bin/freecad"
+init_hooks="chmod +x /usr/local/bin/freecad"
+exported_bins="/usr/local/bin/freecad"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/freecad.desktop"
+
+[librecad-distrobox]
+image=quay.io/fedora/fedora:{{ .atomic_version }}
+replace=true
+start_now=true
+entry=false
+hostname="librecad-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
+additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+{{- $lcad_version := "v2.2.1.5" }}
+init_hooks="curl -L https://github.com/LibreCAD/LibreCAD/releases/download/{{ $lcad_version }}/LibreCAD-v2.2.1.5-x86_64.AppImage -o /usr/local/bin/librecad"
+init_hooks="chmod +x /usr/local/bin/librecad"
+exported_bins="/usr/local/bin/librecad"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/librecad.desktop"
