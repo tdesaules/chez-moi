@@ -23,11 +23,11 @@
        inkscape:collect="always"
        id="linearGradient4731">
       <stop
-         style="stop-color:#000000;stop-opacity:1;"
+         style="stop-color:#2E3440;stop-opacity:1;"
          offset="0"
          id="stop4727" />
       <stop
-         style="stop-color:#000000;stop-opacity:0;"
+         style="stop-color:#2E3440;stop-opacity:0;"
          offset="1"
          id="stop4729" />
     </linearGradient>
@@ -35,7 +35,7 @@
        id="linearGradient3247"
        inkscape:swatch="solid">
       <stop
-         style="stop-color:#9c1a1a;stop-opacity:1;"
+         style="stop-color:#BF616A;stop-opacity:1;"
          offset="0"
          id="stop3245" />
     </linearGradient>
@@ -43,7 +43,7 @@
        id="linearGradient3241"
        inkscape:swatch="solid">
       <stop
-         style="stop-color:#f9f9f9;stop-opacity:0.69999999;"
+         style="stop-color:#ECEFF4;stop-opacity:0.69999999;"
          offset="0"
          id="stop3239" />
     </linearGradient>
@@ -137,13 +137,13 @@
   </defs>
   <sodipodi:namedview
      id="namedview4"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
+     pagecolor="#ECEFF4"
+     bordercolor="#2E3440"
      borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
+     inkscape:deskcolor="#D8DEE9"
      showgrid="false"
      inkscape:zoom="0.5"
      inkscape:cx="1105"

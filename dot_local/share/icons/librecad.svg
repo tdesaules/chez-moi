@@ -25,14 +25,14 @@
    
     .fil2 {fill:#4C566A}
     .fil1 {fill:#A3BE8C}
-    .fil0 {fill:white}
+    .fil0 {fill:#ECEFF4}
    
   </style>
   </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ECEFF4"
-     bordercolor="#666666"
+     bordercolor="#4C566A"
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
