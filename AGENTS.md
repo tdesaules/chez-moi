@@ -185,8 +185,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   - `poolside`: `poolside/laguna-s-2.1`, `poolside/laguna-xs-2.1`
   - `scaleway`: `glm-5.2`, `mistral-medium-3.5-128b`
   - `zai-coding-plan`: `glm-5.2`
-  - `lemonade`: `user.Laguna-S-2.1-Q3_K_S`, `user.Laguna-XS-2.1-Q4_K_M`
-    (Ornith GGUFs removed from disk and config).
+  - `lemonade`: `user.Muse-Glimmer-30B-Q8_0`
 - `openrouter` and `poolside` are defined inline in `opencode.json.tmpl` with
   gopass-backed API keys. `ollama-cloud`, `zai-coding-plan`, and `scaleway` get
   their keys from `dot_local/share/opencode/auth.json.tmpl`. `opencode-go`,
