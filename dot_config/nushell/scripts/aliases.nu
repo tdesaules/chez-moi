@@ -45,7 +45,9 @@ export def --wrapped pass [...args: string] {
 }
 
 export def passgen [] {
-    motus random -c 24 -n
+    let s = (motus random -c 24 -n | str trim)
+    let mid = (($s | str length) // 2)
+    ($s | str substring 0..($mid - 1)) + "-" + ($s | str substring $mid..)
 }
 
 export def --wrapped top [...args: string] {
