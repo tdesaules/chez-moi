@@ -53,6 +53,10 @@
       }
     },
     "llmgateway": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "key": "{{ gopass `perso/token/devpass.llmgateway.io/8d5e203f-14bf-49c9-95ef-f28d55bee94d` | trim }}"
+      },
       "whitelist": [
         "glm-5.3",
         "muse-spark-1.3-contributor",
