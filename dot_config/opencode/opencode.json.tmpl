@@ -2,10 +2,9 @@
   "$schema": "https://opencode.ai/config.json",
   "shell": "/usr/bin/bash",
   "enabled_providers": [
-    "scaleway",
     "llmgateway",
-    "zai-coding-plan",
     "openai",
+    "opencode",
     "lemonade"
   ],
   "provider": {
@@ -74,6 +73,16 @@
       "models": {
         "user.Muse-Glimmer-30B-Q8_0": {
           "name": "muse-glimmer-30b"
+        }
+      }
+    },
+    "opencode": {
+      "whitelist": [
+        "muse-spark-1.3-contributor"
+      ],
+      "models": {
+        "muse-spark-1.3-contributor": {
+          "name": "muse-spark-1.3-contributor"
         }
       }
     },
