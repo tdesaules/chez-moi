@@ -14,7 +14,9 @@ def --env _zellij_add_hook [field: cell-path, new_hook: record] {
 }
 
 def _zellij_rename_tab [] {
-    let max_len = 24
+    let max_len = 15
+    let ellipsis = "[...]"
+    let keep = $max_len - ($ellipsis | str length -g)
     let home = $nu.home-dir
     let dir = if ($env.PWD == $home) {
         "~"
@@ -29,7 +31,7 @@ def _zellij_rename_tab [] {
         if ($short | is-empty) { "/" } else { $short | path join }
     }
     let truncated = if (($dir | str length -g) > $max_len) {
-        "…" + ($dir | str reverse | str substring 0..($max_len - 2) | str reverse)
+        $ellipsis + ($dir | str reverse | str substring 0..($keep - 1) | str reverse)
     } else {
         $dir
     }
