@@ -14,7 +14,7 @@ def --env _zellij_add_hook [field: cell-path, new_hook: record] {
 }
 
 def _zellij_rename_tab [] {
-    let max_len = 15
+    let max_len = 20
     let ellipsis = "[...]"
     let keep = $max_len - ($ellipsis | str length -g)
     let home = $nu.home-dir
