@@ -28,10 +28,11 @@ def _zellij_rename_tab [] {
         }
         if ($short | is-empty) { "/" } else { $short | path join }
     }
-    let name = if (($dir | str length -g) > $max_len) {
+    let truncated = if (($dir | str length -g) > $max_len) {
         "…" + ($dir | str reverse | str substring 0..($max_len - 2) | str reverse)
     } else {
         $dir
     }
+    let name = ($truncated | fill -a left -c ' ' -w $max_len)
     try { ^zellij action rename-tab $name } catch { }
 }
