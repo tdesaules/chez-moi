@@ -7,6 +7,7 @@ use scripts/fzf.nu *
 use scripts/paths.nu *
 use scripts/starship.nu *
 use scripts/vivid.nu *
+use scripts/zellij.nu *
 
 $env.config = {
     show_banner: false
@@ -57,6 +58,8 @@ $env.config = {
         }
     ]
 }
+
+setup-zellij-tab
 
 try {
     if (which fastfetch | is-not-empty) {

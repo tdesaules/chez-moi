@@ -526,6 +526,17 @@ default_shell "nu"
 //
 show_startup_tips false
 
+// Pre-0.45 look: full pane frames (not single title lines) and stacked
+// panes expanded in place (not as a title list)
+pane_frames true
+pane_frame_style "full"
+stacked_pane_list false
+
+// Disable mouse pane grouping, hover effects and hover tips
+advanced_mouse_actions false
+mouse_hover_effects false
+mouse_hover_tips false
+
 // Whether to show release notes on first version run
 // Default: true
 //
