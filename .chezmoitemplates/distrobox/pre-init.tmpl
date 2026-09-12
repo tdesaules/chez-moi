@@ -1,1 +1,2 @@
 pre_init_hooks="export SHELL='/bin/bash'"
+pre_init_hooks="if [ ! -e /usr/share/icons/Bibata-Modern-Ice ] && [ ! -L /usr/share/icons/Bibata-Modern-Ice ]; then ln -s /run/host/usr/share/icons/Bibata-Modern-Ice /usr/share/icons/Bibata-Modern-Ice; fi"
