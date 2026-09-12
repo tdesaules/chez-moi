@@ -1,8 +1,6 @@
 # zellij.nu - short tab names: last 2 path components, bounded width
 
 export def --env setup-zellij-tab [] {
-    if ($env.ZELLIJ_TAB_HOOK_SETUP? | default false) { return }
-    $env.ZELLIJ_TAB_HOOK_SETUP = true
     _zellij_add_hook hooks.pre_prompt { condition: { "ZELLIJ" in $env }, code: { _zellij_rename_tab } }
     _zellij_add_hook hooks.env_change.PWD { condition: { "ZELLIJ" in $env }, code: { _zellij_rename_tab } }
 }
@@ -17,13 +15,15 @@ def _zellij_rename_tab [] {
     let max_len = 20
     let ellipsis = "[...]"
     let keep = $max_len - ($ellipsis | str length -g)
-    let home = $nu.home-dir
-    let dir = if ($env.PWD == $home) {
+    let home = ($nu.home-dir | path expand)
+    let pwd = ($env.PWD | path expand)
+    let dir = if ($pwd == $home) {
         "~"
     } else {
-        let rel = ($env.PWD | str replace $home "~")
+        let in_home = ($pwd | str starts-with $"($home)/")
+        let rel = if $in_home { $pwd | str replace $home "~" } else { $pwd }
         let parts = ($rel | path split | where {|x| $x != "/" and $x != "~" })
-        let short = if ($rel | str starts-with "~") {
+        let short = if $in_home {
             ["~"] ++ ($parts | last 1)
         } else {
             $parts | last 2
