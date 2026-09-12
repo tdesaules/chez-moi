@@ -17,11 +17,11 @@ if [ ! -d "$PLUGINS_DIR" ]; then
     exit 0
 fi
 
-_log "info" "dms plugin change detected, restarting {{ .dms.service }}..."
-if ! output=$(systemctl --user restart {{ .dms.service }} 2>&1); then
+_log "info" "dms plugin change detected, queueing {{ .dms.service }} restart..."
+if ! output=$(systemctl --user --no-block restart {{ .dms.service }} 2>&1); then
     echo "$output"
     _error_handler "{{ .dms.service }} restart"
 fi
-_log "success" "{{ .dms.service }} restarted, plugins reloaded"
+_log "success" "{{ .dms.service }} restart queued"
 
 {{- end }}

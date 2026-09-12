@@ -82,6 +82,11 @@ window-rule {
 }
 
 window-rule {
+    match title="Pinentry"
+    open-floating true
+}
+
+window-rule {
     match title="Gopass Edit Secret"
     open-floating true
     default-column-width { fixed 620; }
