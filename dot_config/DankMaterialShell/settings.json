@@ -311,43 +311,7 @@
       "iconScale": 1.25
     }
   ],
-  "desktopWidgetInstances": [
-    {
-      "id": "dw_1776333829842_rkinsdbdb",
-      "widgetType": "systemMonitor",
-      "name": "System Monitor",
-      "enabled": true,
-      "config": {
-        "showHeader": true,
-        "transparency": 0.7,
-        "colorMode": "custom",
-        "customColor": "#bf616a",
-        "showCpu": true,
-        "showCpuGraph": true,
-        "showCpuTemp": true,
-        "showGpuTemp": false,
-        "gpuPciId": "1002:1586",
-        "showMemory": true,
-        "showMemoryGraph": false,
-        "showNetwork": false,
-        "showNetworkGraph": true,
-        "showDisk": false,
-        "showTopProcesses": true,
-        "topProcessCount": 5,
-        "topProcessSortBy": "cpu",
-        "layoutMode": "grid",
-        "graphInterval": 60,
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true,
-        "clickThrough": false,
-        "showOnOverviewOnly": false,
-        "showOnOverview": false,
-        "showOnOverlay": false
-      }
-    }
-  ],
+  "desktopWidgetInstances": [],
   "builtInPluginSettings": {
     "dms_settings_search": {
       "trigger": "?",
