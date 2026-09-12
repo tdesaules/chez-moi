@@ -313,6 +313,12 @@
   ],
   "desktopWidgetInstances": [],
   "builtInPluginSettings": {
+    "dms_colorpicker": {
+      "enabled": false
+    },
+    "dms_qr_generator": {
+      "enabled": false
+    },
     "dms_settings_search": {
       "trigger": "?",
       "enabled": false
