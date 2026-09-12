@@ -31,9 +31,9 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - chezmoi 2.70.0. Functions and `{{ }}` syntax are chezmoi's, not mise's.
 - **Two data sources for templates:**
   - `.chezmoi.toml.tmpl` computes runtime booleans: `is_linux`, `is_fedora`,
-    `is_mise`, `is_nushell`, `is_ssh`, `is_systemd`, `is_distrobox`, and
-    `atomic_version` (rpm-ostree deployment tag). Use for OS/tool gating:
-    `{{ if .is_linux }} ... {{ end }}`.
+    `is_mise`, `is_nushell`, `is_ssh`, `is_systemd`, and `is_distrobox`. Use
+    `.chezmoi.osRelease.versionID` directly for the Fedora release and these
+    booleans for OS/tool gating: `{{ if .is_linux }} ... {{ end }}`.
   - `.chezmoidata/*.yaml` provides structured config (paths, ports, key names, etc.)
     accessed as `{{ .systemd.user_dir }}`, `{{ .gopass.age.device }}`,
     `{{ .dms.service }}`, etc. Add new config values here, not inline in templates.
@@ -42,6 +42,8 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   - `run_once_after_*` — runs once, after bootstrap.
   - `run_onchange_*` — re-runs only when one of its `{{ include "<path>" | sha256sum }}`
     comment-hashes changes. Add a hash line for every file that should trigger it.
+- `run_after_99-bootstrap-complete.sh.tmpl` writes the success marker consumed by
+  the image's Topgrade service. Keep it last and idempotent.
 - **DMS plugins are chezmoi externals** (downloaded archives, not source files), so the
   `include | sha256sum` pattern cannot detect their changes. Instead,
   `run_onchange_after_03-dms-plugins.sh.tmpl` hashes the resolved release tags of both
@@ -58,7 +60,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - **Never hardcode tokens.** Use the chezmoi `gopass` template function:
   `{{ gopass "perso/token/<host>/<uuid>" | trim }}`
   (path examples live in `dot_local/share/opencode/auth.json.tmpl` and
-  `dot_config/mise/config.toml.tmpl`).
+  `dot_config/mise/private_config.toml.tmpl`).
 - For paths needing special chars, use backtick strings:
   `` {{ gopass `perso/token/.../uuid` | trim }} ``
 - gopass store layout: `perso/<category>/<host>/<uuid>` (token UUIDs are real entries;
@@ -121,7 +123,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## mise
 
-- Global tool list: `dot_config/mise/config.toml.tmpl`. Almost every CLI is a `github:*`
+- Global tool list: `dot_config/mise/private_config.toml.tmpl`. Almost every CLI is a `github:*`
   backend tool. Add new tools there (version `"latest"` unless pinning).
 - `[settings.github]` has `github_attestations = false` — disables GitHub artifact
   attestation verification (sigstore TSA bug in mise, causes install failures for `github:*` tools).
@@ -172,7 +174,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## opencode
 
-- Provider config: `dot_config/opencode/opencode.json.tmpl`. Enabled providers:
+- Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Enabled providers:
   `opencode-go` (OpenCode Go subscription, built-in), `openrouter`, `poolside`,
   `scaleway`, `zai-coding-plan`, `ollama-cloud` (Ollama Cloud API,
   `https://ollama.com/v1`), `lemonade` (local, `http://127.0.0.1:13305/v1`).
@@ -186,7 +188,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   - `scaleway`: `glm-5.2`, `mistral-medium-3.5-128b`
   - `zai-coding-plan`: `glm-5.2`
   - `lemonade`: `user.Muse-Glimmer-30B-Q8_0`
-- `openrouter` and `poolside` are defined inline in `opencode.json.tmpl` with
+- `openrouter` and `poolside` are defined inline in `private_opencode.json.tmpl` with
   gopass-backed API keys. `ollama-cloud`, `zai-coding-plan`, and `scaleway` get
   their keys from `dot_local/share/opencode/auth.json.tmpl`. `opencode-go`,
   `ollama-cloud`, `scaleway`, and `zai-coding-plan` are built-in providers

@@ -9,7 +9,7 @@
 # {{ include "dot_config/systemd/user/gopass-age-agent.service.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
-# {{ include "dot_config/containers/systemd/beszel.container.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/private_beszel.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/beszel-agent.container.tmpl" | sha256sum }}
 # {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
 # {{ include "dot_config/systemd/user/opencode-web.service.tmpl" | sha256sum }}
@@ -34,12 +34,23 @@ if [ -z "$services" ]; then
     _log "info" "no systemd user service/socket files found."
 else
     for service in $services; do
-        _log "info" "enabling and starting $service..."
-        if ! output=$(systemctl --user enable --now "$service" 2>&1); then
+        if ! grep -q "^\[Install\]" "$USER_SYSTEMD_DIR/$service" 2>/dev/null; then
+            continue
+        fi
+
+        _log "info" "enabling $service..."
+        if ! output=$(systemctl --user enable "$service" 2>&1); then
             echo "$output"
-            _log "error" "failed to enable/start $service"
+            _log "error" "failed to enable $service"
+            continue
+        fi
+
+        _log "info" "queueing $service restart..."
+        if ! output=$(systemctl --user --no-block restart "$service" 2>&1); then
+            echo "$output"
+            _log "error" "failed to queue $service restart"
         else
-            _log "success" "enabled and started $service"
+            _log "success" "enabled and queued $service restart"
         fi
     done
 fi
@@ -52,14 +63,14 @@ for container in $containers; do
         continue
     fi
     service="${container%.container}.service"
-    _log "info" "enabling and starting $service..."
+    _log "info" "enabling and queueing $service..."
     mkdir -p "$WANTS_DIR"
     ln -sf "/run/user/$(id -u)/systemd/generator/${service}" "${WANTS_DIR}/${service}"
-    if ! output=$(systemctl --user restart "$service" 2>&1); then
+    if ! output=$(systemctl --user --no-block restart "$service" 2>&1); then
         echo "$output"
-        _log "error" "failed to start $service"
+        _log "error" "failed to queue $service"
     else
-        _log "success" "enabled and started $service"
+        _log "success" "enabled and queued $service"
     fi
 done
 

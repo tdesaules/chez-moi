@@ -1,5 +1,5 @@
 [chromium-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
@@ -11,8 +11,9 @@ exported_bins="/usr/bin/chromium-browser"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop"
 
+{{ if eq .chezmoi.arch "amd64" -}}
 [zen-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
@@ -22,41 +23,45 @@ pre_init_hooks="dnf copr enable --assumeyes myriad-sun/zen-browser"
 additional_packages="zen-browser"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen-work.desktop"
+{{ end -}}
 
 [zed-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
 hostname="zed-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 additional_packages="zed"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_bins="/usr/bin/zed"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zed.desktop"
 
+{{ if eq .chezmoi.arch "amd64" -}}
 [steam-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
 hostname="steam-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 additional_packages="lsb_release pciutils pipewire-libs gamescope mangohud steam"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/steam.desktop"
+{{ end -}}
 
+{{ if eq .chezmoi.arch "amd64" -}}
 [filen-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
 hostname="filen-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 {{- $filen_version := (gitHubLatestRelease "FilenCloudDienste/filen-desktop").TagName }}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 init_hooks="curl -L https://github.com/FilenCloudDienste/filen-desktop/releases/download/{{ $filen_version }}/Filen_linux_x86_64.rpm -o /tmp/filen.rpm"
@@ -64,13 +69,13 @@ init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
 
 [opencode-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
 hostname="opencode-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .atomic_version }}' terra-release; fi"
+pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 {{- $opencode_version := (gitHubLatestRelease "anomalyco/opencode").TagName }}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 init_hooks="curl -L https://github.com/anomalyco/opencode/releases/download/{{ $opencode_version }}/opencode-desktop-linux-x86_64.rpm -o /tmp/opencode.rpm"
@@ -78,7 +83,7 @@ init_hooks="dnf --assumeyes install /tmp/opencode.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/opencode.desktop"
 
 [orcaslicer-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
@@ -95,7 +100,7 @@ exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/orcaslicer.desktop"
 
 [freecad-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
@@ -112,7 +117,7 @@ exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/freecad.desktop"
 
 [librecad-distrobox]
-image=quay.io/fedora/fedora:{{ .atomic_version }}
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
 start_now=true
 entry=false
@@ -127,3 +132,4 @@ init_hooks="chmod +x /usr/local/bin/librecad"
 exported_bins="/usr/local/bin/librecad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/librecad.desktop"
+{{ end -}}

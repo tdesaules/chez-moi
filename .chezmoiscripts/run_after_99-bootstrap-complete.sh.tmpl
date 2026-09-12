@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+{{- if .is_systemd }}
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+BOOTSTRAP_MARKER="{{ .chezmoi.homeDir }}/.local/state/chezmoi/bootstrap-complete"
+
+trap 'rm -f "$BOOTSTRAP_MARKER"' ERR
+install -Dm600 /dev/null "$BOOTSTRAP_MARKER"
+_log "success" "chezmoi bootstrap marked complete"
+
+if systemctl --user is-active --quiet chezmoi-first-init.service; then
+    systemctl --user --no-block restart fcitx5.service
+    systemctl --user --no-block start dms-greeter-sync.service
+    systemctl --user --no-block start topgrade.service
+    _log "success" "post-bootstrap services queued"
+fi
+trap - ERR
+
+{{- end }}

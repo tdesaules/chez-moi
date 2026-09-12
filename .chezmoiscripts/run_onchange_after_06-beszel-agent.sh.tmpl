@@ -3,7 +3,7 @@
 {{- if and .is_systemd .is_fedora }}
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-# {{ include "dot_config/containers/systemd/beszel.container.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/private_beszel.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/beszel-agent.container.tmpl" | sha256sum }}
 # {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
 
