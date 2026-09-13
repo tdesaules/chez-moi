@@ -35,6 +35,5 @@ def _zellij_rename_tab [] {
     } else {
         $dir
     }
-    let name = ($truncated | fill -a left -c ' ' -w $max_len)
-    try { ^zellij action rename-tab $name } catch { }
+    try { ^zellij action rename-tab $truncated } catch { }
 }
