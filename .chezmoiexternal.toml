@@ -22,3 +22,7 @@
     url = 'https://github.com/tdesaules/pinentry-dms/releases/download/{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}/pinentry-dms-plugin-{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName | trimPrefix "v" }}.tar.gz'
     exact = true
     stripComponents = 1
+
+[".config/opencode/skills"]
+    type = "git-repo"
+    url = "https://github.com/tdesaules/skills.git"
