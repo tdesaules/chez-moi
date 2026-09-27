@@ -56,6 +56,31 @@ Externals hit GitHub's rate limit — use an authenticated token:
 GITHUB_TOKEN=$(gopass show -o perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f05c5dfff5) chezmoi apply --source ~/repository/github.com/tdesaules/chez-moi
 ```
 
+## OpenSCAD
+
+OpenSCAD runs in `openscad-distrobox` using a pinned official snapshot AppImage
+(x86_64), with a desktop launcher and an exported `openscad` command.
+The launcher uses XWayland (`QT_QPA_PLATFORM=xcb`): this AppImage bundles Qt
+without its Wayland platform plugin. For GUI launches from the terminal, use
+`env QT_QPA_PLATFORM=xcb openscad`.
+
+To update, change the version, AppImage URL and SHA256 in
+`.chezmoidata/openscad.yaml` using https://openscad.org/downloads.html#snapshots.
+The Distrobox onchange script tracks this file. Keep the previous values to
+roll back to an earlier snapshot.
+
+After previewing the changes, deploy only the relevant files and assemble OpenSCAD:
+
+```bash
+chezmoi apply --source ~/repository/github.com/tdesaules/chez-moi --exclude scripts \
+  ~/.config/distrobox/distrobox.ini ~/.config/distrobox/openscad.desktop \
+  ~/.local/share/icons/openscad.svg
+distrobox assemble create --file ~/.config/distrobox/distrobox.ini --name openscad-distrobox
+update-desktop-database ~/.local/share/applications
+```
+
+A full `chezmoi apply` runs the shared assembly script for all declared Distroboxes.
+
 ## Steam
 
 ### Launch options

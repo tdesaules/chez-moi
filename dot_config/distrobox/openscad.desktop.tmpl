@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OpenSCAD
+GenericName=CAD Application
+Comment=Script-based parametric 3D CAD modeler
+Exec=env QT_QPA_PLATFORM=xcb openscad %F
+TryExec=openscad
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/openscad.svg
+Terminal=false
+StartupNotify=true
+StartupWMClass=openscad
+MimeType=application/x-openscad;
+Categories=Graphics;3DGraphics;Engineering;
+Keywords=cad;3d;modeling;parametric;scad;

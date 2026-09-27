@@ -116,6 +116,22 @@ exported_bins="/usr/local/bin/freecad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/freecad.desktop"
 
+# OpenSCAD snapshot {{ .openscad.version }} (amd64)
+[openscad-distrobox]
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
+replace=true
+start_now=true
+entry=false
+hostname="openscad-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+additional_packages="mesa-dri-drivers mesa-libGL mesa-libGLU mesa-vulkan-drivers qt6-qtbase-gui"
+additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+init_hooks="curl --fail --location --retry 3 {{ .openscad.appimage_url }} -o /tmp/openscad.AppImage && sha256sum /tmp/openscad.AppImage | grep -q ^{{ .openscad.sha256 }} && install -m 0755 /tmp/openscad.AppImage /usr/local/bin/openscad && rm /tmp/openscad.AppImage"
+exported_bins="/usr/local/bin/openscad"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/openscad.desktop"
+
 [librecad-distrobox]
 image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
