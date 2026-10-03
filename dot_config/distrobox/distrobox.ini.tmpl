@@ -92,6 +92,11 @@ hostname="orcaslicer-distrobox"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 additional_packages="mesa-dri-drivers mesa-libGL mesa-libGLU mesa-vulkan-drivers libglvnd-opengl webkit2gtk4.1"
 additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+# radeonsi (Mesa 26.x) segfaults on Strix Halo 8060S when rendering slice
+# thumbnails (NULL deref in libc, GUI-only, CLI slices fine). zink crashes
+# too (zink_kopper_acquire_submit SIGSEGV, gdb-proven). Software GL works.
+# Re-test HW drivers on Mesa upgrades or OrcaSlicer > 2.4.2 (#14453).
+additional_flags="--env LIBGL_ALWAYS_SOFTWARE=1"
 {{- $orsa_version := "v2.4.2" }}
 init_hooks="curl -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/{{ $orsa_version }}/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage -o /usr/local/bin/orcaslicer"
 init_hooks="chmod +x /usr/local/bin/orcaslicer"
