@@ -84,6 +84,7 @@ A full `chezmoi apply` runs the shared assembly script for all declared Distrobo
 ## Steam
 
 Steam runs in `steam-distrobox` with PipeWire capture enabled.
+The main application launcher opens Big Picture by default.
 RPM Fusion Free supplies VAAPI H.264/HEVC codecs
 for both architectures; 32-bit EGL enables Steam's PipeWire DMA-BUF capture.
 These packages are installed automatically when the Distrobox is rebuilt.
