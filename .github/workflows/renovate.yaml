@@ -25,6 +25,6 @@ jobs:
         with:
           configurationFile: .github/renovate-config.cjs
           token: ${{ secrets.RENOVATE_TOKEN }}
-          renovate-version: 44.151.0
+          renovate-version: 44.155.6
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
