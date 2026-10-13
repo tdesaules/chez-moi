@@ -9,6 +9,7 @@
 # {{ include "dot_config/systemd/user/gopass-age-agent.service.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/lemonade-server.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/open-webui.container.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/open-terminal.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/private_beszel.container.tmpl" | sha256sum }}
 # {{ include "dot_config/containers/systemd/beszel-agent.container.tmpl" | sha256sum }}
 # {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
@@ -25,6 +26,13 @@ if ! output=$(systemctl --user daemon-reload 2>&1); then
     _error_handler "systemd user daemon reload"
 fi
 _log "success" "systemd user daemon reloaded."
+
+# The vendor timer only updates running, auto-update-labelled containers;
+# stopped/on-demand AI services remain stopped.
+if ! output=$(systemctl --user enable --now podman-auto-update.timer 2>&1); then
+    _log "error" "$output"
+    _error_handler "enable podman-auto-update.timer"
+fi
 
 _log "info" "podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
 

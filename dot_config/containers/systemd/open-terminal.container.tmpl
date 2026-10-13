@@ -4,6 +4,7 @@ After=network.target open-webui.service
 BindsTo=open-webui.service
 
 [Container]
+AutoUpdate=registry
 Image=ghcr.io/open-webui/open-terminal:latest
 ContainerName=open-terminal
 Network=ai.network

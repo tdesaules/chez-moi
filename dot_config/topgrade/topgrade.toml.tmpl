@@ -11,3 +11,14 @@ disable = ["firmware","chezmoi","mise","pip3","node","pipx"]
 
 [linux]
 rpm_ostree = true
+
+[containers]
+runtime = "podman"
+# Quadlet images are pulled and running services restarted by podman-auto-update.
+ignored_containers = [
+  "docker.io/henrygd/beszel:latest",
+  "docker.io/henrygd/beszel-agent:latest",
+  "ghcr.io/lemonade-sdk/lemonade-server:latest",
+  "ghcr.io/open-webui/open-webui:latest",
+  "ghcr.io/open-webui/open-terminal:latest",
+]
