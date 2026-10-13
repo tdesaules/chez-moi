@@ -66,7 +66,7 @@ hostname="filen-distrobox"
 pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 {{- $filen_version := .filen }}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-init_hooks="curl -L https://github.com/FilenCloudDienste/filen-desktop/releases/download/{{ $filen_version }}/Filen_linux_x86_64.rpm -o /tmp/filen.rpm"
+init_hooks="curl --fail --location --retry 3 https://github.com/FilenCloudDienste/filen-desktop/releases/download/{{ $filen_version }}/Filen_linux_x86_64.rpm -o /tmp/filen.rpm"
 init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
 
@@ -80,7 +80,7 @@ hostname="opencode-distrobox"
 pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 {{- $opencode_version := .opencode_desktop }}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-init_hooks="curl -L https://github.com/anomalyco/opencode/releases/download/{{ $opencode_version }}/opencode-desktop-linux-x86_64.rpm -o /tmp/opencode.rpm"
+init_hooks="curl --fail --location --retry 3 https://github.com/anomalyco/opencode/releases/download/{{ $opencode_version }}/opencode-desktop-linux-x86_64.rpm -o /tmp/opencode.rpm"
 init_hooks="dnf --assumeyes install /tmp/opencode.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/opencode.desktop"
 
@@ -100,7 +100,7 @@ additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
 # Re-test HW drivers on Mesa upgrades or OrcaSlicer > 2.4.2 (#14453).
 additional_flags="--env LIBGL_ALWAYS_SOFTWARE=1"
 {{- $orsa_version := .orcaslicer }}
-init_hooks="curl -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/{{ $orsa_version }}/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage -o /usr/local/bin/orcaslicer"
+init_hooks="curl --fail --location --retry 3 https://github.com/OrcaSlicer/OrcaSlicer/releases/download/{{ $orsa_version }}/OrcaSlicer_Linux_AppImage_Ubuntu2404_V{{ $orsa_version | trimPrefix "v" }}.AppImage -o /tmp/orcaslicer.AppImage && install -m 0755 /tmp/orcaslicer.AppImage /usr/local/bin/orcaslicer && rm /tmp/orcaslicer.AppImage"
 init_hooks="chmod +x /usr/local/bin/orcaslicer"
 exported_bins="/usr/local/bin/orcaslicer"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
@@ -117,7 +117,7 @@ hostname="freecad-distrobox"
 additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
 additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
 {{- $fcad_version := .freecad }}
-init_hooks="curl -L https://github.com/FreeCAD/FreeCAD/releases/download/{{ $fcad_version }}/FreeCAD_1.1.3-Linux-x86_64-py311.AppImage -o /usr/local/bin/freecad"
+init_hooks="curl --fail --location --retry 3 https://github.com/FreeCAD/FreeCAD/releases/download/{{ $fcad_version }}/FreeCAD_{{ $fcad_version }}-Linux-x86_64-py311.AppImage -o /tmp/freecad.AppImage && install -m 0755 /tmp/freecad.AppImage /usr/local/bin/freecad && rm /tmp/freecad.AppImage"
 init_hooks="chmod +x /usr/local/bin/freecad"
 exported_bins="/usr/local/bin/freecad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
@@ -150,7 +150,7 @@ hostname="librecad-distrobox"
 additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
 additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
 {{- $lcad_version := .librecad }}
-init_hooks="curl -L https://github.com/LibreCAD/LibreCAD/releases/download/{{ $lcad_version }}/LibreCAD-v2.2.1.5-x86_64.AppImage -o /usr/local/bin/librecad"
+init_hooks="curl --fail --location --retry 3 https://github.com/LibreCAD/LibreCAD/releases/download/{{ $lcad_version }}/LibreCAD-{{ $lcad_version }}-x86_64.AppImage -o /tmp/librecad.AppImage && install -m 0755 /tmp/librecad.AppImage /usr/local/bin/librecad && rm /tmp/librecad.AppImage"
 init_hooks="chmod +x /usr/local/bin/librecad"
 exported_bins="/usr/local/bin/librecad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"

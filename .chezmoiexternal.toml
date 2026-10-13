@@ -13,13 +13,13 @@
 
 [".config/DankMaterialShell/plugins/gopass-dms"]
     type = "archive"
-    url = 'https://github.com/tdesaules/gopass-dms/archive/{{ (gitHubLatestRelease "tdesaules/gopass-dms").TagName }}.tar.gz'
+    url = 'https://github.com/tdesaules/gopass-dms/archive/{{ .plugins.gopass }}.tar.gz'
     exact = true
     stripComponents = 1
 
 [".config/DankMaterialShell/plugins/pinentry-dms"]
     type = "archive"
-    url = 'https://github.com/tdesaules/pinentry-dms/releases/download/{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}/pinentry-dms-plugin-{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName | trimPrefix "v" }}.tar.gz'
+    url = 'https://github.com/tdesaules/pinentry-dms/releases/download/{{ .plugins.pinentry }}/pinentry-dms-plugin-{{ .plugins.pinentry | trimPrefix "v" }}.tar.gz'
     exact = true
     stripComponents = 1
 

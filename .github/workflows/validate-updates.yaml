@@ -1,0 +1,27 @@
+name: Validate dependency updates
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate Renovate configuration
+        run: docker run --rm -v "$PWD:/work" -w /work ghcr.io/renovatebot/renovate:44.151.0 renovate-config-validator --strict renovate.json
+      - name: Install chezmoi for rendering
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/chezmoi"
+          gh release download v2.70.0 --repo twpayne/chezmoi --pattern chezmoi_2.70.0_linux_amd64.tar.gz --dir "$RUNNER_TEMP/chezmoi"
+          tar -xzf "$RUNNER_TEMP/chezmoi/chezmoi_2.70.0_linux_amd64.tar.gz" -C "$RUNNER_TEMP/chezmoi" chezmoi
+          echo "$RUNNER_TEMP/chezmoi" >> "$GITHUB_PATH"
+      - name: Check release assets from rendered templates
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 .github/check-release-assets.py

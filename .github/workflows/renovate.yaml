@@ -6,8 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
 
 jobs:
   renovate:
@@ -15,10 +18,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Validate renovate.json
-        run: python3 -m json.tool renovate.json > /dev/null
+        with:
+          persist-credentials: false
       - name: Run Renovate
         uses: renovatebot/github-action@v46.3.8
         with:
-          configurationFile: renovate.json
-          token: ${{ secrets.GITHUB_TOKEN }}
+          configurationFile: .github/renovate-config.cjs
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          renovate-version: 44.151.0
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}

@@ -1,0 +1,5 @@
+plugins:
+  # renovate: depName=tdesaules/pinentry-dms
+  pinentry: "v1.2.3"
+  # renovate: depName=tdesaules/gopass-dms
+  gopass: "v2.2.3"

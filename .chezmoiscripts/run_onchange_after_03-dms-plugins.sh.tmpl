@@ -4,8 +4,8 @@
 
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
-# {{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}
-# {{ (gitHubLatestRelease "tdesaules/gopass-dms").TagName }}
+# {{ .plugins.pinentry }}
+# {{ .plugins.gopass }}
 
 PLUGINS_DIR="{{ .chezmoi.homeDir }}/{{ .dms.plugins_dir }}"
 
