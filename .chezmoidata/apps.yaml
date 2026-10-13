@@ -14,6 +14,6 @@ opencode_desktop: "v1.19.0"
 # renovate: depName=OrcaSlicer/OrcaSlicer
 orcaslicer: "v2.4.2"
 # renovate: depName=FreeCAD/FreeCAD
-freecad: "1.1.3"
+freecad: "1.1.4"
 # renovate: depName=LibreCAD/LibreCAD
 librecad: "v2.2.1.5"
