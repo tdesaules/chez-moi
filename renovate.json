@@ -1,0 +1,77 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "onboarding": false,
+  "timezone": "Europe/Paris",
+  "schedule": ["every weekend"],
+  "packageRules": [
+    {
+      "description": "craft-distrobox apps in a single PR (one container rebuild)",
+      "matchDatasources": ["github-releases"],
+      "matchPackageNames": [
+        "storytold/lightcraft",
+        "storytold/pdfcraft",
+        "storytold/vectorcraft",
+        "kilianvivien/DarkSlide"
+      ],
+      "groupName": "craft-distrobox apps",
+      "groupSlug": "craft-distrobox"
+    }
+  ],
+  "regexManagers": [
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["lightcraft: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "storytold/lightcraft",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["pdfcraft: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "storytold/pdfcraft",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["vectorcraft: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "storytold/vectorcraft",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["darkslide: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "kilianvivien/DarkSlide",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["filen: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "FilenCloudDienste/filen-desktop",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["opencode_desktop: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "anomalyco/opencode",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["orcaslicer: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "OrcaSlicer/OrcaSlicer",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["freecad: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "FreeCAD/FreeCAD",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "managerFilePatterns": ["/\\.chezmoidata/apps\\.yaml$/"],
+      "matchStrings": ["librecad: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "LibreCAD/LibreCAD",
+      "datasourceTemplate": "github-releases"
+    }
+  ]
+}
