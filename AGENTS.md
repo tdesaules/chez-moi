@@ -144,10 +144,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `default.target.wants` and restarted). Those without `[Install]` get daemon-reload only.
 - Any new unit must add a `# {{ include "<path>" | sha256sum }}` line to the
   systemd onchange script.
-- Quadlets use `AutoUpdate=registry`; the systemd onchange script enables the
-  vendor user `podman-auto-update.timer`. Only running labelled containers are
-  updated; the on-demand AI stack is not started by the timer. Topgrade excludes
-  these five images to avoid pulling them before Podman can detect an update.
+- Quadlet images follow `latest` and are pulled by Topgrade using Podman.
+  Restart their services manually to use new images. No `AutoUpdate=registry`:
+  the systemd onchange script disables the previously managed
+  `podman-auto-update.timer` on apply.
 
 ## Renovate
 

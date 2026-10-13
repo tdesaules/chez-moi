@@ -75,19 +75,16 @@ downloads retain their existing update strategies.
 
 ### Quadlet updates
 
-The five Quadlet images keep `latest` and use Podman's vendor user
-`podman-auto-update.timer`, enabled by the systemd onchange script on apply.
-It updates running labelled containers and restarts their services. Stopped
-AI services are not started by the timer; they become eligible when running.
-Topgrade explicitly uses Podman and excludes these five images, so pulling
-them early cannot hide registry changes from Podman's updater.
-
-Check the deployed timer and pending updates:
+The five Quadlet images keep `latest`. Topgrade uses Podman to pull updated
+images, but does not restart running containers. Restart the corresponding
+services manually to use the new images, for example:
 
 ```bash
-systemctl --user status podman-auto-update.timer
-podman auto-update --dry-run
+systemctl --user restart beszel.service beszel-agent.service
 ```
+
+Podman automatic updates are disabled. The systemd onchange script stops and
+disables the previously managed `podman-auto-update.timer` on apply.
 
 ## OpenSCAD
 
