@@ -44,12 +44,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
     comment-hashes changes. Add a hash line for every file that should trigger it.
 - `run_after_99-bootstrap-complete.sh.tmpl` writes the success marker consumed by
   the image's Topgrade service. Keep it last and idempotent.
-- **DMS plugins are chezmoi externals** (downloaded archives, not source files), so the
-  `include | sha256sum` pattern cannot detect their changes. Instead,
-  `run_onchange_after_03-dms-plugins.sh.tmpl` hashes the resolved release tags of both
-  `pinentry-dms` and `gopass-dms`:
-  `{{ (gitHubLatestRelease "tdesaules/pinentry-dms").TagName }}` and
-  `{{ (gitHubLatestRelease "tdesaules/gopass-dms").TagName }}`.
+- **DMS plugins are chezmoi externals**. Their release tags are pinned in
+  `.chezmoidata/plugins.yaml` and updated together by Renovate. The externals and
+  `run_onchange_after_03-dms-plugins.sh.tmpl` both use these tags. The pinentry
+  binary remains on mise `latest`; check binary/plugin compatibility on upgrades.
 - Shared logging helper: every script does
   `{{ include ".chezmoitemplates/functions.tmpl" }}`
   then calls `_log "<level>" "<msg>"` (levels: info/success/error/warning/...).
@@ -113,9 +111,8 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## GitHub API rate limits
 
-- `.chezmoiexternal.toml` calls `(gitHubLatestRelease "<org>/<repo>").TagName` for DMS
-  plugins — this hits GitHub's unauthenticated rate limit fast. Run authenticated applies:
-  `GITHUB_TOKEN=$(gopass show -o perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f05c5dfff5) chezmoi apply --source <repo>`
+- DMS externals use pinned tags, so applying them no longer resolves latest
+  releases through the GitHub API. CI checks release assets with a GitHub token.
 - The `GITHUB_TOKEN` env var (provisioned by mise via gopass) also covers
   `mise ls-remote` and any `github:` backend calls.
 - Other externals (`usage-specs`, `nvim`/LazyVim) use static archive URLs and don't hit
@@ -147,6 +144,23 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `default.target.wants` and restarted). Those without `[Install]` get daemon-reload only.
 - Any new unit must add a `# {{ include "<path>" | sha256sum }}` line to the
   systemd onchange script.
+- Quadlets use `AutoUpdate=registry`; the systemd onchange script enables the
+  vendor user `podman-auto-update.timer`. Only running labelled containers are
+  updated; the on-demand AI stack is not started by the timer. Topgrade excludes
+  these five images to avoid pulling them before Podman can detect an update.
+
+## Renovate
+
+- Nine Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
+  and `plugins.yaml`. Preserve the `# renovate: depName=...` annotations.
+- `.github/renovate-config.cjs` is runner config; `renovate.json` is repo config.
+- The weekly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository
+  contents, PR, issues (dependency dashboard), and workflow write access. No
+  automerge. Never store its value in this repo.
+- PR CI validates Renovate and checks assets using rendered chezmoi templates.
+  If upstream changes an asset naming convention, update the template too.
+- Mise stays on `latest`. DNF/OS, OpenSCAD snapshots, branch externals and models
+  retain their existing update strategies.
 
 ## distrobox
 

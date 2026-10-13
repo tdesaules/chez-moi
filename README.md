@@ -50,10 +50,43 @@ The agent caches the unlocked identity for 2h idle (`age.agent-timeout`); the
 cache is purged at boot, on AGE USB key removal, and on agent restart. See
 `AGENTS.md` for the full caching lifecycle.
 
-Externals hit GitHub's rate limit — use an authenticated token:
+DMS externals use pinned release URLs; applying them does not resolve latest
+releases through the GitHub API.
+
+### Renovate
+
+Nine Distrobox apps (`.chezmoidata/apps.yaml`) and two DMS plugins
+(`.chezmoidata/plugins.yaml`) receive weekly update PRs (Saturday, 04:00 UTC).
+The workflow also supports manual dispatch. Merge is manual; CI validates the
+Renovate configuration and verifies release assets from rendered templates.
+If an upstream filename changes (for example FreeCAD's Python suffix), update
+the template in the same PR. The pinentry binary remains on mise `latest`:
+check its compatibility with the pinned plugin on upgrades.
+
+Before the first run, create the repository Actions secret `RENOVATE_TOKEN`
+using a GitHub token with Contents, Pull requests, Issues and Workflows write
+permissions. Keep it outside this repository. After pushing the commits,
+run the `renovate` workflow from GitHub Actions. The runner config is
+`.github/renovate-config.cjs`; dependency rules live in `renovate.json`.
+
+After merging a PR, `chezmoi update` deploys the changes. Mise remains on
+`latest` via Topgrade. DNF/OS, OpenSCAD snapshots, branch externals and model
+downloads retain their existing update strategies.
+
+### Quadlet updates
+
+The five Quadlet images keep `latest` and use Podman's vendor user
+`podman-auto-update.timer`, enabled by the systemd onchange script on apply.
+It updates running labelled containers and restarts their services. Stopped
+AI services are not started by the timer; they become eligible when running.
+Topgrade explicitly uses Podman and excludes these five images, so pulling
+them early cannot hide registry changes from Podman's updater.
+
+Check the deployed timer and pending updates:
 
 ```bash
-GITHUB_TOKEN=$(gopass show -o perso/token/github.com/5fc4238e-6370-4187-bbd7-f8f05c5dfff5) chezmoi apply --source ~/repository/github.com/tdesaules/chez-moi
+systemctl --user status podman-auto-update.timer
+podman auto-update --dry-run
 ```
 
 ## OpenSCAD
