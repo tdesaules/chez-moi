@@ -1,10 +1,10 @@
 craft:
   # renovate: depName=storytold/lightcraft
-  lightcraft: "0.7.1"
+  lightcraft: "0.8.0"
   # renovate: depName=storytold/pdfcraft
-  pdfcraft: "0.7.1"
+  pdfcraft: "0.8.0"
   # renovate: depName=storytold/vectorcraft
-  vectorcraft: "0.10.0"
+  vectorcraft: "0.12.0"
   # renovate: depName=kilianvivien/DarkSlide
   darkslide: "v1.3.1"
 # renovate: depName=FilenCloudDienste/filen-desktop
