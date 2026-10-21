@@ -1,0 +1,6 @@
+opencode:
+  openai:
+    limit:
+      context: 1000000
+      input: 872000
+      output: 128000

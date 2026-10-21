@@ -39,18 +39,21 @@
     "openai": {
       "whitelist": [
         "gpt-6-astra",
-        "gpt-6-sol",
+        "gpt-6.1-sol",
         "gpt-6-luna"
       ],
       "models": {
         "gpt-6-astra": {
-          "name": "gpt-6-astra"
+          "name": "gpt-6-astra",
+          "limit": {{ .opencode.openai.limit | toJson }}
         },
-        "gpt-6-sol": {
-          "name": "gpt-6-sol"
+        "gpt-6.1-sol": {
+          "name": "gpt-6.1-sol",
+          "limit": {{ .opencode.openai.limit | toJson }}
         },
         "gpt-6-luna": {
-          "name": "gpt-6-luna"
+          "name": "gpt-6-luna",
+          "limit": {{ .opencode.openai.limit | toJson }}
         }
       }
     }
