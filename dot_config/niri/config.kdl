@@ -79,6 +79,13 @@ window-rule {
 }
 
 window-rule {
+    match app-id="^xdg-desktop-portal-gtk$"
+    open-floating true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 600; }
+}
+
+window-rule {
     match title="Gopass Passphrase"
     open-floating true
     default-column-width { fixed 620; }
