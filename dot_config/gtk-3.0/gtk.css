@@ -1,0 +1,54 @@
+@import url("dank-colors.css");
+
+/* Map DMS colors to the names used by GTK 3 themes. */
+@define-color theme_bg_color @window_bg_color;
+@define-color theme_fg_color @window_fg_color;
+@define-color theme_base_color @view_bg_color;
+@define-color theme_text_color @view_fg_color;
+@define-color theme_selected_bg_color @accent_bg_color;
+@define-color theme_selected_fg_color @accent_fg_color;
+
+/* Adwaita GTK 3 embeds colors rather than using all the symbolic names. */
+window, dialog, .background {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+headerbar, headerbar:backdrop {
+    background-image: none;
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+}
+
+.view, entry, textview text {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+.sidebar, .sidebar .view {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+button, button:backdrop {
+    background-image: none;
+    background-color: @card_bg_color;
+    color: @card_fg_color;
+    text-shadow: none;
+}
+
+button:hover {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+.view:selected, row:selected, selection, button.suggested-action {
+    background-image: none;
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+popover, menu {
+    background-color: @popover_bg_color;
+    color: @popover_fg_color;
+}
