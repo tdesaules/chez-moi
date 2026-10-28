@@ -52,3 +52,98 @@ popover, menu {
     background-color: @popover_bg_color;
     color: @popover_fg_color;
 }
+
+/* Keep Adwaita's light borders and inset highlights out of the dark palette. */
+* {
+    border-color: alpha(@window_fg_color, 0.16);
+    text-shadow: none;
+    -gtk-icon-shadow: none;
+}
+
+label, label:backdrop, image, image:backdrop {
+    color: inherit;
+}
+
+window:backdrop, dialog:backdrop, .background:backdrop {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+.view:backdrop, entry:backdrop, textview text:backdrop {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+button, button:backdrop, entry, entry:backdrop, headerbar, headerbar:backdrop {
+    border-color: alpha(@window_fg_color, 0.16);
+    box-shadow: none;
+}
+
+button, entry {
+    border-radius: 8px;
+    min-height: 28px;
+}
+
+entry:focus {
+    border-color: @accent_bg_color;
+    box-shadow: 0 0 0 1px alpha(@accent_bg_color, 0.25);
+}
+
+button:hover, button:checked, button:active {
+    background-image: none;
+    background-color: mix(@card_bg_color, @accent_bg_color, 0.25);
+    color: @card_fg_color;
+    border-color: alpha(@accent_bg_color, 0.55);
+}
+
+button.suggested-action, button.suggested-action:hover,
+.view:selected, .view:selected:focus, .view:selected:backdrop,
+row:selected, row:selected:hover, row:selected:backdrop, selection {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+.sidebar:backdrop, .sidebar .view:backdrop {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+placessidebar row, placessidebar row:backdrop {
+    color: @sidebar_fg_color;
+}
+
+placessidebar row:hover {
+    background-color: alpha(@accent_bg_color, 0.15);
+}
+
+placessidebar row:selected, placessidebar row:selected:backdrop {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+separator {
+    background-color: alpha(@window_fg_color, 0.12);
+    min-width: 1px;
+    min-height: 1px;
+}
+
+scrollbar, scrollbar:backdrop, scrollbar trough {
+    background-color: @view_bg_color;
+    border-color: transparent;
+}
+
+scrollbar slider {
+    background-color: alpha(@window_fg_color, 0.25);
+    border: none;
+    border-radius: 8px;
+    min-width: 6px;
+    min-height: 6px;
+}
+
+scrollbar slider:hover, scrollbar slider:active {
+    background-color: alpha(@accent_bg_color, 0.75);
+}
+
+*:disabled, *:disabled:backdrop {
+    color: alpha(@window_fg_color, 0.45);
+}
