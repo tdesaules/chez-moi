@@ -154,7 +154,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - Nine Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
   and `plugins.yaml`. Preserve the `# renovate: depName=...` annotations.
 - `.github/renovate-config.cjs` is runner config; `renovate.json` is repo config.
-- The weekly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository
+- The nightly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository
   contents, PR, issues (dependency dashboard), and workflow write access. No
   automerge. Never store its value in this repo.
 - PR CI validates Renovate and checks assets using rendered chezmoi templates.
