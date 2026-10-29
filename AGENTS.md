@@ -232,8 +232,9 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `llama-server-toggle` reports readiness using `/health`; it does not download models.
 - The icon is the upstream llama.cpp SVG recolored in Nord, with its MIT notice.
 - Context fitting is disabled to prevent silently reducing the requested capacity.
-  KV cache stays in system RAM (`--no-kv-offload`): the five 256K slots need
-  about 25 GiB of FP16 KV cache, beyond the available VRAM once weights are loaded.
+  Vulkan reports about 79 GiB accessible on this Strix Halo host, including shared
+  memory (the kernel reports 32 GiB dedicated VRAM). Keep KV offloading enabled;
+  the five 256K slots need about 25 GiB of FP16 KV cache in addition to weights.
   Validate memory use and `/props` after changing context, parallelism, or backend.
 
 ## Verify before commit
