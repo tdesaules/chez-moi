@@ -191,7 +191,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Enabled providers:
   `opencode-go` (OpenCode Go subscription, built-in), `openrouter`, `poolside`,
   `scaleway`, `zai-coding-plan`, `ollama-cloud` (Ollama Cloud API,
-  `https://ollama.com/v1`), `lemonade` (local, `http://127.0.0.1:13305/v1`).
+  `https://ollama.com/v1`).
 - OpenCode Zen (`opencode`) has been replaced by OpenCode Go (`opencode-go`).
 - Each provider uses a `whitelist` to show only curated models in `/models`:
   - `opencode-go`: `kimi-k3`, `kimi-k2.7-code`, `deepseek-v4-flash`, `glm-5.2`
@@ -201,7 +201,6 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   - `poolside`: `poolside/laguna-s-2.1`, `poolside/laguna-xs-2.1`
   - `scaleway`: `glm-5.2`, `mistral-medium-3.5-128b`
   - `zai-coding-plan`: `glm-5.2`
-  - `lemonade`: `user.Muse-Glimmer-30B-Q8_0`
 - `openrouter` and `poolside` are defined inline in `private_opencode.json.tmpl` with
   gopass-backed API keys. `ollama-cloud`, `zai-coding-plan`, and `scaleway` get
   their keys from `dot_local/share/opencode/auth.json.tmpl`. `opencode-go`,
@@ -209,6 +208,17 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   (models.dev).
 - The `opencode-claude-auth` plugin (removed in OpenCode 1.3.0) is no longer
   referenced. Anthropic Pro/Max OAuth routing is not supported per Anthropic ToS.
+
+## Local model downloads
+
+- `dot_local/bin/private_executable_pull-hf-models.tmpl` downloads Hugging Face
+  models listed in `dot_config/models/config.kcl.tmpl` to
+  `~/.local/share/huggingface/models`, using the mise-provided `hf`, `kcl`, and `jq`.
+- Topgrade runs `pull-hf-models`. This downloader is independent of the retired
+  Lemonade / Open WebUI / Open Terminal stack.
+- `.chezmoiremove` removes the retired stack's deployed configuration and launchers;
+  `run_once_before_03-retire-lemonade.sh.tmpl` stops its user services first.
+  Existing Podman volumes and downloaded models are preserved.
 
 ## Verify before commit
 

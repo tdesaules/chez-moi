@@ -1,0 +1,16 @@
+#!/bin/bash
+
+{{- if .is_systemd }}
+set -euo pipefail
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# Stop the stack before chezmoi removes its Quadlets and reloads systemd.
+for service in open-terminal.service open-webui.service lemonade-server.service; do
+    state=$(systemctl --user show "$service" --property=LoadState --value) || _error_handler "inspect $service"
+    if [ "$state" != "not-found" ]; then
+        _log "info" "stopping retired $service..."
+        systemctl --user stop "$service" || _error_handler "stop $service"
+    fi
+done
+{{- end }}

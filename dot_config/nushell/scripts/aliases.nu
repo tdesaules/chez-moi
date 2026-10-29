@@ -57,7 +57,3 @@ export def --wrapped top [...args: string] {
 export def --wrapped tree [...args: string] {
     eza --tree --icons=always --color=always ...$args
 }
-
-export def --wrapped lemonade [...args: string] {
-    podman exec -it lemonade-server /opt/lemonade/lemonade ...$args
-}

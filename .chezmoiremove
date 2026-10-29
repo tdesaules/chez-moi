@@ -1,0 +1,11 @@
+.config/containers/systemd/lemonade-server.container
+.config/containers/systemd/open-webui.container
+.config/containers/systemd/open-terminal.container
+.config/lemonade/config.json
+.local/share/applications/lemonade-web.desktop
+.local/share/applications/open-webui-web.desktop
+.local/share/icons/lemonade.svg
+.local/share/icons/openwebui.svg
+.config/systemd/user/default.target.wants/lemonade-server.service
+.config/systemd/user/default.target.wants/open-webui.service
+.config/systemd/user/default.target.wants/open-terminal.service
