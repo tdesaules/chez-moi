@@ -1,0 +1,18 @@
+[Unit]
+Description=Llama.cpp — Ornith
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists={{ .chezmoi.homeDir }}/{{ .llama.models_dir }}/{{ .llama.model }}
+
+[Container]
+Image={{ .llama.image }}
+ContainerName=llama-server
+AddDevice=/dev/dri
+GroupAdd=keep-groups
+SecurityLabelDisable=true
+PublishPort=127.0.0.1:{{ .llama.port }}:8080
+Volume={{ .chezmoi.homeDir }}/{{ .llama.models_dir }}:/models:ro
+Exec=--model /models/{{ .llama.model }} --alias {{ .llama.alias }} --host 0.0.0.0 --port 8080 --ctx-size {{ mul .llama.context_per_slot .llama.parallel }} --parallel {{ .llama.parallel }} --kv-unified-per-slot {{ .llama.context_per_slot }} --fit off --n-gpu-layers 99 --no-kv-offload --jinja --temp 0.6 --top-p 0.95 --top-k 20
+
+[Service]
+TimeoutStartSec={{ .llama.startup_timeout }}

@@ -1,6 +1,10 @@
 download_dir = "{{ .chezmoi.homeDir }}/.local/share/huggingface/models"
 models = [
     {
+        repo = "{{ .llama.repo }}"
+        file = "{{ .llama.model }}"
+    }
+    {
         repo = "unsloth/Muse-Glimmer-30B-GGUF"
         file = "Muse-Glimmer-30B-Q8_0.gguf"
     }

@@ -1,0 +1,11 @@
+llama:
+  image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+  service: llama-server.service
+  port: 13305
+  models_dir: .local/share/huggingface/models
+  repo: ornith-ai/Ornith-1.5-35B-A3B-GGUF
+  model: Ornith-1.5-35B-Q4_K_M.gguf
+  alias: ornith
+  context_per_slot: 262144
+  parallel: 5
+  startup_timeout: 900

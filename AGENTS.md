@@ -220,6 +220,22 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `run_once_before_03-retire-lemonade.sh.tmpl` stops its user services first.
   Existing Podman volumes and downloaded models are preserved.
 
+## llama.cpp
+
+- `.chezmoidata/llama.yaml` configures the Vulkan Quadlet, Ornith Q4_K_M model,
+  localhost port 13305, and five slots with 262144 tokens per slot.
+- `dot_config/models/config.kcl.tmpl` adds Ornith to the existing downloader;
+  keep existing models in the list to prevent its orphan cleanup deleting them.
+- `llama-server.container.tmpl` mounts the whole models directory read-only,
+  including `.hf-cache` so the downloader's relative symlinks resolve.
+- No `[Install]`: start/stop on demand through the Dank launcher entry `Llama.cpp`.
+  `llama-server-toggle` reports readiness using `/health`; it does not download models.
+- The icon is the upstream llama.cpp SVG recolored in Nord, with its MIT notice.
+- Context fitting is disabled to prevent silently reducing the requested capacity.
+  KV cache stays in system RAM (`--no-kv-offload`): the five 256K slots need
+  about 25 GiB of FP16 KV cache, beyond the available VRAM once weights are loaded.
+  Validate memory use and `/props` after changing context, parallelism, or backend.
+
 ## Verify before commit
 
 - `chezmoi diff --source <repo>` — preview rendered changes against `$HOME`.

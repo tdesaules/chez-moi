@@ -1,0 +1,69 @@
+#!/bin/bash
+set -euo pipefail
+
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+SERVICE="{{ .llama.service }}"
+ICON="{{ .chezmoi.homeDir }}/.local/share/icons/llama-cpp.svg"
+MODEL="{{ .chezmoi.homeDir }}/{{ .llama.models_dir }}/{{ .llama.model }}"
+HEALTH="http://127.0.0.1:{{ .llama.port }}/health"
+
+notify() {
+    _log info "$1"
+    notify-send --app-name=Llama.cpp --icon="$ICON" \
+        -h string:x-canonical-private-synchronous:llama-server "Llama.cpp" "$1" || true
+}
+
+fail() {
+    notify "Échec : $1. Logs : journalctl --user -u $SERVICE"
+    exit 1
+}
+
+# Serialize toggles, but release the lock while waiting for model loading.
+exec 9>"${XDG_RUNTIME_DIR:?}/llama-server-toggle.lock"
+flock 9
+state=$(systemctl --user show "$SERVICE" --property=ActiveState --value)
+case "$state" in
+    active|activating|reloading)
+        systemctl --user stop "$SERVICE" || fail "arrêt du serveur"
+        notify "Arrêté"
+        exit 0
+        ;;
+    deactivating)
+        notify "Arrêt en cours"
+        exit 0
+        ;;
+esac
+
+if [ ! -r "$MODEL" ]; then
+    notify "Modèle absent. Lance pull-hf-models, puis réessaie."
+    exit 1
+fi
+systemctl --user reset-failed "$SERVICE" 2>/dev/null || true
+systemctl --user start --no-block "$SERVICE" || fail "démarrage du serveur"
+notify "Chargement d’Ornith…"
+flock -u 9
+
+# Follow this invocation only: a later stop/start must not get stale notifications.
+invocation=""
+deadline=$((SECONDS + {{ .llama.startup_timeout }}))
+while (( SECONDS < deadline )); do
+    state=$(systemctl --user show "$SERVICE" --property=ActiveState --value)
+    current=$(systemctl --user show "$SERVICE" --property=InvocationID --value)
+    case "$state" in
+        failed) fail "chargement du modèle" ;;
+        inactive|deactivating) exit 0 ;;
+    esac
+    if [ -n "$current" ]; then
+        if [ -n "$invocation" ] && [ "$invocation" != "$current" ]; then
+            exit 0
+        fi
+        invocation="$current"
+    fi
+    if curl --fail --silent --max-time 2 "$HEALTH" >/dev/null; then
+        notify "Prêt — http://127.0.0.1:{{ .llama.port }}"
+        exit 0
+    fi
+    sleep 2
+done
+fail "délai de chargement dépassé"
