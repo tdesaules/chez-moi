@@ -8,6 +8,7 @@ llama:
   models_dir: .local/share/huggingface/models
   repo: ornith-ai/Ornith-1.5-35B-A3B-GGUF
   model: Ornith-1.5-35B-Q4_K_M.gguf
+  projector: mmproj-Ornith-1.5-35B-BF16.gguf
   alias: ornith
   context_per_slot: 262144
   parallel: 5

@@ -231,8 +231,9 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - Qwen/Muse wrappers merge their overrides with `llama` defaults using a deep copy.
   Shared implementations live in `.chezmoitemplates/llama-*` and `llama.desktop.tmpl`.
   Each model has a distinct launcher, toggle lock, tray ID, port and container name.
-- `dot_config/models/config.kcl.tmpl` downloads Ornith plus Qwen/Muse and their
-  vision projectors. The old meta-models Muse quantization is no longer retained;
+- `dot_config/models/config.kcl.tmpl` downloads Ornith, Qwen and Muse with their
+  vision projectors (Ornith uses `mmproj-Ornith-1.5-35B-BF16.gguf`).
+  The old meta-models Muse quantization is no longer retained;
   the downloader removes models absent from this list during orphan cleanup.
 - The shared Quadlet mounts the whole models directory read-only,
   including `.hf-cache` so the downloader's relative symlinks resolve.
