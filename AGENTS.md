@@ -232,9 +232,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `llama-server-toggle` waits for `/health` silently on startup (errors still notify);
   it does not download models.
 - `ornith-tray.service` is wanted by the server and stops with it (`BindsTo`/`PartOf`).
-  Left-click opens the Nord health panel in `dot_config/quickshell/ornith-health/`
-  on the focused Niri output; it refreshes `/health` every 3 seconds and closes on
-  Escape or an outside click. Right-click has only `Open Chat` and `Stop`.
+  Left-click does nothing. Right-click shows `/health` status, `Open Chat` and `Stop`.
+  Each root-menu `AboutToShow` makes one HTTP health request, with a 2-second timeout;
+  there is no startup request or periodic polling. Layout/property reads use the
+  cached result. The former standalone Quickshell health panel is removed.
   The tray uses `/usr/bin/python3`, system PyGObject/Gio and GdkPixbuf,
   not mise Python. It re-registers when the tray watcher restarts.
 - The Ornith mascot is redrawn as a Nord SVG; its reference URL is in the SVG.
