@@ -223,7 +223,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 ## llama.cpp
 
 - `.chezmoidata/llama.yaml` configures the Vulkan Quadlet, Ornith Q4_K_M model,
-  localhost port 13305, and five slots with 262144 tokens per slot.
+  localhost port 50501, and five slots with 262144 tokens per slot.
 - `dot_config/models/config.kcl.tmpl` adds Ornith to the existing downloader;
   keep existing models in the list to prevent its orphan cleanup deleting them.
 - `llama-server.container.tmpl` mounts the whole models directory read-only,
