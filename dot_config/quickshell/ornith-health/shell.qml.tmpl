@@ -1,0 +1,127 @@
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+
+ShellRoot {
+    id: root
+    property string status: "Chargement…"
+    property string response: ""
+    property bool healthy: false
+
+    function displayResponse(text) {
+        const split = text.lastIndexOf("\n");
+        const code = text.slice(split + 1).trim();
+        const body = text.slice(0, split).trim();
+        healthy = code === "200";
+        status = code === "000" ? "Serveur inaccessible" : "HTTP " + code;
+        try {
+            response = JSON.stringify(JSON.parse(body), null, 2);
+        } catch (_) {
+            response = body || "Aucune réponse de /health";
+        }
+    }
+
+    Process {
+        id: probe
+        command: ["curl", "--silent", "--max-time", "2", "--write-out", "\n%{http_code}", "http://127.0.0.1:{{ .llama.port }}/health"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.displayResponse(text)
+        }
+    }
+
+    Timer {
+        interval: 3000
+        running: true
+        repeat: true
+        onTriggered: if (!probe.running) probe.running = true
+    }
+
+    PanelWindow {
+        id: window
+        screen: Quickshell.screens.find(s => s.name === Quickshell.env("ORNITH_SCREEN")) || Quickshell.screens[0]
+        anchors { top: true; bottom: true; left: true; right: true }
+        color: "transparent"
+        WlrLayershell.namespace: "ornith-health"
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.exclusionMode: ExclusionMode.Ignore
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+        Item {
+            anchors.fill: parent
+            focus: true
+            Keys.onEscapePressed: Quickshell.quit()
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: Quickshell.quit()
+            }
+
+            Rectangle {
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: 48
+                anchors.rightMargin: 16
+                width: Math.min(360, parent.width - 32)
+                height: content.implicitHeight + 32
+                radius: 12
+                color: "#2e3440"
+                border.color: "#4c566a"
+                border.width: 1
+
+                // Keep clicks inside the health panel from dismissing it.
+                MouseArea { anchors.fill: parent }
+
+                ColumnLayout {
+                    id: content
+                    anchors { top: parent.top; left: parent.left; right: parent.right; margins: 16 }
+                    spacing: 12
+
+                    RowLayout {
+                        Image {
+                            source: "file://{{ .chezmoi.homeDir }}/.local/share/icons/{{ .llama.icon }}.svg"
+                            sourceSize.width: 28
+                            sourceSize.height: 28
+                            Layout.preferredWidth: 28
+                            Layout.preferredHeight: 28
+                        }
+                        Text {
+                            text: {{ .llama.name | toJson }}
+                            color: "#eceff4"
+                            font.bold: true
+                            font.pixelSize: 14
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                        }
+                    }
+                    Text {
+                        text: "/health — " + root.status
+                        color: root.healthy ? "#a3be8c" : "#ebcb8b"
+                        font.pixelSize: 14
+                    }
+                    Text {
+                        text: root.response
+                        textFormat: Text.PlainText
+                        color: "#d8dee9"
+                        font.family: "monospace"
+                        font.pixelSize: 13
+                        wrapMode: Text.WrapAnywhere
+                        maximumLineCount: 12
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                    }
+                    Text {
+                        text: "Actualisation toutes les 3 s · Échap pour fermer"
+                        color: "#81a1c1"
+                        font.pixelSize: 11
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                    }
+                }
+            }
+        }
+    }
+}

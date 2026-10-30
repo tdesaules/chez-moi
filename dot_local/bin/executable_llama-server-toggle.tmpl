@@ -41,7 +41,7 @@ if [ ! -r "$MODEL" ]; then
 fi
 systemctl --user reset-failed "$SERVICE" 2>/dev/null || true
 systemctl --user start --no-block "$SERVICE" || fail "démarrage du serveur"
-notify "Chargement d’Ornith…"
+_log info "Chargement d’Ornith…"
 flock -u 9
 
 # Follow this invocation only: a later stop/start must not get stale notifications.
@@ -61,7 +61,7 @@ while (( SECONDS < deadline )); do
         invocation="$current"
     fi
     if curl --fail --silent --max-time 2 "$HEALTH" >/dev/null; then
-        notify "Prêt — http://127.0.0.1:{{ .llama.port }}"
+        _log success "Prêt — http://127.0.0.1:{{ .llama.port }}"
         exit 0
     fi
     sleep 2

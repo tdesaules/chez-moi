@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 """StatusNotifierItem + DBusMenu for Dank; uses Fedora's system PyGObject."""
+import json
+import os
 import signal
 import subprocess
 import threading
@@ -15,6 +17,7 @@ NAME = {{ .llama.name | toJson }}
 ICON = "{{ .chezmoi.homeDir }}/.local/share/icons/{{ .llama.icon }}.svg"
 SERVICE = {{ .llama.service | toJson }}
 URL = "http://127.0.0.1:{{ .llama.port }}"
+HEALTH_POPUP = "{{ .chezmoi.homeDir }}/.config/quickshell/ornith-health/shell.qml"
 SNI = "org.kde.StatusNotifierItem"
 MENU = "com.canonical.dbusmenu"
 WATCHER = "org.kde.StatusNotifierWatcher"
@@ -58,6 +61,7 @@ class Tray:
         self.state = "Chargement…"
         self.revision = 1
         self.checking = False
+        self.popup = None
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(ICON, 64, 64, True).add_alpha(False, 0, 0, 0)
         pixels = pixbuf.get_pixels()
         argb = bytearray()
@@ -107,9 +111,9 @@ class Tray:
         if item == 0:
             props = {"children-display": GLib.Variant("s", "submenu")}
         else:
-            labels = {1: self.state, 2: "Ouvrir le chat", 3: "Arrêter et quitter"}
+            labels = {2: "Open Chat", 3: "Stop"}
             props = {"label": GLib.Variant("s", labels[item]),
-                     "enabled": GLib.Variant("b", item != 1), "visible": GLib.Variant("b", True)}
+                     "enabled": GLib.Variant("b", True), "visible": GLib.Variant("b", True)}
         return {k: v for k, v in props.items() if not names or k in names}
 
     def event(self, item, event):
@@ -120,21 +124,33 @@ class Tray:
         elif item == 3:
             subprocess.Popen(["systemctl", "--user", "stop", "--no-block", SERVICE])
 
+    def toggle_health(self):
+        if self.popup is not None and self.popup.poll() is None:
+            self.popup.terminate()
+            return
+        env = os.environ.copy()
+        try:
+            output = subprocess.check_output(["niri", "msg", "-j", "focused-output"], timeout=1)
+            env["ORNITH_SCREEN"] = json.loads(output)["name"]
+        except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError):
+            pass
+        self.popup = subprocess.Popen(["quickshell", "--no-duplicate", "--path", HEALTH_POPUP], env=env)
+
     def call(self, connection, sender, path, interface, method, parameters, invocation):
         args = parameters.unpack()
         result = None
         try:
             if interface == SNI:
                 if method in ("Activate", "SecondaryActivate"):
-                    self.event(2, "clicked")
+                    self.toggle_health()
             elif method == "GetLayout":
                 parent, depth, names = args
                 children = [GLib.Variant("(ia{sv}av)", (i, self.properties(i, names), []))
-                            for i in (1, 2, 3)] if parent == 0 and depth != 0 else []
+                            for i in (2, 3)] if parent == 0 and depth != 0 else []
                 result = GLib.Variant("(u(ia{sv}av))", (self.revision, (parent, self.properties(parent, names), children)))
             elif method == "GetGroupProperties":
                 ids, names = args
-                result = GLib.Variant("(a(ia{sv}))", ([(i, self.properties(i, names)) for i in (ids or [0, 1, 2, 3])],))
+                result = GLib.Variant("(a(ia{sv}))", ([(i, self.properties(i, names)) for i in (ids or [0, 2, 3])],))
             elif method == "GetProperty":
                 result = GLib.Variant("(v)", (self.properties(args[0])[args[1]],))
             elif method == "Event":
