@@ -12,6 +12,8 @@
 .local/share/applications/omnissa-horizon-client.desktop
 .local/share/applications/omnissa-horizon-thales.desktop
 .local/share/icons/omnissa-horizon.svg
+.local/share/applications/alcea-thales-web.desktop
+.local/share/icons/alcea-thales.svg
 .config/systemd/user/default.target.wants/lemonade-server.service
 .config/systemd/user/default.target.wants/open-webui.service
 .config/systemd/user/default.target.wants/open-terminal.service
