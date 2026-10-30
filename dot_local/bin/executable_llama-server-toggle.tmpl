@@ -4,14 +4,14 @@ set -euo pipefail
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 SERVICE="{{ .llama.service }}"
-ICON="{{ .chezmoi.homeDir }}/.local/share/icons/llama-cpp.svg"
+ICON="{{ .chezmoi.homeDir }}/.local/share/icons/{{ .llama.icon }}.svg"
 MODEL="{{ .chezmoi.homeDir }}/{{ .llama.models_dir }}/{{ .llama.model }}"
 HEALTH="http://127.0.0.1:{{ .llama.port }}/health"
 
 notify() {
     _log info "$1"
-    notify-send --app-name=Llama.cpp --icon="$ICON" \
-        -h string:x-canonical-private-synchronous:llama-server "Llama.cpp" "$1" || true
+    notify-send --app-name="{{ .llama.name }}" --icon="$ICON" \
+        -h string:x-canonical-private-synchronous:llama-server "{{ .llama.name }}" "$1" || true
 }
 
 fail() {

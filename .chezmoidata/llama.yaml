@@ -1,6 +1,9 @@
 llama:
   image: ghcr.io/ggml-org/llama.cpp:server-vulkan
   service: llama-server.service
+  tray_service: ornith-tray.service
+  name: Ornith-1.5-35B-A3B
+  icon: ornith
   port: 50501
   models_dir: .local/share/huggingface/models
   repo: ornith-ai/Ornith-1.5-35B-A3B-GGUF

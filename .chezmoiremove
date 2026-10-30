@@ -6,6 +6,7 @@
 .local/share/applications/open-webui-web.desktop
 .local/share/icons/lemonade.svg
 .local/share/icons/openwebui.svg
+.local/share/icons/llama-cpp.svg
 .config/systemd/user/default.target.wants/lemonade-server.service
 .config/systemd/user/default.target.wants/open-webui.service
 .config/systemd/user/default.target.wants/open-terminal.service

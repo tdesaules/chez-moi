@@ -228,9 +228,13 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   keep existing models in the list to prevent its orphan cleanup deleting them.
 - `llama-server.container.tmpl` mounts the whole models directory read-only,
   including `.hf-cache` so the downloader's relative symlinks resolve.
-- No `[Install]`: start/stop on demand through the Dank launcher entry `Llama.cpp`.
+- No `[Install]`: start/stop on demand through the Dank launcher entry `Ornith-1.5-35B-A3B`.
   `llama-server-toggle` reports readiness using `/health`; it does not download models.
-- The icon is the upstream llama.cpp SVG recolored in Nord, with its MIT notice.
+- `ornith-tray.service` is wanted by the server and stops with it (`BindsTo`/`PartOf`).
+  Its StatusNotifierItem/DBusMenu provides readiness, open-chat and stop/quit actions
+  in Dank's system tray. It uses `/usr/bin/python3`, system PyGObject/Gio and GdkPixbuf,
+  not mise Python. It re-registers when the tray watcher restarts.
+- The Ornith mascot is redrawn as a Nord SVG; its reference URL is in the SVG.
 - Context fitting is disabled to prevent silently reducing the requested capacity.
   Vulkan reports about 79 GiB accessible on this Strix Halo host, including shared
   memory (the kernel reports 32 GiB dedicated VRAM). Keep KV offloading enabled;

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <title>Ornith — Nord</title>
+  <desc>Vector adaptation of the Ornith bird mascot, with Nord colors. Reference: https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-GGUF/resolve/main/assets/ornith_logo.png</desc>
+  <defs><clipPath id="circle"><circle cx="128" cy="128" r="124"/></clipPath></defs>
+  <g clip-path="url(#circle)" stroke="#2e3440" stroke-width="5" stroke-linejoin="round">
+    <circle cx="128" cy="128" r="124" fill="#4c566a" stroke="none"/>
+    <path d="M42 144Q22 151 29 177Q14 195 43 220L83 254H173L214 220Q242 196 226 177Q234 151 214 144Z" fill="#3b4252"/>
+    <path d="M43 113Q57 77 91 62Q122 48 147 14Q169 -12 166 26Q165 37 158 48Q188 22 174 59Q198 72 211 103Q224 134 214 162Q208 177 184 189L128 220L74 190Q38 171 40 150Z" fill="#eceff4"/>
+    <path d="M92 62Q123 48 147 14Q169 -12 166 26Q165 37 158 48Q188 22 174 59Q156 74 132 72Z" fill="#ebcb8b" stroke="none"/>
+    <ellipse cx="70" cy="158" rx="14" ry="12" fill="#d08770" stroke="none"/>
+    <ellipse cx="187" cy="158" rx="14" ry="12" fill="#d08770" stroke="none"/>
+    <path d="M111 140Q128 122 143 140Q151 153 137 164L128 174L119 166Q104 157 111 140Z" fill="#d08770"/>
+    <path d="M118 140Q124 136 124 150" fill="none" stroke="#ebcb8b" stroke-width="3"/>
+    <g fill="none" stroke="#2e3440" stroke-width="6">
+      <path d="M44 114Q44 108 68 108Q106 107 112 116Q118 133 109 148Q100 160 76 158Q53 158 48 145Q42 132 44 114Z"/>
+      <path d="M143 116Q149 107 183 108Q210 108 213 115Q217 133 209 146Q201 160 178 158Q155 159 148 147Q140 133 143 116Z"/>
+      <path d="M113 124Q128 116 143 124M43 117H36M213 117H220"/>
+    </g>
+    <ellipse cx="88" cy="134" rx="10" ry="12" fill="#2e3440" stroke="none"/>
+    <ellipse cx="168" cy="134" rx="10" ry="12" fill="#2e3440" stroke="none"/>
+    <path d="M35 201Q59 186 109 221M221 201Q198 186 147 221" fill="none"/>
+    <path d="M97 214L96 251M159 214L160 251" stroke="#eceff4" stroke-width="7" stroke-linecap="round"/>
+    <path d="M92 241H100M156 241H164" stroke="#eceff4" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

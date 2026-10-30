@@ -2,6 +2,7 @@
 Description=Llama.cpp — Ornith
 After=network-online.target
 Wants=network-online.target
+Wants={{ .llama.tray_service }}
 ConditionPathExists={{ .chezmoi.homeDir }}/{{ .llama.models_dir }}/{{ .llama.model }}
 
 [Container]
