@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 """StatusNotifierItem + DBusMenu for Dank; uses Fedora's system PyGObject."""
-import json
 import signal
 import subprocess
-import threading
-import urllib.error
-import urllib.request
 
 import gi
 
@@ -15,7 +11,8 @@ from gi.repository import GdkPixbuf, Gio, GLib
 NAME = {{ .llama.name | toJson }}
 ICON = "{{ .chezmoi.homeDir }}/.local/share/icons/{{ .llama.icon }}.svg"
 SERVICE = {{ .llama.service | toJson }}
-URL = "http://127.0.0.1:{{ .llama.port }}"
+ADDRESS = "127.0.0.1:{{ .llama.port }}"
+URL = "http://" + ADDRESS
 SNI = "org.kde.StatusNotifierItem"
 MENU = "com.canonical.dbusmenu"
 WATCHER = "org.kde.StatusNotifierWatcher"
@@ -56,10 +53,7 @@ XML = """<node>
 
 class Tray:
     def __init__(self):
-        self.state = "Non vérifié"
         self.revision = 1
-        self.checking = False
-        self.waiters = []
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(ICON, 64, 64, True).add_alpha(False, 0, 0, 0)
         pixels = pixbuf.get_pixels()
         argb = bytearray()
@@ -99,7 +93,7 @@ class Tray:
             "Id": GLib.Variant("s", "ornith"), "Title": GLib.Variant("s", NAME),
             "Status": GLib.Variant("s", "Active"), "WindowId": GLib.Variant("u", 0),
             "IconName": GLib.Variant("s", ICON), "IconPixmap": GLib.Variant("a(iiay)", self.pixmaps),
-            "ToolTip": GLib.Variant("(sa(iiay)ss)", (ICON, self.pixmaps, NAME, self.state)),
+            "ToolTip": GLib.Variant("(sa(iiay)ss)", (ICON, self.pixmaps, NAME, ADDRESS)),
             "ItemIsMenu": GLib.Variant("b", False), "Menu": GLib.Variant("o", "/Menu"),
         }[name]
 
@@ -107,7 +101,7 @@ class Tray:
         if item == 0:
             props = {"children-display": GLib.Variant("s", "submenu")}
         else:
-            labels = {1: "/health: " + self.state, 2: "Open Chat", 3: "Stop"}
+            labels = {1: ADDRESS, 2: "Open Chat", 3: "Stop"}
             props = {"label": GLib.Variant("s", labels[item]),
                      "enabled": GLib.Variant("b", item != 1), "visible": GLib.Variant("b", True)}
         return {k: v for k, v in props.items() if not names or k in names}
@@ -143,53 +137,12 @@ class Tray:
                     self.event(item, event)
                 result = GLib.Variant("(ai)", ([],))
             elif method == "AboutToShow":
-                if args[0] == 0:
-                    self.check_health(invocation)
-                    return
                 result = GLib.Variant("(b)", (False,))
             elif method == "AboutToShowGroup":
-                if 0 in args[0]:
-                    self.check_health(invocation, group=True)
-                    return
                 result = GLib.Variant("(aiai)", ([], []))
             invocation.return_value(result)
         except (KeyError, ValueError) as error:
             invocation.return_dbus_error("com.canonical.dbusmenu.Error", str(error))
-
-    def check_health(self, invocation, group=False):
-        # One request per menu opening; overlapping opens share the pending request.
-        self.waiters.append((invocation, group))
-        if not self.checking:
-            self.checking = True
-            threading.Thread(target=self.probe, daemon=True).start()
-
-    def probe(self):
-        try:
-            with urllib.request.urlopen(URL + "/health", timeout=2) as response:
-                status = json.load(response).get("status", "unknown")
-                state = f"{str(status)[:80]} (HTTP {response.status})"
-        except urllib.error.HTTPError as error:
-            state = "Chargement (HTTP 503)" if error.code == 503 else f"Erreur HTTP {error.code}"
-        except (OSError, urllib.error.URLError):
-            state = "Serveur indisponible"
-        except (ValueError, AttributeError):
-            state = "Réponse JSON invalide"
-        GLib.idle_add(self.update, state)
-
-    def update(self, state):
-        self.checking = False
-        if state != self.state:
-            self.state = state
-            self.revision += 1
-            self.bus.emit_signal(None, "/StatusNotifierItem", SNI, "NewToolTip", None)
-        # AboutToShow's reply tells the host to fetch the updated layout. Avoid a
-        # LayoutUpdated signal here: fetching properties must not trigger probes.
-        waiters, self.waiters = self.waiters, []
-        for invocation, group in waiters:
-            result = GLib.Variant("(aiai)", ([0], [])) if group else GLib.Variant("(b)", (True,))
-            invocation.return_value(result)
-        return GLib.SOURCE_REMOVE
-
 
 if __name__ == "__main__":
     loop = GLib.MainLoop()
