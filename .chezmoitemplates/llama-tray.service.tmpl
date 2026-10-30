@@ -1,0 +1,10 @@
+[Unit]
+Description={{ .llama.name }} status tray
+After={{ .llama.service }}
+BindsTo={{ .llama.service }}
+PartOf={{ .llama.service }}
+
+[Service]
+ExecStart=/usr/bin/python3 {{ .chezmoi.homeDir }}/.local/bin/{{ .llama.alias }}-tray
+Restart=on-failure
+RestartSec=3

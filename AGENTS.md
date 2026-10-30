@@ -222,26 +222,36 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## llama.cpp
 
-- `.chezmoidata/llama.yaml` configures the Vulkan Quadlet, Ornith Q4_K_M model,
-  localhost port 50501, and five slots with 262144 tokens per slot.
-- `dot_config/models/config.kcl.tmpl` adds Ornith to the existing downloader;
-  keep existing models in the list to prevent its orphan cleanup deleting them.
-- `llama-server.container.tmpl` mounts the whole models directory read-only,
+- `.chezmoidata/llama.yaml` defines three independent Vulkan servers, all with five slots:
+  - `llama` / `llama-server.service`: Ornith Q4_K_M, localhost 50501, 256K per slot.
+  - `qwen` / `qwen-server.service`: Unsloth Qwen3.8-27B UD-Q4_K_XL, localhost 50502,
+    256K per slot, Q8 KV cache and flash attention to reduce cache memory use.
+  - `muse` / `muse-server.service`: Unsloth Muse-Glimmer-30B UD-Q4_K_XL,
+    localhost 50503, native 128K per slot.
+- Qwen/Muse wrappers merge their overrides with `llama` defaults using a deep copy.
+  Shared implementations live in `.chezmoitemplates/llama-*` and `llama.desktop.tmpl`.
+  Each model has a distinct launcher, toggle lock, tray ID, port and container name.
+- `dot_config/models/config.kcl.tmpl` downloads Ornith plus Qwen/Muse and their
+  vision projectors. The old meta-models Muse quantization is no longer retained;
+  the downloader removes models absent from this list during orphan cleanup.
+- The shared Quadlet mounts the whole models directory read-only,
   including `.hf-cache` so the downloader's relative symlinks resolve.
-- No `[Install]`: start/stop on demand through the Dank launcher entry `Ornith-1.5-35B-A3B`.
-  `llama-server-toggle` waits for `/health` silently on startup (errors still notify);
-  it does not download models.
-- `ornith-tray.service` is wanted by the server and stops with it (`BindsTo`/`PartOf`).
-  Left-click does nothing. Right-click shows the connection address (`127.0.0.1:50501`),
+- No `[Install]`: start/stop on demand through each model's Dank launcher.
+  The toggle checks model/projector files and waits for `/health` silently on startup
+  (errors still notify); it does not download models.
+- Each `*-tray.service` is wanted by its server and stops with it (`BindsTo`/`PartOf`).
+  Left-click does nothing. Right-click shows the model's connection address,
   `Open Chat` and `Stop`. The tray makes no health requests. The former standalone
   Quickshell health panel is removed.
   The tray uses `/usr/bin/python3`, system PyGObject/Gio and GdkPixbuf,
   not mise Python. It re-registers when the tray watcher restarts.
 - The Ornith mascot is redrawn as a Nord SVG; its reference URL is in the SVG.
+  Qwen and Meta (Muse) logo geometry comes from LobeHub, recolored in Nord, with
+  the MIT license included in each rendered SVG.
 - Context fitting is disabled to prevent silently reducing the requested capacity.
   Vulkan reports about 79 GiB accessible on this Strix Halo host, including shared
   memory (the kernel reports 32 GiB dedicated VRAM). Keep KV offloading enabled;
-  the five 256K slots need about 25 GiB of FP16 KV cache in addition to weights.
+  Ornith's five 256K slots need about 25 GiB of FP16 KV cache in addition to weights.
   Validate memory use and `/props` after changing context, parallelism, or backend.
 
 ## Verify before commit

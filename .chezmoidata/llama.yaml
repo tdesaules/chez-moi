@@ -12,3 +12,31 @@ llama:
   context_per_slot: 262144
   parallel: 5
   startup_timeout: 900
+  toggle: llama-server-toggle
+
+qwen:
+  service: qwen-server.service
+  tray_service: qwen-tray.service
+  name: Qwen3.8-27B
+  icon: qwen
+  port: 50502
+  repo: unsloth/Qwen3.8-27B-GGUF
+  model: Qwen3.8-27B-UD-Q4_K_XL.gguf
+  projector: mmproj-F16.gguf
+  alias: qwen
+  toggle: qwen-server-toggle
+  context_per_slot: 262144
+  cache_type: q8_0
+
+muse:
+  service: muse-server.service
+  tray_service: muse-tray.service
+  name: Muse-Glimmer-30B
+  icon: muse
+  port: 50503
+  repo: unsloth/Muse-Glimmer-30B-GGUF
+  model: Muse-Glimmer-30B-UD-Q4_K_XL.gguf
+  projector: mmproj-Muse-Glimmer-30B-Q8_0.gguf
+  alias: muse
+  toggle: muse-server-toggle
+  context_per_slot: 131072

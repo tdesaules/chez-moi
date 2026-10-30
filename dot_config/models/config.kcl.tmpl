@@ -1,15 +1,17 @@
-download_dir = "{{ .chezmoi.homeDir }}/.local/share/huggingface/models"
+download_dir = "{{ .chezmoi.homeDir }}/{{ .llama.models_dir }}"
 models = [
     {
         repo = "{{ .llama.repo }}"
         file = "{{ .llama.model }}"
     }
+{{ range list .qwen .muse }}
     {
-        repo = "meta-models/Muse-Glimmer-30B-GGUF"
-        file = "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf"
+        repo = "{{ .repo }}"
+        file = "{{ .model }}"
     }
     {
-        repo = "meta-models/Muse-Glimmer-30B-GGUF"
-        file = "mmproj-Muse-Glimmer-30B-Q4_K_M.gguf"
+        repo = "{{ .repo }}"
+        file = "{{ .projector }}"
     }
+{{ end }}
 ]

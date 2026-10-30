@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name={{ .llama.name }}
+Comment=Démarrer / arrêter {{ .llama.name }}
+Exec="{{ .chezmoi.homeDir }}/.local/bin/{{ .llama.toggle }}"
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/{{ .llama.icon }}.svg
+Terminal=false
+Categories=Development;
+Keywords={{ .llama.alias }};LLM;AI;llama;server;

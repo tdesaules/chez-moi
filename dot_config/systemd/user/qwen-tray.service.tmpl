@@ -1,0 +1,1 @@
+{{ includeTemplate "llama-tray.service.tmpl" (dict "chezmoi" .chezmoi "llama" (merge (deepCopy .qwen) .llama)) }}
