@@ -7,6 +7,11 @@
 .local/share/icons/lemonade.svg
 .local/share/icons/openwebui.svg
 .local/share/icons/llama-cpp.svg
+.config/distrobox/omnissa-horizon-client.desktop
+.config/distrobox/omnissa-horizon-thales.desktop
+.local/share/applications/omnissa-horizon-client.desktop
+.local/share/applications/omnissa-horizon-thales.desktop
+.local/share/icons/omnissa-horizon.svg
 .config/systemd/user/default.target.wants/lemonade-server.service
 .config/systemd/user/default.target.wants/open-webui.service
 .config/systemd/user/default.target.wants/open-terminal.service
