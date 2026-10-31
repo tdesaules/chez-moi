@@ -10,7 +10,7 @@ craft:
 # renovate: depName=FilenCloudDienste/filen-desktop
 filen: "v3.0.53"
 # renovate: depName=anomalyco/opencode
-opencode_desktop: "v1.19.0"
+opencode_desktop: "v2.2.5"
 # renovate: depName=OrcaSlicer/OrcaSlicer
 orcaslicer: "v2.4.2"
 # renovate: depName=FreeCAD/FreeCAD
