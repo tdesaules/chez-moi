@@ -151,7 +151,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## Renovate
 
-- Ten Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
+- Nine Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
   and `plugins.yaml`. Preserve the `# renovate: depName=...` annotations.
 - `.github/renovate-config.cjs` is runner config; `renovate.json` is repo config.
 - The nightly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository

@@ -139,23 +139,6 @@ exported_bins="/usr/local/bin/openscad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/openscad.desktop"
 
-[librecad-distrobox]
-image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
-replace=true
-start_now=true
-entry=false
-hostname="librecad-distrobox"
-{{ includeTemplate "distrobox/pre-init.tmpl" -}}
-{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
-additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
-{{- $lcad_version := .librecad }}
-init_hooks="curl --fail --location --retry 3 https://github.com/LibreCAD/LibreCAD/releases/download/{{ $lcad_version }}/LibreCAD-{{ $lcad_version }}-x86_64.AppImage -o /tmp/librecad.AppImage && install -m 0755 /tmp/librecad.AppImage /usr/local/bin/librecad && rm /tmp/librecad.AppImage"
-init_hooks="chmod +x /usr/local/bin/librecad"
-exported_bins="/usr/local/bin/librecad"
-exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/librecad.desktop"
-
 [librepcb-distrobox]
 image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
