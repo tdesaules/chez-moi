@@ -70,20 +70,6 @@ init_hooks="curl --fail --location --retry 3 https://github.com/FilenCloudDienst
 init_hooks="dnf --assumeyes install /tmp/filen.rpm"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/filen.desktop"
 
-[opencode-distrobox]
-image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
-replace=true
-start_now=true
-entry=false
-hostname="opencode-distrobox"
-{{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
-{{- $opencode_version := .opencode_desktop }}
-{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-init_hooks="curl --fail --location --retry 3 https://github.com/anomalyco/opencode/releases/download/{{ $opencode_version }}/opencode-desktop-linux-x86_64.rpm -o /tmp/opencode.rpm"
-init_hooks="dnf --assumeyes install /tmp/opencode.rpm"
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/opencode.desktop"
-
 [orcaslicer-distrobox]
 image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true

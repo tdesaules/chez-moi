@@ -18,6 +18,14 @@
 .local/share/applications/librecad-distrobox-librecad.desktop
 .local/share/icons/librecad.svg
 .local/bin/librecad
+.config/distrobox/opencode.desktop
+.local/share/applications/opencode-distrobox-opencode.desktop
+.local/share/applications/opencode-web.desktop
+.local/share/applications/gemini-web.desktop
+.local/share/icons/opencode.svg
+.local/share/icons/gemini.svg
+.config/systemd/user/opencode-web.service
+.config/systemd/user/default.target.wants/opencode-web.service
 .config/quickshell/ornith-health/shell.qml
 .config/systemd/user/default.target.wants/lemonade-server.service
 .config/systemd/user/default.target.wants/open-webui.service

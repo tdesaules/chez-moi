@@ -25,7 +25,7 @@ matches = re.findall(
     r"https://github.com/([^/]+/[^/]+)/releases/download/([^/]+)/([^\s\"']+)",
     rendered + external,
 )
-assert len(matches) == 9, f"Expected eight applications and pinentry plugin on GitHub, got {len(matches)}"
+assert len(matches) == 8, f"Expected seven applications and pinentry plugin on GitHub, got {len(matches)}"
 for repo, tag, filename in matches:
     with urlopen(Request(f"https://api.github.com/repos/{repo}/releases/tags/{tag}", headers=headers)) as response:
         release = json.load(response)
