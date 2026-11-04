@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <title>LibrePCB — Nord</title>
+  <desc>LibrePCB official monochrome logo, recolored with Nord frost colors.
+    Source: https://librepcb.org/img/librepcb-monochrome.svg
+    Attribution: LibrePCB, https://librepcb.org/
+    License: CC BY 3.0 or later, https://creativecommons.org/licenses/by/3.0/
+  </desc>
+  <g fill="#88c0d0">
+    <rect x="307.07" y="432.45" width="45.65" height="67.55"/>
+    <rect x="227.17" y="432.45" width="45.65" height="67.55"/>
+    <rect x="147.28" y="432.45" width="45.65" height="67.55"/>
+    <rect x="307.07" width="45.65" height="67.55"/>
+    <rect x="227.17" width="45.65" height="67.55"/>
+    <rect x="147.28" width="45.65" height="67.55"/>
+    <rect y="307.07" width="67.55" height="45.65"/>
+    <rect y="227.17" width="67.55" height="45.65"/>
+    <rect y="147.28" width="67.55" height="45.65"/>
+    <rect x="432.45" y="307.07" width="67.55" height="45.65"/>
+    <rect x="432.45" y="227.17" width="67.55" height="45.65"/>
+    <rect x="432.45" y="147.28" width="67.55" height="45.65"/>
+  </g>
+  <path fill="#81a1c1" d="M365.11,94.73H134.89a40.13,40.13,0,0,0-40.16,40.16V365.11a40.17,40.17,0,0,0,40.16,40.16H365.11a40.17,40.17,0,0,0,40.16-40.16V134.89A40.13,40.13,0,0,0,365.11,94.73ZM127.07,165a30.14,30.14,0,1,1,30.1,30.16A30.09,30.09,0,0,1,127.07,165Z"/>
+</svg>

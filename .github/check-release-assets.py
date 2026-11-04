@@ -1,4 +1,4 @@
-"""Check the actual rendered download URLs against GitHub release assets."""
+"""Check rendered download URLs against GitHub releases and official hosts."""
 import json
 import os
 from pathlib import Path
@@ -31,6 +31,11 @@ for repo, tag, filename in matches:
         release = json.load(response)
     assert filename in {asset["name"] for asset in release["assets"]}, f"Missing asset: {repo}@{tag}/{filename}"
     print(f"OK {repo}@{tag}/{filename}")
+
+# LibrePCB publishes its binaries on its own host, not as GitHub assets.
+librepcb_url = re.search(r"https://download\.librepcb\.org/[^\s\"']+", rendered).group(0)
+with urlopen(Request(librepcb_url, method="HEAD"), timeout=30):
+    print(f"OK {librepcb_url}")
 
 tag = re.search(r"gopass-dms/archive/([^/]+)\.tar\.gz", external).group(1)
 with urlopen(Request(f"https://api.github.com/repos/tdesaules/gopass-dms/releases/tags/{tag}", headers=headers)):

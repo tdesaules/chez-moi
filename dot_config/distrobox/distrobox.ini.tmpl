@@ -156,6 +156,21 @@ exported_bins="/usr/local/bin/librecad"
 exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/librecad.desktop"
 
+[librepcb-distrobox]
+image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
+replace=true
+start_now=true
+entry=false
+hostname="librepcb-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+additional_packages="mesa-dri-drivers mesa-libGL mesa-vulkan-drivers qt6-qtwayland"
+additional_flags="--env APPIMAGE_EXTRACT_AND_RUN=1"
+init_hooks="curl --fail --location --retry 3 https://download.librepcb.org/releases/{{ .librepcb }}/librepcb-{{ .librepcb }}-linux-x86_64.AppImage -o /tmp/librepcb.AppImage && install -m 0755 /tmp/librepcb.AppImage /usr/local/bin/librepcb && rm /tmp/librepcb.AppImage"
+exported_bins="/usr/local/bin/librepcb"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/librepcb.desktop"
+
 [craft-distrobox]
 image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true
