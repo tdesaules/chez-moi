@@ -188,6 +188,11 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## opencode
 
+- Skills are deployed from the root of `tdesaules/skills` into
+  `~/.config/opencode/skills` by an exact archive external (24h refresh).
+  Repository documentation is excluded; skill resources are preserved.
+  OpenCode discovers this directory automatically. Use `chezmoi apply -R` to
+  fetch changes immediately. The old `~/.local/share/skills` clone is unmanaged.
 - Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Enabled providers:
   `opencode-go` (OpenCode Go subscription, built-in), `openrouter`, `poolside`,
   `scaleway`, `zai-coding-plan`, `ollama-cloud` (Ollama Cloud API,

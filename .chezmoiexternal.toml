@@ -23,6 +23,11 @@
     exact = true
     stripComponents = 1
 
-[".local/share/skills"]
-    type = "git-repo"
-    url = "https://github.com/tdesaules/skills.git"
+[".config/opencode/skills"]
+    type = "archive"
+    url = "https://github.com/tdesaules/skills/archive/main.tar.gz"
+    exact = true
+    stripComponents = 1
+    refreshPeriod = "24h"
+    # Keep skill directories and their resources, not repository documentation.
+    exclude = ["*/.*", "*/AGENTS.md", "*/README.md", "*/LICENSE", "*/docs"]
