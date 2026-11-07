@@ -1,0 +1,4 @@
+#!/bin/sh
+# Prefer container runtimes over the host's mise installations.
+export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+exec /opt/niri-tonic-files/bin/niri-tonic-files "$@"

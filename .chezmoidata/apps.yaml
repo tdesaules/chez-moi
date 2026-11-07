@@ -15,3 +15,6 @@ orcaslicer: "v2.4.2"
 freecad: "1.1.4"
 # renovate: depName=LibrePCB/LibrePCB
 librepcb: "2.1.1"
+# renovate: depName=niri-tonic/niri-tonic-files
+niri_tonic_files: "1.0.0"
+niri_tonic_files_fedora: "44"

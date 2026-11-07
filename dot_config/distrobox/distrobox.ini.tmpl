@@ -12,6 +12,30 @@ exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
 exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/chromium-work.desktop"
 
 {{ if eq .chezmoi.arch "amd64" -}}
+[niri-tonic-files-distrobox]
+# Release binaries require Fedora 44's glibc and GTK runtime.
+image=quay.io/fedora/fedora:{{ .niri_tonic_files_fedora }}
+replace=true
+start_now=true
+entry=false
+hostname="niri-tonic-files-distrobox"
+{{ includeTemplate "distrobox/pre-init.tmpl" -}}
+additional_packages="gtk4 mesa-dri-drivers mesa-vulkan-drivers nodejs npm libsecret xdg-utils desktop-file-utils"
+{{ includeTemplate "distrobox/common-hooks.tmpl" -}}
+# Install inside the container; the shared home retains configuration and accounts.
+init_hooks="mkdir -p /tmp/niri-tonic-files-install /opt/niri-tonic-files"
+init_hooks="curl --fail --location --retry 3 https://github.com/niri-tonic/niri-tonic-files/releases/download/{{ .niri_tonic_files }}/niri-tonic-files-{{ .niri_tonic_files }}-linux-amd64.tar.gz -o /tmp/niri-tonic-files-install/niri-tonic-files-{{ .niri_tonic_files }}-linux-amd64.tar.gz"
+init_hooks="curl --fail --location --retry 3 https://github.com/niri-tonic/niri-tonic-files/releases/download/{{ .niri_tonic_files }}/SHA256SUMS -o /tmp/niri-tonic-files-install/SHA256SUMS"
+init_hooks="(cd /tmp/niri-tonic-files-install && grep -F niri-tonic-files-{{ .niri_tonic_files }}-linux-amd64.tar.gz SHA256SUMS | sha256sum --check --strict && tar -xzf niri-tonic-files-{{ .niri_tonic_files }}-linux-amd64.tar.gz -C /opt/niri-tonic-files)"
+init_hooks="/usr/bin/npm ci --omit=dev --ignore-scripts --cache /tmp/niri-tonic-files-npm-cache --prefix /opt/niri-tonic-files/share/niri-tonic-files/plugins/filen"
+# Standard icon directories are read-only host mounts; export the bundled icon by path.
+init_hooks="desktop-file-edit --set-icon=/opt/niri-tonic-files/share/icons/hicolor/scalable/apps/io.github.tdesaules.NiriTonicFiles.svg /opt/niri-tonic-files/share/applications/io.github.tdesaules.NiriTonicFiles.desktop"
+init_hooks="install -m755 {{ .chezmoi.homeDir }}/.config/distrobox/niri-tonic-files-launch /usr/local/bin/niri-tonic-files"
+init_hooks="/usr/local/bin/niri-tonic-files --version && rm -rf /tmp/niri-tonic-files-install /tmp/niri-tonic-files-npm-cache"
+exported_bins="/usr/local/bin/niri-tonic-files"
+exported_bins_path="{{ .chezmoi.homeDir }}/.local/bin"
+exported_apps="/opt/niri-tonic-files/share/applications/io.github.tdesaules.NiriTonicFiles.desktop"
+
 [zen-distrobox]
 image=quay.io/fedora/fedora:{{ .chezmoi.osRelease.versionID }}
 replace=true

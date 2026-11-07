@@ -160,7 +160,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## Renovate
 
-- Eight Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
+- Nine Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
   and `plugins.yaml`. Preserve the `# renovate: depName=...` annotations.
 - `.github/renovate-config.cjs` is runner config; `renovate.json` is repo config.
 - The nightly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository
@@ -173,6 +173,13 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## distrobox
 
+- Niri Tonic Files uses a dedicated Fedora 44 box (runtime pinned in
+  `.chezmoidata/apps.yaml`), with GTK 4, Node.js and both cloud adapters.
+  Its release archive is SHA-256 checked and extracted to `/opt/niri-tonic-files` inside
+  the container; Filen dependencies use `npm ci --omit=dev --ignore-scripts`.
+  Distrobox exports the upstream desktop entry, icon and CLI wrapper. The
+  container launcher prioritizes system binaries over host mise runtimes.
+  The shared `~/.config/niri-tonic-files/config.yaml` is never seeded or overwritten.
 - `dot_config/distrobox/distrobox.ini.tmpl` assembles containers via
   `distrobox assemble create --file ...` in `run_onchange_after_04-distrobox.sh.tmpl`.
   Add a hash line in that script for every new `.desktop.tmpl`, `distrobox.ini.tmpl`,
