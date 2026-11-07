@@ -1,10 +1,10 @@
 git:
   user:
-    name: Thibault DESAULES
+    name: thibault
     email: thibault@desaules.me
   targets:
     github-com-tdesaules:
-      name: Thibault DESAULES
+      name: thibault
       email: thibault@desaules.me
       urls:
         - "https://github.com/tdesaules/**"
@@ -12,9 +12,9 @@ git:
         - "ssh://git@github.com/tdesaules/**"
       credential_url: https://github.com/tdesaules
       username: tdesaules
-      secret: git/github.com/tdesaules
+      secret: perso/token/github.com/tdesaules/51fd0064-4366-465d-b741-ab3239cf8271
     github-com-niri-tonic:
-      name: Thibault DESAULES
+      name: thibault
       email: thibault@desaules.me
       urls:
         - "https://github.com/niri-tonic/**"
@@ -24,7 +24,7 @@ git:
       username: tdesaules
       secret: perso/token/github.com/niri-tonic/070eb73e-02a4-4df2-a77b-a724e0e2f21f
     gitlab-thalesdigital-io:
-      name: Thibault DESAULES
+      name: thibault
       email: thibault.desaules@external.thalesgroup.com
       urls:
         - "https://gitlab.thalesdigital.io/**"
@@ -32,4 +32,4 @@ git:
         - "ssh://git@gitlab.thalesdigital.io/**"
       credential_url: https://gitlab.thalesdigital.io
       username: thibault.desaules@external.thalesgroup.com
-      secret: git/gitlab.thalesdigital.io/thibault.desaules@external.thalesgroup.com
+      secret: thales/token/gitlab.thalesdigital.io/5b00262e-c4ac-4ba6-9859-cb3fd0b09c0e
