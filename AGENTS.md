@@ -27,7 +27,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   Target files share `.chezmoitemplates/git-target.tmpl` and define identity
   plus URL-scoped HTTPS credentials. Each helper reads its explicit gopass
   entry at runtime; no token is rendered into Git configuration.
-  `credential.useHttpPath` isolates the 24-hour Git cache by repository.
+  `credential.useHttpPath` isolates the 15-minute Git cache by repository.
   SSH authentication continues to use SSH keys. New targets need a wrapper
   `dot_gitconfig-<target>.tmpl` as well as a data entry.
 
