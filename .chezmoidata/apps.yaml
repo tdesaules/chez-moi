@@ -10,7 +10,7 @@ craft:
 # renovate: depName=FilenCloudDienste/filen-desktop
 filen: "v3.0.53"
 # renovate: depName=OrcaSlicer/OrcaSlicer
-orcaslicer: "v2.4.2"
+orcaslicer: "v2.5.0"
 # renovate: depName=FreeCAD/FreeCAD
 freecad: "1.1.4"
 # renovate: depName=LibrePCB/LibrePCB
