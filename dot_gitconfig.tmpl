@@ -3,9 +3,11 @@
     email = {{ .git.user.email | quote }}
     signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 
-{{- range .git.thales.urls }}
+{{- range $name, $target := .git.targets }}
+{{- range $target.urls }}
 [includeIf "hasconfig:remote.*.url:{{ . }}"]
-    path = {{ $.chezmoi.homeDir }}/.gitconfig-thales
+    path = {{ printf "%s/.gitconfig-%s" $.chezmoi.homeDir $name | quote }}
+{{- end }}
 {{- end }}
 
 [core]
@@ -70,5 +72,4 @@
     gpgsign = true
 
 [credential]
-    helper = cache --timeout=86400
-    helper = gopass
+    useHttpPath = true

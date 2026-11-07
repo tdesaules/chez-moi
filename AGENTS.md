@@ -22,6 +22,15 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## Git workflow
 
+- Git targets live in `.chezmoidata/git.yaml`; `dot_gitconfig.tmpl` selects
+  `.gitconfig-<target>` by HTTPS, scp-style SSH, or `ssh://` remote URL.
+  Target files share `.chezmoitemplates/git-target.tmpl` and define identity
+  plus URL-scoped HTTPS credentials. Each helper reads its explicit gopass
+  entry at runtime; no token is rendered into Git configuration.
+  `credential.useHttpPath` isolates the 24-hour Git cache by repository.
+  SSH authentication continues to use SSH keys. New targets need a wrapper
+  `dot_gitconfig-<target>.tmpl` as well as a data entry.
+
 - **Commit changes locally** using [conventional commits](https://www.conventionalcommits.org/)
   (e.g. `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
 - **Never push** — pushing to the remote is done manually by the user.

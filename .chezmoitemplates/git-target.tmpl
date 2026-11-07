@@ -1,0 +1,9 @@
+[user]
+    name = {{ .name | quote }}
+    email = {{ .email | quote }}
+
+[credential {{ .credential_url | quote }}]
+    username = {{ .username | quote }}
+    helper =
+    helper = cache --timeout=86400
+    helper = {{ printf "!f() { if [ \"$1\" = get ]; then token=$(gopass show -o %s) || return; printf 'password=%%s\\n' \"$token\"; fi; }; f" (.secret | squote) | quote }}

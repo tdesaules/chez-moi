@@ -1,3 +1,4 @@
+.gitconfig-thales
 .config/containers/systemd/lemonade-server.container
 .config/containers/systemd/open-webui.container
 .config/containers/systemd/open-terminal.container
