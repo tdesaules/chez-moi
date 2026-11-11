@@ -3,6 +3,16 @@ git:
     name: thibault
     email: thibault@desaules.me
   targets:
+    github-com-devoteam:
+      name: thibault
+      email: thibault.desaules@devoteam.com
+      urls:
+        - "https://github.com/devoteam/**"
+        - "git@github.com:devoteam/**"
+        - "ssh://git@github.com/devoteam/**"
+      credential_url: https://github.com/devoteam
+      username: tdesaules-devoteam
+      secret: perso/token/github.com/tdesaules-devoteam/633e9d53-261e-4766-bc36-812bb2b84616
     github-com-tdesaules:
       name: thibault
       email: thibault@desaules.me
