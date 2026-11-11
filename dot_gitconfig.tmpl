@@ -3,6 +3,11 @@
     email = {{ .git.user.email | quote }}
     signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 
+{{- range .git.github_urls }}
+[includeIf "hasconfig:remote.*.url:{{ . }}"]
+    path = {{ printf "%s/.gitconfig-github" $.chezmoi.homeDir | quote }}
+{{- end }}
+
 {{- range $name, $target := .git.targets }}
 {{- range $target.urls }}
 [includeIf "hasconfig:remote.*.url:{{ . }}"]

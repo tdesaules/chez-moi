@@ -1,4 +1,8 @@
 git:
+  github_urls:
+    - "https://github.com/**"
+    - "git@github.com:*/**"
+    - "ssh://git@github.com/**"
   user:
     name: thibault
     email: thibault@desaules.me
