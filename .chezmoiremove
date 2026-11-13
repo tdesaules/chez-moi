@@ -1,4 +1,16 @@
 .gitconfig-thales
+.config/containers/systemd/llama-server.container
+.config/containers/systemd/muse-server.container
+.config/systemd/user/ornith-tray.service
+.config/systemd/user/muse-tray.service
+.local/bin/llama-server-toggle
+.local/bin/ornith-tray
+.local/bin/muse-server-toggle
+.local/bin/muse-tray
+.local/share/applications/llama-cpp.desktop
+.local/share/applications/muse.desktop
+.local/share/icons/ornith.svg
+.local/share/icons/muse.svg
 .config/containers/systemd/lemonade-server.container
 .config/containers/systemd/open-webui.container
 .config/containers/systemd/open-terminal.container

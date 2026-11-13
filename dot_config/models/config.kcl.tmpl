@@ -1,13 +1,15 @@
 download_dir = "{{ .chezmoi.homeDir }}/{{ .llama.models_dir }}"
 models = [
-{{ range list .llama .qwen .muse }}
+{{ range list .llama .qwen .ripple }}
     {
         repo = "{{ .repo }}"
         file = "{{ .model }}"
     }
+{{ if hasKey . "projector" }}
     {
         repo = "{{ .repo }}"
         file = "{{ .projector }}"
     }
+{{ end }}
 {{ end }}
 ]

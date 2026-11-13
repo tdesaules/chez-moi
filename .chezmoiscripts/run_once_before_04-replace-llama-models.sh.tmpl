@@ -1,0 +1,13 @@
+#!/bin/bash
+{{- if .is_systemd }}
+set -euo pipefail
+{{ include ".chezmoitemplates/functions.tmpl" }}
+
+# Stop the retired instances before removing their Quadlets and model files.
+for service in llama-server.service ornith-tray.service muse-server.service muse-tray.service qwen-server.service; do
+    if systemctl --user cat "$service" >/dev/null 2>&1; then
+        _log info "Stopping $service for the model replacement..."
+        systemctl --user stop "$service"
+    fi
+done
+{{- end }}

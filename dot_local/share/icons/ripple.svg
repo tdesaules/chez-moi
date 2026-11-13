@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Ripple — Nord</title>
+  <desc>Original concentric water ripples, in the Nord palette.</desc>
+  <rect width="256" height="256" rx="48" fill="#2e3440"/>
+  <g fill="none" stroke-width="12">
+    <ellipse cx="128" cy="152" rx="88" ry="48" stroke="#5e81ac"/>
+    <ellipse cx="128" cy="148" rx="58" ry="30" stroke="#81a1c1"/>
+    <ellipse cx="128" cy="144" rx="28" ry="13" stroke="#88c0d0"/>
+  </g>
+  <path d="M128 44c-8 16-22 30-22 43a22 22 0 0 0 44 0c0-13-14-27-22-43Z" fill="#8fbcbb"/>
+  <path d="M118 87a10 10 0 0 0 10 10" fill="none" stroke="#eceff4" stroke-width="5" stroke-linecap="round"/>
+</svg>

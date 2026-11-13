@@ -244,18 +244,22 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 ## llama.cpp
 
 - `.chezmoidata/llama.yaml` defines three independent Vulkan servers, all with five slots:
-  - `llama` / `llama-server.service`: Ornith Q4_K_M, localhost 50501, 256K per slot.
-  - `qwen` / `qwen-server.service`: Unsloth Qwen3.8-27B UD-Q4_K_XL, localhost 50502,
-    256K per slot, Q8 KV cache and flash attention to reduce cache memory use.
-  - `muse` / `muse-server.service`: Unsloth Muse-Glimmer-30B UD-Q4_K_XL,
-    localhost 50503, native 128K per slot.
-- Qwen/Muse wrappers merge their overrides with `llama` defaults using a deep copy.
+  - `llama` / `nanbeige-server.service`: DealignAI Nanbeige4.3-33B UNCENSORED
+    Q4_K_M, localhost 50501, 64K per slot (bounded for host memory).
+  - `qwen` / `qwen-server.service`: DealignAI Qwen3.8-27B UNCENSORED
+    (`CRACK-Q4_K_M` filename), localhost 50502, 256K per slot.
+  - `ripple` / `ripple-server.service`: DealignAI Ripple-65B-Preview UNCENSORED
+    Q4_K_M, localhost 50503, 128K per slot.
+  All use Q8 KV cache and flash attention to reduce cache memory use.
+- Qwen/Ripple wrappers merge their overrides with `llama` defaults using a deep copy.
   Shared implementations live in `.chezmoitemplates/llama-*` and `llama.desktop.tmpl`.
   Each model has a distinct launcher, toggle lock, tray ID, port and container name.
-- `dot_config/models/config.kcl.tmpl` downloads Ornith, Qwen and Muse with their
-  vision projectors (Ornith uses `mmproj-Ornith-1.5-35B-BF16.gguf`).
-  The old meta-models Muse quantization is no longer retained;
-  the downloader removes models absent from this list during orphan cleanup.
+- `dot_config/models/config.kcl.tmpl` downloads Nanbeige, Qwen and Ripple.
+  Only Qwen has a vision projector (`mmproj-Qwen3.8-27B-f16.gguf`);
+  Nanbeige and Ripple are text-only. The downloader removes the retired Ornith,
+  Unsloth Qwen and Muse files and caches during orphan cleanup.
+  `run_once_before_04-replace-llama-models.sh.tmpl` stops the old services;
+  `.chezmoiremove` removes their launchers, trays, icons and Quadlets.
 - The shared Quadlet mounts the whole models directory read-only,
   including `.hf-cache` so the downloader's relative symlinks resolve.
 - No `[Install]`: start/stop on demand through each model's Dank launcher.
@@ -267,13 +271,14 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   Quickshell health panel is removed.
   The tray uses `/usr/bin/python3`, system PyGObject/Gio and GdkPixbuf,
   not mise Python. It re-registers when the tray watcher restarts.
-- The Ornith mascot is redrawn as a Nord SVG; its reference URL is in the SVG.
-  Qwen and Meta (Muse) logo geometry comes from LobeHub, recolored in Nord, with
-  the MIT license included in each rendered SVG.
+- Nanbeige uses an original north–south compass SVG; Ripple uses water ripples.
+  All three icons use Nord colors. Qwen's logo geometry comes from LobeHub,
+  with its MIT license included in the rendered SVG.
 - Context fitting is disabled to prevent silently reducing the requested capacity.
   Vulkan reports about 79 GiB accessible on this Strix Halo host, including shared
   memory (the kernel reports 32 GiB dedicated VRAM). Keep KV offloading enabled;
-  Ornith's five 256K slots need about 25 GiB of FP16 KV cache in addition to weights.
+  Nanbeige's dense attention requires about 34 GiB of Q8 KV for five 64K slots,
+  in addition to weights; its advertised 512K context is not the deployed capacity.
   Validate memory use and `/props` after changing context, parallelism, or backend.
 
 ## Verify before commit

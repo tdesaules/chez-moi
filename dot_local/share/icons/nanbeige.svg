@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Nanbeige — Nord</title>
+  <desc>Original north–south compass mark, in the Nord palette.</desc>
+  <rect width="256" height="256" rx="48" fill="#2e3440"/>
+  <circle cx="128" cy="128" r="88" fill="none" stroke="#4c566a" stroke-width="8"/>
+  <path d="M128 40 174 128 128 108 82 128Z" fill="#88c0d0"/>
+  <path d="M128 216 82 128 128 148 174 128Z" fill="#5e81ac"/>
+  <path d="M40 128h20m136 0h20" stroke="#d8dee9" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="128" cy="128" r="12" fill="#eceff4"/>
+</svg>
