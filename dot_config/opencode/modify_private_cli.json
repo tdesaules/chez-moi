@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+"""Manage terminal defaults while preserving preferences changed in OpenCode."""
+import json
+import sys
+
+config = json.loads(sys.stdin.read() or "{}")
+config["$schema"] = "https://opencode.ai/v2/cli.json"
+config.setdefault("theme", {})["name"] = "nord"
+config.setdefault("keybinds", {})["variant.cycle"] = "alt+t"
+json.dump(config, sys.stdout, indent=2, ensure_ascii=False)
+sys.stdout.write("\n")

@@ -1,15 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "shell": "/usr/bin/bash",
-  "enabled_providers": [
-    "openai",
-    "opencode"
+  "policies": [
+    { "action": "provider.use", "resource": "*", "effect": "deny" },
+    { "action": "provider.use", "resource": "openai", "effect": "allow" },
+    { "action": "provider.use", "resource": "opencode", "effect": "allow" }
   ],
-  "provider": {
+  "providers": {
     "opencode": {
-      "whitelist": [
-        "muse-spark-1.3-contributor-free"
-      ],
       "models": {
         "muse-spark-1.3-contributor-free": {
           "name": "muse-spark-1.3-contributor-free"
@@ -17,11 +15,6 @@
       }
     },
     "openai": {
-      "whitelist": [
-        "gpt-6-astra",
-        "gpt-6.1-sol",
-        "gpt-6-luna"
-      ],
       "models": {
         "gpt-6-astra": {
           "name": "gpt-6-astra",

@@ -1,4 +1,5 @@
 .gitconfig-thales
+.config/opencode/tui.json
 .config/distrobox/zen-work.desktop
 .local/share/applications/zen-distrobox-zen-work.desktop
 .config/containers/systemd/llama-server.container
