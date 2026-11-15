@@ -1,0 +1,127 @@
+/*
+ * Nord Dark / {{ .profile.name }} — built-in pages only.
+ * Ordinary websites keep their styles, fonts, images and identity colors.
+ */
+/* about:blank/srcdoc can belong to ordinary websites (editors, payment frames). */
+@-moz-document regexp("about:(?!(?:blank|srcdoc)(?:[?#]|$)).*") {
+    :root,
+    :host {
+{{ includeTemplate "zen/tokens.css.tmpl" . }}
+    }
+
+    html, body, page, window, .activity-stream {
+        color-scheme: dark !important;
+        background-color: var(--nord-base) !important;
+        color: var(--nord-text) !important;
+        font-family: var(--nord-font-sans) !important;
+    }
+
+    button, input, select, textarea, menulist, label, description {
+        font-family: var(--nord-font-sans) !important;
+    }
+
+    h1, h2, h3, .title, .header-name, .category-name {
+        font-family: var(--nord-font-display) !important;
+        font-weight: {{ .zen.fonts.display_weight }} !important;
+        color: var(--nord-heading) !important;
+    }
+
+    h1 {
+        text-decoration: underline;
+        text-decoration-color: var(--nord-profile-accent);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 0.3em;
+    }
+
+    code, pre, kbd, samp,
+    #prefs, .pref-name, .pref-value,
+    input[type="url"] {
+        font-family: var(--nord-font-mono) !important;
+    }
+
+    a, .text-link {
+        color: var(--nord-text) !important;
+        text-decoration: underline;
+        text-decoration-color: var(--nord8) !important;
+        text-underline-offset: 0.2em;
+    }
+
+    a:hover, .text-link:hover {
+        color: var(--nord-heading) !important;
+        text-decoration-color: var(--nord7) !important;
+    }
+
+    .card, .addon.card, .info-box, .content-blocking-category,
+    .tile, .top-site-outer .tile, .section-list,
+    dialog, .dialogBox, groupbox {
+        background-color: var(--nord-surface) !important;
+        color: var(--nord-text) !important;
+        border-color: var(--nord3) !important;
+    }
+
+    .category[selected], .category.selected {
+        background-color: var(--nord-surface) !important;
+        color: var(--nord-heading) !important;
+        box-shadow: inset 3px 0 var(--nord-profile-accent) !important;
+    }
+
+    input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+    textarea, select, menulist {
+        background-color: var(--nord-base) !important;
+        color: var(--nord-text) !important;
+        border-color: var(--nord3) !important;
+        caret-color: var(--nord8) !important;
+    }
+
+    select > option {
+        background-color: var(--nord-surface) !important;
+        color: var(--nord-text) !important;
+    }
+
+    button:not(.primary):hover {
+        background-color: var(--nord-raised) !important;
+        color: var(--nord-heading) !important;
+    }
+
+    button.primary, button[primary], button[default] {
+        background-color: var(--nord-primary-button) !important;
+        color: var(--nord-heading) !important;
+        border-color: var(--nord9) !important;
+    }
+
+    button.primary:hover, button[primary]:hover, button[default]:hover {
+        background-color: var(--nord-primary-button-hover) !important;
+    }
+
+    :focus-visible {
+        outline-color: var(--nord8) !important;
+    }
+
+    * {
+        scrollbar-color: var(--nord9) var(--nord-base) !important;
+    }
+
+    ::selection {
+        background-color: var(--nord-selection) !important;
+        color: var(--nord-heading) !important;
+    }
+}
+
+/* Plain source viewer is also a browser-owned document, not an HTTP page. */
+@-moz-document url-prefix("view-source:") {
+    :root {
+{{ includeTemplate "zen/tokens.css.tmpl" . }}
+    }
+
+    body, pre {
+        background-color: var(--nord-base) !important;
+        color: var(--nord-text) !important;
+        font-family: var(--nord-font-mono) !important;
+    }
+
+    .start-tag, .end-tag { color: var(--nord8) !important; }
+    .attribute-name { color: var(--nord7) !important; }
+    .attribute-value { color: var(--nord14) !important; }
+    .comment { color: var(--nord4) !important; }
+    .error { color: var(--nord11) !important; }
+}

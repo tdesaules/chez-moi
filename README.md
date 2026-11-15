@@ -101,6 +101,19 @@ systemctl --user restart beszel.service beszel-agent.service
 Podman automatic updates are disabled. The systemd onchange script stops and
 disables the previously managed `podman-auto-update.timer` on apply.
 
+## Zen Browser
+
+The three profiles share a **Nord Dark** theme: Polar Night surfaces, Snow Storm
+text and Frost controls. Small Aurora accents distinguish Perso (green), Devoteam
+(orange, existing `work` profile) and Thales (purple).
+
+Geist Sans (`Geist`) is used for the interface, Geist Mono for addresses/code,
+and Comfortaa 600 for headings. Fonts are already available inside the Zen box.
+Palette and profile accents live in `.chezmoidata/zen.yaml`.
+
+See [theme sources, deployment and browser verification](.github/ZEN-THEME.md).
+After applying, close and reopen each profile to load the CSS and dark preferences.
+
 ## OpenSCAD
 
 OpenSCAD runs in `openscad-distrobox` using a pinned official snapshot AppImage

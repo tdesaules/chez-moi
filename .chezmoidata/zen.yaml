@@ -1,0 +1,45 @@
+zen:
+  palette:
+    nord0: "#2e3440"
+    nord1: "#3b4252"
+    nord2: "#434c5e"
+    nord3: "#4c566a"
+    nord4: "#d8dee9"
+    nord5: "#e5e9f0"
+    nord6: "#eceff4"
+    nord7: "#8fbcbb"
+    nord8: "#88c0d0"
+    nord9: "#81a1c1"
+    nord10: "#5e81ac"
+    nord11: "#bf616a"
+    nord12: "#d08770"
+    nord13: "#ebcb8b"
+    nord14: "#a3be8c"
+    nord15: "#b48ead"
+  fonts:
+    # Geist Sans registers as "Geist" in the installed font files.
+    sans: Geist
+    mono: Geist Mono
+    display: Comfortaa
+    display_weight: 600
+  profiles:
+    perso:
+      name: Perso
+      accent: nord14
+    work:
+      name: Devoteam
+      accent: nord12
+    thales:
+      name: Thales
+      accent: nord15
+  preferences:
+    toolkit.legacyUserProfileCustomizations.stylesheets: true
+    # Zen: 0 = dark, 1 = light, 2 = system.
+    zen.view.window.scheme: 0
+    ui.systemUsesDarkTheme: 1
+    # Prefer dark websites without overriding their own styles.
+    layout.css.prefers-color-scheme.content-override: 0
+  palette_preferences:
+    # Browser defaults for empty/dark documents; author page colors still win.
+    browser.display.background_color.dark: nord1
+    browser.display.foreground_color.dark: nord5

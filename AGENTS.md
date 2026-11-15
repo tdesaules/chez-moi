@@ -196,6 +196,12 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - Zen Devoteam reuses the former Work profile at `~/.zen/work` to preserve
   browsing data. Zen Thales uses `~/.zen/thales`; both launch with `--no-remote`
   and distinct window classes in the shared `zen-distrobox` container.
+- All three Zen profiles share `.chezmoitemplates/zen/` and `.chezmoidata/zen.yaml`:
+  fixed Nord Dark surfaces, Frost controls, and small Aurora accents (Perso green,
+  Devoteam orange, Thales purple). Fonts are Geist (the registered name of Geist
+  Sans), Geist Mono and Comfortaa 600. Do not restore separate copied stylesheets.
+  Scope content CSS to browser-owned pages, excluding web `about:blank`/`srcdoc`
+  frames. See `.github/ZEN-THEME.md` for sources and isolated browser verification.
 
 - Niri Tonic Files uses a dedicated Fedora 44 box (runtime pinned in
   `.chezmoidata/apps.yaml`), with GTK 4, Node.js and both cloud adapters.

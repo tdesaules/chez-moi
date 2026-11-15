@@ -1,0 +1,279 @@
+/*
+ * Nord Dark / {{ .profile.name }} — original shared chezmoi theme.
+ * Zen 1.23b and Firefox token names; see .github/ZEN-THEME.md.
+ * Geometry, compact mode, native icons and container identity colors are retained.
+ */
+@namespace xul url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+:root,
+:host(:is(.anonymous-content-host, notification-message)),
+zen-workspace,
+panel,
+menupopup {
+{{ includeTemplate "zen/tokens.css.tmpl" . }}
+}
+
+/* Opaque Nord surfaces, including Zen's separately painted background layers. */
+#main-window,
+#browser,
+#navigator-toolbox,
+#nav-bar,
+#TabsToolbar,
+#PersonalToolbar,
+#sidebar-box,
+#sidebar-main,
+#sidebar,
+#zen-main-app-wrapper,
+#zen-browser-background,
+.browserSidebarContainer,
+.zen-browser-generic-background,
+.zen-browser-generic-background::before,
+.zen-browser-generic-background::after,
+#zen-browser-background::before,
+#zen-browser-background::after {
+    color-scheme: dark !important;
+    background-color: var(--nord-base) !important;
+    background-image: none !important;
+    color: var(--nord-text) !important;
+}
+
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
+#tabbrowser-tabpanels browser[type="content"],
+.browserStack {
+    color-scheme: dark !important;
+    background-color: var(--nord-base) !important;
+}
+
+/* Sans for controls, Mono for addresses/data, Comfortaa for section headings. */
+button, input, textarea, select, menulist, menu, menuitem, menucaption,
+toolbarbutton, label, description, tree, .tab-label, .panel-subview-body {
+    font-family: var(--nord-font-sans) !important;
+}
+
+#urlbar-input,
+.urlbarView-url,
+#statuspanel-label,
+.downloadDetails,
+.devtools-monospace {
+    font-family: var(--nord-font-mono) !important;
+}
+
+.zen-current-workspace-indicator-name,
+.zen-workspace-sidebar-name,
+zen-folder > .tab-group-label-container > label,
+.panel-header > h1,
+.panel-header > label,
+.subview-subheader {
+    font-family: var(--nord-font-display) !important;
+    font-weight: {{ .zen.fonts.display_weight }} !important;
+    color: var(--nord-heading) !important;
+}
+
+/* Tabs: one subtle Aurora edge, never a full saturated profile-colored surface. */
+.tabbrowser-tab .tab-content {
+    color: var(--nord-text) !important;
+}
+
+.tabbrowser-tab:hover:not([selected], [visuallyselected]) .tab-background {
+    background-color: var(--nord-surface) !important;
+}
+
+.tabbrowser-tab:is([selected], [visuallyselected], [multiselected]) .tab-background {
+    background-color: var(--nord-raised) !important;
+    background-image: none !important;
+    box-shadow: inset 3px 0 0 var(--nord-profile-accent) !important;
+}
+
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-label {
+    color: var(--nord-heading) !important;
+    font-weight: 600 !important;
+}
+
+.tab-close-button:hover {
+    background-color: color-mix(in srgb, var(--nord11) 25%, var(--nord-surface)) !important;
+    fill: var(--nord6) !important;
+}
+
+.tab-throbber,
+.tab-icon-sound,
+.tab-icon-overlay {
+    color: var(--nord8) !important;
+}
+
+/* Do not recolor favicons, emoji or Firefox contextual-identity indicators. */
+zen-folder {
+    --zen-folder-front-bgcolor: var(--nord7) !important;
+    --zen-folder-behind-bgcolor: var(--nord10) !important;
+    --zen-folder-stroke: var(--nord3) !important;
+}
+
+.bookmark-item[container="true"] > .toolbarbutton-icon,
+zen-folder .tab-group-folder-icon {
+    color: var(--nord7) !important;
+    fill: var(--nord7) !important;
+}
+
+.zen-current-workspace-indicator {
+    border-inline-start: 2px solid var(--nord-profile-accent) !important;
+}
+
+.zen-current-workspace-indicator-icon {
+    color: var(--nord-profile-accent) !important;
+    fill: var(--nord-profile-accent) !important;
+}
+
+#zen-workspaces-button toolbarbutton[active="true"] {
+    box-shadow: inset 0 -2px var(--nord-profile-accent) !important;
+}
+
+/* Address/search bar, suggestion rows and identity/permission chips. */
+#urlbar-background,
+.urlbar-background,
+#searchbar {
+    background-color: var(--nord-surface) !important;
+    background-image: none !important;
+    border: 1px solid var(--nord3) !important;
+}
+
+#urlbar:is([focused], [breakout-extend]) #urlbar-background,
+#urlbar:is([focused], [breakout-extend]) .urlbar-background {
+    border-color: var(--nord8) !important;
+    box-shadow: var(--nord-shadow) !important;
+}
+
+#urlbar-input, #searchbar input {
+    color: var(--nord-heading) !important;
+    caret-color: var(--nord8) !important;
+}
+
+.urlbarView {
+    color: var(--nord-text) !important;
+    background-color: var(--nord-surface) !important;
+}
+
+.urlbarView-row:is([selected], :hover) > .urlbarView-row-inner {
+    background-color: var(--nord-raised) !important;
+    color: var(--nord-heading) !important;
+}
+
+.urlbarView-url {
+    color: var(--nord-secondary-text) !important;
+}
+
+.urlbarView-action {
+    color: var(--nord-secondary-text) !important;
+}
+
+.urlbarView-row[selected] :is(.urlbarView-url, .urlbarView-action) {
+    color: var(--nord-heading) !important;
+}
+
+.search-one-offs {
+    background-color: var(--nord-surface) !important;
+    border-top-color: var(--nord3) !important;
+}
+
+/* App menu, context menus, extensions, downloads and permission panels. */
+panel, menupopup, tooltip,
+.panel-subview-body, .panel-header,
+#zen-toast-container .zen-toast {
+    color-scheme: dark !important;
+    background-color: var(--nord-surface) !important;
+    color: var(--nord-text) !important;
+    border-color: var(--nord3) !important;
+}
+
+panel::part(content), menupopup::part(content) {
+    background-color: var(--nord-surface) !important;
+    color: var(--nord-text) !important;
+    border: 1px solid var(--nord3) !important;
+    box-shadow: var(--nord-shadow) !important;
+}
+
+menuitem[_moz-menuactive="true"],
+menu[_moz-menuactive="true"],
+.subviewbutton:hover,
+.subviewbutton[open] {
+    background-color: var(--nord-raised) !important;
+    color: var(--nord-heading) !important;
+}
+
+#downloads-indicator-progress-inner,
+.downloadProgress {
+    color: var(--nord14) !important;
+    accent-color: var(--nord14) !important;
+}
+
+.notification-anchor-icon[showing],
+#identity-icon,
+#permissions-granted-icon {
+    fill: var(--nord8) !important;
+}
+
+notification-message[type="warning"] {
+    border-inline-start: 3px solid var(--nord13) !important;
+}
+
+notification-message[type="critical"] {
+    border-inline-start: 3px solid var(--nord11) !important;
+}
+
+/* Findbar, Library/bookmarks/history and split-view/Glance controls. */
+findbar,
+#statuspanel-label,
+#placesToolbar,
+#placesView,
+#detailsPane {
+    background-color: var(--nord-surface) !important;
+    color: var(--nord-text) !important;
+    border-color: var(--nord3) !important;
+}
+
+.findbar-textbox {
+    background-color: var(--nord-base) !important;
+    color: var(--nord-heading) !important;
+}
+
+.findbar-textbox[status="notfound"] {
+    border-color: var(--nord11) !important;
+}
+
+treechildren::-moz-tree-row(selected) {
+    background-color: var(--nord-selection) !important;
+}
+
+treechildren::-moz-tree-cell-text(selected) {
+    color: var(--nord-heading) !important;
+}
+
+tree {
+    background-color: var(--nord-base) !important;
+    color: var(--nord-text) !important;
+}
+
+.zen-split-view-splitter:hover::before,
+#zen-sidebar-splitter:hover::before {
+    background-color: var(--nord9) !important;
+}
+
+.zen-glance-sidebar-container,
+#zen-media-controls-toolbar {
+    color-scheme: dark !important;
+    background-color: var(--nord-surface) !important;
+    color: var(--nord-text) !important;
+}
+
+:focus-visible {
+    outline-color: var(--nord8) !important;
+}
+
+:root, tree, scrollbox, arrowscrollbox, .panel-subview-body,
+.urlbarView-results, zen-workspace > arrowscrollbox::part(scrollbox) {
+    scrollbar-color: var(--nord9) var(--nord-base) !important;
+}
+
+::selection {
+    background-color: var(--nord-selection) !important;
+    color: var(--nord-heading) !important;
+}
