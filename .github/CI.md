@@ -111,6 +111,11 @@ and scratch for the static maintenance event validator. Renovate validation
 inherits the verified Fedora-based catalog runtime used by maintenance.
 The git-cliff donor is build-only; the resulting runtime is Fedora.
 
+Validate base references against the registry, including the AMD64/ARM64 index,
+before updating a pin. For local build verification use `podman build
+--pull=always --no-cache`: a cached image can still build after its manifest
+becomes unavailable to a fresh GitHub runner.
+
 ## Adding checks
 
 Keep repository-only helpers under `.github/scripts/` and tests named `test_*.py`.
