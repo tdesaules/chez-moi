@@ -20,7 +20,6 @@ jobs:
       has_tests: ${{ steps.plan.outputs.has_tests }}
       has_release: ${{ steps.plan.outputs.has_release }}
       has_assets: ${{ steps.plan.outputs.has_assets }}
-      request_release: ${{ steps.plan.outputs.request_release }}
       lint_matrix: ${{ steps.plan.outputs.lint_matrix }}
       build_matrix: ${{ steps.plan.outputs.build_matrix }}
       test_matrix: ${{ steps.plan.outputs.test_matrix }}
@@ -114,7 +113,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
-      actions: write
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.check.outputs.test_matrix) }}
@@ -144,8 +142,3 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           overwrite: true
-      - name: Request independent release preparation
-        if: github.ref == 'refs/heads/main' && needs.check.outputs.request_release == 'true'
-        uses: ./.github/actions/dispatch-release
-        with:
-          token: ${{ github.token }}

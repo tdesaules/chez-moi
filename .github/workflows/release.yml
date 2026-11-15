@@ -3,15 +3,6 @@ on:
   push:
     tags: ['*']
   workflow_dispatch:
-    inputs:
-      source_sha:
-        description: Expected main revision (automatic dispatch)
-        type: string
-        default: ''
-      first_release:
-        description: Explicitly publish the first official 1.0.0 release
-        type: boolean
-        default: false
 permissions:
   contents: read
 concurrency:

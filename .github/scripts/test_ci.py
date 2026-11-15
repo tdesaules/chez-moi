@@ -17,17 +17,9 @@ import ci_common
 import plan_ci
 from publish_source_release import is_latest
 import publish_source_release
-import dispatch_release
 
 
 class ReleaseContractTests(unittest.TestCase):
-    def test_dispatch_rejects_wrong_ref_before_network(self):
-        with patch.dict(os.environ, GITHUB_REF="refs/heads/other", GITHUB_EVENT_NAME="push"), \
-                patch("dispatch_release.api") as api:
-            with self.assertRaises(ValueError):
-                dispatch_release.main()
-            api.assert_not_called()
-
     def test_old_release_cannot_replace_latest(self):
         releases = [{"tag_name": "2.0.0", "draft": False, "prerelease": False},
                     {"tag_name": "3.0.0", "draft": True, "prerelease": False}]
@@ -135,10 +127,11 @@ class PlanEventTests(unittest.TestCase):
         return subprocess.check_output(["git", *args], cwd=self.root, env=self.env,
                                        stderr=subprocess.DEVNULL, text=True).strip()
 
-    def plan(self, mode, ref="refs/heads/main", inputs=None, before="0" * 40):
+    def plan(self, mode, ref="refs/heads/main", inputs=None, before="0" * 40,
+             event_name=None):
         event = self.root / "event.json"
         event.write_text(json.dumps({"inputs": inputs or {}, "before": before}))
-        event_name = "workflow_dispatch" if mode == "prepare" else "push"
+        event_name = event_name or ("workflow_dispatch" if mode == "prepare" else "push")
         with patch.object(ci_common, "ROOT", self.root), patch.object(plan_ci, "ROOT", self.root), \
                 patch.dict(os.environ, dict(self.env, INPUT_MODE=mode, GITHUB_REF=ref,
                            GITHUB_EVENT_NAME=event_name, GITHUB_EVENT_PATH=str(event),
@@ -147,19 +140,31 @@ class PlanEventTests(unittest.TestCase):
                 plan_ci.main()
         return json.loads((self.root / ".build/plan.json").read_text())
 
-    def test_initial_preparation_is_explicit(self):
+    def test_preparation_requires_existing_release(self):
+        with self.assertRaisesRegex(ValueError, "stable release tag"):
+            self.plan("prepare")
+
+    def test_no_bump_is_a_noop(self):
+        self.run_git("-c", "tag.gpgsign=false", "tag", "-a", "1.0.0", "-m", "initial")
+        self.run_git("-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", "ci: jobs")
         plan = self.plan("prepare")
         self.assertFalse(plan["has_release"])
         self.assertFalse(plan["has_tests"])
-        plan = self.plan("prepare", inputs={"first_release": "true"})
-        self.assertEqual(plan["version"], "1.0.0")
-        self.assertEqual(len(plan["test_matrix"]["include"]), 2)
+        self.assertEqual(plan["version"], "")
 
-    def test_wrong_ref_and_stale_source_fail(self):
+    def test_nonmanual_events_and_version_overrides_are_rejected(self):
+        with self.assertRaises(ValueError):
+            self.plan("prepare", event_name="repository_dispatch")
+        with self.assertRaises(ValueError):
+            self.plan("prepare", event_name="push")
+        with self.assertRaises(ValueError):
+            self.plan("prepare", inputs={"source_sha": self.source})
+        with self.assertRaises(ValueError):
+            self.plan("prepare", inputs={"version": "9.0.0"})
+
+    def test_wrong_ref_and_invalid_tag_fail(self):
         with self.assertRaises(ValueError):
             self.plan("prepare", ref="refs/heads/other")
-        with self.assertRaises(ValueError):
-            self.plan("prepare", inputs={"source_sha": "f" * 40})
         with self.assertRaises(ValueError):
             self.plan("publish", ref="refs/tags/v1.0.0")
 
@@ -168,6 +173,20 @@ class PlanEventTests(unittest.TestCase):
         self.assertFalse(plan["has_lint"])
         self.assertFalse(plan["has_tests"])
         self.assertFalse(plan["has_images"])
+
+    def test_docs_only_development_does_not_select_runtime_qualification(self):
+        self.run_git("-c", "tag.gpgsign=false", "tag", "-a", "1.0.0", "-m", "initial")
+        # Even an unreleased feature does not turn a later docs-only push into
+        # automatic release preparation or native runtime qualification.
+        self.run_git("-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", "feat: pending")
+        previous = self.run_git("rev-parse", "HEAD")
+        (self.root / "README.md").write_text("# Updated fixture\n")
+        self.run_git("add", "README.md")
+        self.run_git("-c", "commit.gpgsign=false", "commit", "-m", "docs: clarify")
+        plan = self.plan("development", before=previous)
+        self.assertEqual([entry["id"] for entry in plan["lint_matrix"]["include"]], ["markdownlint"])
+        self.assertFalse(plan["has_tests"])
+        self.assertFalse(plan["has_release"])
 
     def test_git_cliff_bump_and_changelog(self):
         self.run_git("-c", "tag.gpgsign=false", "tag", "-a", "1.0.0", "-m", "initial")
@@ -186,6 +205,16 @@ class PlanEventTests(unittest.TestCase):
         self.assertIn("### Added", notes)
         self.assertIn("### Changed", notes)
         self.assertIn("/compare/1.0.0...2.0.0", notes)
+
+    def test_git_cliff_breaking_changes_override_routine_types(self):
+        for previous, subject, expected in [
+            ("0.4.0", "chore: migrate\n\nBREAKING CHANGE: configuration moved", "0.5.0"),
+            ("1.0.0", "refactor!: remove obsolete configuration", "2.0.0"),
+        ]:
+            with self.subTest(previous=previous):
+                self.run_git("-c", "tag.gpgsign=false", "tag", "-a", previous, "-m", previous)
+                self.run_git("-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", subject)
+                self.assertEqual(self.plan("prepare")["version"], expected)
 
 
 if __name__ == "__main__":

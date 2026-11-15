@@ -182,8 +182,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - `main` works from changed files; release qualifies the complete source independently.
 - This source-only repository declares image builds empty. Qualification uses
   native AMD64/ARM64 runners for releases; development runs on AMD64.
-- First `1.0.0` requires explicit `first_release` dispatch. Later semantic bumps
-  are automatically requested after successful main qualification.
+- The initial `1.0.0` exists. Release preparation is manual through
+  `workflow_dispatch` on `main`, with no inputs or initial-version override.
+  Git-cliff computes the version automatically; the tag triggers publication.
+  Development CI never dispatches release preparation.
 - Helpers and regression tests live in `.github/scripts/`; `.github/CI.md`
   documents credentials, event gates and the temporary dedicated source-action
   bridge. Do not claim catalog activation until its images are published and

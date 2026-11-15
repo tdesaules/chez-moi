@@ -21,8 +21,6 @@ outputs:
     description: Whether publication is selected
   has_assets:
     description: Whether external assets must be checked
-  request_release:
-    description: Whether main should dispatch release preparation
   lint_matrix:
     description: Selected named linters and files
   build_matrix:

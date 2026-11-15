@@ -13,11 +13,12 @@ and tag publication qualify the complete source on AMD64 and ARM64. Template
 fixtures additionally exercise both architectures, absent tools and path handling.
 No development artifact is reused as release qualification.
 
-After successful development qualification on `main`, version-changing history
-requests a separate `release.yml` dispatch using the job's `actions: write`
-permission. GitHub permits workflow dispatch with `GITHUB_TOKEN` to start another
-run. This is the intentional automatic-preparation extension to the shared
-three-workflow contract; manual preparation remains available.
+Start preparation using **Run workflow** on `release.yml`, selecting `main`.
+The manual entrypoint has no version or source inputs: the workflow captures the
+checked-out revision and computes the next version from its history.
+Development CI does not trigger preparation and needs only source-read permissions.
+Release and maintenance retain separate manual entrypoints, both restricted to
+`main`, as required by the shared three-workflow contract.
 
 Preparation verifies source-bound native receipts, updates `CHANGELOG.md`, and
 atomically pushes the changelog commit and a new annotated tag using a bot App
@@ -28,17 +29,20 @@ Tag publication never rebuilds a distributed artifact.
 
 ## Version policy
 
-Initial development does not publish automatically. Dispatch `release.yml` on
-`main` with `first_release=true` to explicitly publish the first `1.0.0`.
-Subsequent releases are automatic:
+The initial `1.0.0` release exists. Preparation requires an existing reachable
+stable tag. The trigger is manual; version calculation is automatic:
 
 - `feat`: minor;
 - `fix` or `perf`: patch;
 - `!` or `BREAKING CHANGE:` on any commit type: major after 1.0.0, minor before it;
 - other changes alone: no release.
 
-The selector determines the strongest intent before changelog filtering.
-Pinned git-cliff 2.14.2 computes the increment and Keep a Changelog notes.
+The selector checks whether the history contains release-worthy changes.
+Pinned git-cliff 2.14.2 computes the next version automatically with
+`--bumped-version`, without an explicit bump or initial-version override, and
+generates Keep a Changelog notes. Do not use `no_increment_regex` to exclude
+routine types: it also suppresses their breaking changes. The commit parsers
+retain breaking changes of every type.
 Tags have no `v` prefix. Deployment from a branch versus a release tag remains a
 separate chezmoi operational choice.
 

@@ -76,9 +76,10 @@ downloads retain their existing update strategies.
 ### CI and releases
 
 Work happens on `main`. The three workflows separate development checks,
-release qualification and maintenance. Explicitly prepare the first `1.0.0`
-using `release.yml` with `first_release=true`; subsequent semantic releases
-are requested automatically after successful main qualification.
+release qualification and maintenance. Start release preparation manually with
+**Run workflow** on `release.yml`, selecting `main`. Since the initial `1.0.0`,
+there is no bootstrap or version-selection option: git-cliff computes the next
+version from the commit history. Development CI does not trigger preparation.
 
 `feat` increments minor, `fix`/`perf` increment patch, and breaking changes
 increment major after 1.0.0. Other changes alone do not release.

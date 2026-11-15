@@ -33,21 +33,17 @@ def main():
     elif mode == "prepare":
         require_main()
         if os.environ["GITHUB_EVENT_NAME"] != "workflow_dispatch":
-            raise ValueError("Preparation requires dispatch")
-        expected = event.get("inputs", {}).get("source_sha", "")
-        if expected and expected != sha:
-            raise ValueError("main advanced since qualification; use the newer run")
-        first = event.get("inputs", {}).get("first_release") in (True, "true")
-        if not previous and not first:
-            reason = "Initial development: explicitly dispatch first_release for 1.0.0"
-        elif not previous:
-            version = "1.0.0"
-        elif first:
-            raise ValueError("First release already exists")
+            raise ValueError("Preparation requires manual dispatch on main")
+        if event.get("inputs"):
+            raise ValueError("Release preparation accepts no version or source overrides")
+        if not previous:
+            raise ValueError("A reachable stable release tag is required")
         elif bump:
             version = subprocess.check_output(
-                ["git-cliff", "--config", "cliff.toml", "--bump", bump, "--bumped-version"],
+                ["git-cliff", "--config", "cliff.toml", "--bumped-version"],
                 cwd=ROOT, text=True).strip()
+            if version == previous:
+                raise ValueError("git-cliff did not increment the release version")
         else:
             reason = "No version-changing commits"
         paths = git("ls-files", "-z", strip=False).split("\0") if version else []
@@ -79,7 +75,7 @@ def main():
             lint.append({"id": name, "files": files, "runner": "ubuntu-24.04",
                          "action_path": f"lint/{name}"})
     runtime = bool(paths) and (
-        mode != "development" or bool(previous and bump) or
+        mode != "development" or
         any(not p.endswith(".md") for p in paths))
     if runtime:
         lint.append({"id": "chezmoi", "files": existing, "runner": "ubuntu-24.04",
@@ -96,7 +92,7 @@ def main():
         "previous": previous, "version": version, "reason": reason,
         "files": paths, "comparison_before": event.get("before", ""),
         "has_lint": bool(lint), "has_images": False, "has_tests": bool(tests),
-        "has_release": bool(version), "request_release": bool(previous and bump),
+        "has_release": bool(version),
         "lint_matrix": {"include": lint}, "build_matrix": {"include": []},
         "test_matrix": {"include": tests},
         "plan_artifact": f"plan-{os.environ['GITHUB_RUN_ID']}",
