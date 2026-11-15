@@ -4,6 +4,14 @@
 
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
+# run_once is keyed by rendered content, not by filename. Editing this script
+# must not repeat OAuth/passphrase prompts on an already initialized desktop.
+if [ -d "{{ .chezmoi.homeDir }}/{{ .gopass.store.path }}/.git" ] &&
+    [ -f "{{ .chezmoi.homeDir }}/.config/systemd/user/gopass-age-agent.service" ]; then
+    _log "info" "gopass is already bootstrapped; skipping interactive setup"
+    exit 0
+fi
+
 _log "info" "installing gopass and gh via mise..."
 if ! output=$(mise use -g github:gopasspw/gopass@latest github:cli/cli@latest 2>&1); then
     echo "$output"
