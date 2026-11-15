@@ -6,3 +6,7 @@ LICENSE
 prototypes
 .github
 renovate.json
+cliff.toml
+CHANGELOG.md
+.build
+.markdownlint.json

@@ -1,0 +1,5 @@
+name: Validate Renovate configuration
+description: Validate against the exact Renovate runtime used by maintenance
+runs:
+  using: docker
+  image: Dockerfile

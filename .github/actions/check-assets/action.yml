@@ -1,0 +1,11 @@
+name: Check rendered release assets
+description: Check annotated dependencies with bounded HTTP requests
+inputs:
+  token:
+    description: Read-only GitHub API token
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    GITHUB_TOKEN: ${{ inputs.token }}

@@ -1,0 +1,93 @@
+name: maintenance
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: maintenance
+  cancel-in-progress: false
+jobs:
+  maintenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate maintenance event
+        id: guard
+        uses: ./.github/actions/validate-maintenance
+      - name: Create repository-scoped bot token
+        id: app
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+      - name: Update dependencies
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        uses: tdesaules/github-actions/maintenance/update-dependencies@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ steps.app.outputs.token }}
+      - name: Check rendered release assets
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        uses: ./.github/actions/check-assets
+        with:
+          token: ${{ github.token }}
+      - name: Check documentation links
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        uses: tdesaules/github-actions/lint/lychee@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          files: '["README.md", ".github/CI.md"]'
+      - name: Inventory source dependencies
+        id: sbom
+        timeout-minutes: 5
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        continue-on-error: true
+        uses: tdesaules/github-actions/oci/new-sbom@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          source: dir:.
+          format: syft-json
+          output: .build/security/source.syft.json
+      - name: Report source vulnerabilities
+        id: scan
+        timeout-minutes: 10
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        continue-on-error: true
+        uses: tdesaules/github-actions/oci/test-vulnerabilities@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          sbom: .build/security/source.syft.json
+          fail-on: none
+          output: .build/security/grype.json
+      - name: Summarize actual advisory outcomes
+        timeout-minutes: 2
+        if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
+        continue-on-error: true
+        uses: tdesaules/github-actions/workflow/summarize-security@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          subject: git:${{ github.sha }}
+          sbom-outcome: ${{ steps.sbom.outcome }}
+          scan-outcome: ${{ steps.scan.outcome }}
+          sbom: .build/security/source.syft.json
+          report: .build/security/grype.json
+      - name: Retain functional diagnostics
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: maintenance-${{ github.run_id }}
+          path: .build/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+      - name: Retain advisory diagnostics
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: security-${{ github.run_id }}
+          path: .build/security/
+          include-hidden-files: true
+          if-no-files-found: warn

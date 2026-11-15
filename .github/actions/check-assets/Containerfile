@@ -1,0 +1,11 @@
+FROM docker.io/library/golang:1.27.3-alpine3.24@sha256:fa3d596898d9f126af7c01d14ee7597bab3f39cccf392ef36b69fe77cd681f18 AS build
+WORKDIR /src
+COPY main.go .
+RUN CGO_ENABLED=0 go build -trimpath -o /entrypoint main.go
+FROM quay.io/fedora/fedora:45@sha256:fa773d10382c082ff2cccaf7982a5c162f11f296f91274b994357f2d3d473770
+# hadolint ignore=DL3041
+RUN dnf install -y --setopt=install_weak_deps=False python3 chezmoi-2.73.0-1.fc45 ca-certificates && dnf clean all
+COPY --from=build /entrypoint /entrypoint
+ENV PYTHONDONTWRITEBYTECODE=1
+WORKDIR /github/workspace
+ENTRYPOINT ["/entrypoint"]

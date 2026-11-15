@@ -1,0 +1,5 @@
+name: Qualify chezmoi source
+description: Run native isolated round trips and regression tests
+runs:
+  using: docker
+  image: Dockerfile

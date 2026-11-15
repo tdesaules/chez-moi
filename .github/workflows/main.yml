@@ -1,0 +1,151 @@
+name: main
+on:
+  push:
+    branches: ['**']
+permissions:
+  contents: read
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+      source_sha: ${{ steps.plan.outputs.source_sha }}
+      version: ${{ steps.plan.outputs.version }}
+      has_lint: ${{ steps.plan.outputs.has_lint }}
+      has_images: ${{ steps.plan.outputs.has_images }}
+      has_tests: ${{ steps.plan.outputs.has_tests }}
+      has_release: ${{ steps.plan.outputs.has_release }}
+      has_assets: ${{ steps.plan.outputs.has_assets }}
+      request_release: ${{ steps.plan.outputs.request_release }}
+      lint_matrix: ${{ steps.plan.outputs.lint_matrix }}
+      build_matrix: ${{ steps.plan.outputs.build_matrix }}
+      test_matrix: ${{ steps.plan.outputs.test_matrix }}
+      plan_artifact: ${{ steps.plan.outputs.plan_artifact }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Plan changed work
+        id: plan
+        uses: ./.github/actions/plan
+        with:
+          mode: development
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ${{ steps.plan.outputs.plan_artifact }}
+          path: .build/plan.json
+          include-hidden-files: true
+          if-no-files-found: error
+          overwrite: true
+  lint:
+    needs: check
+    timeout-minutes: 30
+    if: needs.check.outputs.has_lint == 'true'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.check.outputs.lint_matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.check.outputs.source_sha }}
+          persist-credentials: false
+      - name: Validate workflows
+        if: matrix.id == 'actionlint'
+        uses: tdesaules/github-actions/lint/actionlint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          files: ${{ toJSON(matrix.files) }}
+      - name: Validate YAML
+        if: matrix.id == 'yaml'
+        uses: tdesaules/github-actions/lint/yaml@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          files: ${{ toJSON(matrix.files) }}
+      - name: Validate action recipes
+        if: matrix.id == 'hadolint'
+        uses: tdesaules/github-actions/lint/hadolint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          files: ${{ toJSON(matrix.files) }}
+      - name: Validate Markdown
+        if: matrix.id == 'markdownlint'
+        uses: tdesaules/github-actions/lint/markdownlint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          files: ${{ toJSON(matrix.files) }}
+      - name: Validate rendered dotfiles
+        if: matrix.id == 'chezmoi'
+        uses: ./.github/actions/lint-chezmoi
+      - name: Validate Renovate configuration
+        if: matrix.id == 'renovate'
+        uses: ./.github/actions/validate-renovate
+      - name: Retain diagnostics
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: lint-${{ github.run_id }}-${{ matrix.id }}
+          path: .build/reports/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          overwrite: true
+  build:
+    needs: [check, lint]
+    if: >-
+      ${{ !cancelled() && needs.check.result == 'success' &&
+          needs.check.outputs.has_images == 'true' &&
+          needs.lint.result == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      # Source-only repository: check always declares this phase empty.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+  test:
+    needs: [check, lint, build]
+    timeout-minutes: 45
+    if: >-
+      ${{ !cancelled() && needs.check.result == 'success' &&
+          needs.check.outputs.has_tests == 'true' &&
+          ((needs.check.outputs.has_lint == 'true' && needs.lint.result == 'success') ||
+           (needs.check.outputs.has_lint == 'false' && needs.lint.result == 'skipped')) &&
+          needs.check.outputs.has_images == 'false' && needs.build.result == 'skipped' }}
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      actions: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.check.outputs.test_matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.check.outputs.source_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check rendered assets
+        if: needs.check.outputs.has_assets == 'true'
+        uses: ./.github/actions/check-assets
+        with:
+          token: ${{ github.token }}
+      - name: Qualify source
+        uses: tdesaules/github-actions/check/test-go@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        with:
+          directory: .github/actions
+      - name: Qualify chezmoi behavior
+        uses: ./.github/actions/test-chezmoi
+      - name: Retain qualification
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: qualification-${{ github.run_id }}-${{ matrix.arch }}
+          path: .build/qualified/
+          include-hidden-files: true
+          if-no-files-found: error
+          overwrite: true
+      - name: Request independent release preparation
+        if: github.ref == 'refs/heads/main' && needs.check.outputs.request_release == 'true'
+        uses: ./.github/actions/dispatch-release
+        with:
+          token: ${{ github.token }}

@@ -1,0 +1,5 @@
+name: Lint rendered dotfiles
+description: Render isolated profiles and validate generated configuration
+runs:
+  using: docker
+  image: Dockerfile

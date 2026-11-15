@@ -1,0 +1,11 @@
+name: Request source release preparation
+description: Dispatch independent release qualification for the current main revision
+inputs:
+  token:
+    description: Job token with actions write permission
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    CI_TOKEN: ${{ inputs.token }}

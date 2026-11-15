@@ -1,0 +1,11 @@
+name: Publish qualified source release
+description: Reconcile native qualification and publish idempotent stable notes
+inputs:
+  token:
+    description: Job token with contents write permission
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    CI_TOKEN: ${{ inputs.token }}

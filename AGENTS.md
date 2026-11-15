@@ -33,11 +33,13 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 - **Commit changes locally** using [conventional commits](https://www.conventionalcommits.org/)
   (e.g. `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
-- **Never push** — pushing to the remote is done manually by the user.
+- **Never push from a local agent** — source pushes are done manually by the user.
+  The authorized CI release preparation creates and atomically pushes its own
+  changelog commit and annotated SemVer tag after complete qualification.
 
 ## Chezmoi template facts
 
-- chezmoi 2.70.0. Functions and `{{ }}` syntax are chezmoi's, not mise's.
+- CI uses chezmoi 2.73.0. Functions and `{{ }}` syntax are chezmoi's, not mise's.
 - **Two data sources for templates:**
   - `.chezmoi.toml.tmpl` computes runtime booleans: `is_linux`, `is_fedora`,
     `is_mise`, `is_nushell`, `is_ssh`, `is_systemd`, and `is_distrobox`. Use
@@ -47,8 +49,9 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
     accessed as `{{ .systemd.user_dir }}`, `{{ .gopass.age.device }}`,
     `{{ .dms.service }}`, etc. Add new config values here, not inline in templates.
 - Scripts in `.chezmoiscripts/` use lifecycle prefixes with numeric ordering:
-  - `run_once_before_*` — bootstrap (runs once on first init, before everything else).
-  - `run_once_after_*` — runs once, after bootstrap.
+  - `run_once_before_*` — bootstrap (once per rendered content, before files).
+    Interactive setup must guard against rerunning on initialized desktops.
+  - `run_once_after_*` — once per rendered content, after file deployment.
   - `run_onchange_*` — re-runs only when one of its `{{ include "<path>" | sha256sum }}`
     comment-hashes changes. Add a hash line for every file that should trigger it.
 - `run_after_99-bootstrap-complete.sh.tmpl` writes the success marker consumed by
@@ -66,8 +69,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 - **Never hardcode tokens.** Use the chezmoi `gopass` template function:
   `{{ gopass "perso/token/<host>/<uuid>" | trim }}`
-  (path examples live in `dot_local/share/opencode/auth.json.tmpl` and
-  `dot_config/mise/private_config.toml.tmpl`).
+  (a rendered configuration example lives in
+  `dot_config/containers/systemd/private_beszel.container.tmpl`).
+  Executable scripts may instead read gopass at runtime, avoiding secret
+  interpolation into shell source.
 - For paths needing special chars, use backtick strings:
   `` {{ gopass `perso/token/.../uuid` | trim }} ``
 - gopass store layout: `perso/<category>/<host>/<uuid>` (token UUIDs are real entries;
@@ -87,7 +92,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   working recovery path. If prompts repeat on every call, run
   `gopass-age-selfheal` (or `gopass age agent lock`) once.
 - **Passphrase caching**: the agent caches the *unlocked identity* in memory
-  (not the passphrase). `age.agent-timeout` (in `dot_config/gopass/config`,
+  (not the passphrase). `age.agent-timeout` (in `dot_config/gopass/config.tmpl`,
   7200s = 2h) is an **idle** timeout — each successful `gopass show` resets the
   timer, so regular use keeps the cache alive indefinitely. The cache is purged
   by: **AGE USB key removal** (the `gopass-age-usb-handler` polls the device
@@ -122,8 +127,8 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 - DMS externals use pinned tags, so applying them no longer resolves latest
   releases through the GitHub API. CI checks release assets with a GitHub token.
-- The `GITHUB_TOKEN` env var (provisioned by mise via gopass) also covers
-  `mise ls-remote` and any `github:` backend calls.
+- Exporting `GITHUB_TOKEN` for a command also covers `mise ls-remote` and
+  `github:` backend calls. The current mise template does not provision it.
 - Other externals (`usage-specs`, `nvim`/LazyVim) use static archive URLs and don't hit
   the rate limit.
 
@@ -139,20 +144,21 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   - `run_once_after_01-mise.sh.tmpl` — runs `mise install --yes` once.
   - If a tool needs systemd/shim refresh, add a `run_onchange_*` script with the file hash.
 - Env vars for mise live under `[env]` in the same config. Use `redact = true` on secrets
-  so `mise env` doesn't leak them. Example pattern (already in repo):
+  so `mise env` doesn't leak them. Example pattern if adding one:
   `GITHUB_TOKEN = { value = "{{ gopass \"...\" | trim }}", redact = true }`
 
 ## systemd / containers
 
 - User units: `dot_config/systemd/user/*.service.tmpl` → `~/.config/systemd/user/`.
-  `run_onchange_after_01-systemd.sh.tmpl` reloads and enables/disables based on presence.
-- **The onchange script scans `*.service`, `*.socket`, and `*.path`** (line 31 `find`).
-  If you add `.timer` or `.mount` units, extend the `find` command accordingly.
+  `run_onchange_after_01-systemd.sh.tmpl` derives its inventory from this source
+  tree and never enables unrelated user units. Failed operations fail apply.
+- The inventory covers `.service`, `.socket`, `.path`, and `.timer` sources.
+  Extend the template predicate before adding `.mount` units.
 - Quadlet containers: `dot_config/containers/systemd/*.container.tmpl` + `ai.network`.
   Containers with an `[Install]` section are explicitly enabled (symlinked into
   `default.target.wants` and restarted). Those without `[Install]` get daemon-reload only.
-- Any new unit must add a `# {{ include "<path>" | sha256sum }}` line to the
-  systemd onchange script.
+- Unit and Quadlet hashes are generated with their inventories. Add explicit
+  hashes for shared templates, networks and data dependencies.
 - Quadlet images follow `latest` and are pulled by Topgrade using Podman.
   Restart their services manually to use new images. No `AutoUpdate=registry`:
   the systemd onchange script disables the previously managed
@@ -162,14 +168,28 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 - Nine Distrobox apps and two DMS plugins are pinned in `.chezmoidata/apps.yaml`
   and `plugins.yaml`. Preserve the `# renovate: depName=...` annotations.
-- `.github/renovate-config.cjs` is runner config; `renovate.json` is repo config.
-- The nightly workflow needs the GitHub secret `RENOVATE_TOKEN`, with repository
-  contents, PR, issues (dependency dashboard), and workflow write access. No
-  automerge. Never store its value in this repo.
-- PR CI validates Renovate and checks assets using rendered chezmoi templates.
+- `renovate.json` is repo config; the shared catalog action provides runner settings.
+- Daily maintenance uses `BOT_APP_ID` and `BOT_APP_PRIVATE_KEY`, generating its
+  own repository-scoped installation token. No PAT or automerge.
+- Branch-push CI validates Renovate and checks assets using rendered chezmoi templates.
   If upstream changes an asset naming convention, update the template too.
 - Mise stays on `latest`. DNF/OS, OpenSCAD snapshots, branch externals and models
   retain their existing update strategies.
+
+## CI and release contract
+
+- `.github/workflows/{main,release,maintenance}.yml` own the three event chains.
+- `main` works from changed files; release qualifies the complete source independently.
+- This source-only repository declares image builds empty. Qualification uses
+  native AMD64/ARM64 runners for releases; development runs on AMD64.
+- First `1.0.0` requires explicit `first_release` dispatch. Later semantic bumps
+  are automatically requested after successful main qualification.
+- Helpers and regression tests live in `.github/scripts/`; `.github/CI.md`
+  documents credentials, event gates and the temporary dedicated source-action
+  bridge. Do not claim catalog activation until its images are published and
+  local `uses:` references have been replaced by qualified catalog references.
+- Security findings/tool errors remain advisory; functional failures and missing
+  qualification receipts block release.
 
 ## distrobox
 
@@ -194,7 +214,8 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 - `run_once_before_01-ssh-keygen.sh.tmpl` — generates ed25519 SSH key (gated on `is_ssh`).
 - `run_once_before_02-gopass-bootstrap.sh.tmpl` — **interactive**: installs gopass+gh via
   mise, does GitHub OAuth (QR code on terminal), mounts AGE USB key, clones gopass store,
-  unlocks age agent. Reads passphrase from `/dev/tty`. Runs only on first init.
+  prepares the age agent's locked recovery path. Reads passphrase from `/dev/tty`.
+  Runs only on first init.
 - `run_onchange_after_02-age-usb.sh.tmpl` — deploys udisks2 mount_options.conf to system
   path (**needs sudo**).
 - `run_onchange_after_05-qemu-bridge.sh.tmpl` — deploys QEMU bridge network config +
@@ -213,24 +234,14 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   Repository documentation is excluded; skill resources are preserved.
   OpenCode discovers this directory automatically. Use `chezmoi apply -R` to
   fetch changes immediately. The old `~/.local/share/skills` clone is unmanaged.
-- Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Enabled providers:
-  `opencode-go` (OpenCode Go subscription, built-in), `openrouter`, `poolside`,
-  `scaleway`, `zai-coding-plan`, `ollama-cloud` (Ollama Cloud API,
-  `https://ollama.com/v1`).
-- OpenCode Zen (`opencode`) has been replaced by OpenCode Go (`opencode-go`).
-- Each provider uses a `whitelist` to show only curated models in `/models`:
-  - `opencode-go`: `kimi-k3`, `kimi-k2.7-code`, `deepseek-v4-flash`, `glm-5.2`
-  - `ollama-cloud`: same four as `opencode-go`
-  - `openrouter`: `moonshotai/kimi-k3`, `moonshotai/kimi-k2.7-code`,
-    `deepseek/deepseek-v4-flash`, `z-ai/glm-5.2`
-  - `poolside`: `poolside/laguna-s-2.1`, `poolside/laguna-xs-2.1`
-  - `scaleway`: `glm-5.2`, `mistral-medium-3.5-128b`
-  - `zai-coding-plan`: `glm-5.2`
-- `openrouter` and `poolside` are defined inline in `private_opencode.json.tmpl` with
-  gopass-backed API keys. `ollama-cloud`, `zai-coding-plan`, and `scaleway` get
-  their keys from `dot_local/share/opencode/auth.json.tmpl`. `opencode-go`,
-  `ollama-cloud`, `scaleway`, and `zai-coding-plan` are built-in providers
-  (models.dev).
+- Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Native V2
+  policies allow only `openai` and `opencode`; credentials are managed externally.
+- Explicit model overrides cover GPT-6 Astra, GPT-6.1 Sol, GPT-6 Luna and
+  Muse Spark 1.3 Contributor Free. V2 ignores the old `whitelist` fields: these
+  overrides are not an allowlist. Hide individual unwanted models with the
+  documented `disabled` field; do not invent a model policy or wildcard field.
+- Terminal defaults are merged by `dot_config/opencode/modify_private_cli.json`,
+  preserving other UI preferences. `.chezmoiremove` retires the old `tui.json`.
 - The `opencode-claude-auth` plugin (removed in OpenCode 1.3.0) is no longer
   referenced. Anthropic Pro/Max OAuth routing is not supported per Anthropic ToS.
 
@@ -241,6 +252,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   `~/.local/share/huggingface/models`, using the mise-provided `hf`, `kcl`, and `jq`.
 - Topgrade runs `pull-hf-models`. This downloader is independent of the retired
   Lemonade / Open WebUI / Open Terminal stack.
+- It reads its HF token from gopass at runtime, serializes downloads, links the
+  actual returned snapshot and preserves old models after any download failure.
+  Do not prune snapshots inside retained repositories: deployed links may still
+  reference them.
 - `.chezmoiremove` removes the retired stack's deployed configuration and launchers;
   `run_once_before_03-retire-lemonade.sh.tmpl` stops its user services first.
   Existing Podman volumes and downloaded models are preserved.

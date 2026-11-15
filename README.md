@@ -40,10 +40,11 @@ Or apply changes from the repo clone:
 chezmoi apply --source ~/repository/github.com/tdesaules/chez-moi
 ```
 
-Applies that read secrets need the age agent unlocked:
+Insert the AGE key before applies that read secrets. If an affected gopass
+version is stuck unlocked-but-empty, prepare its normal recovery path:
 
 ```bash
-gopass age agent unlock
+gopass-age-selfheal
 ```
 
 The agent caches the unlocked identity for 2h idle (`age.agent-timeout`); the
@@ -56,22 +57,36 @@ releases through the GitHub API.
 ### Renovate
 
 Nine Distrobox apps (`.chezmoidata/apps.yaml`) and two DMS plugins
-(`.chezmoidata/plugins.yaml`) receive weekly update PRs (Saturday, 04:00 UTC).
-The workflow also supports manual dispatch. Merge is manual; CI validates the
+(`.chezmoidata/plugins.yaml`) receive update PRs from daily maintenance (04:00 UTC).
+The workflow also supports manual dispatch on `main`. Merge is manual; CI validates the
 Renovate configuration and verifies release assets from rendered templates.
 If an upstream filename changes (for example FreeCAD's Python suffix), update
 the template in the same PR. The pinentry binary remains on mise `latest`:
 check its compatibility with the pinned plugin on upgrades.
 
-Before the first run, create the repository Actions secret `RENOVATE_TOKEN`
-using a GitHub token with Contents, Pull requests, Issues and Workflows write
-permissions. Keep it outside this repository. After pushing the commits,
-run the `renovate` workflow from GitHub Actions. The runner config is
-`.github/renovate-config.cjs`; dependency rules live in `renovate.json`.
+Maintenance uses the repository's `BOT_APP_ID` variable and
+`BOT_APP_PRIVATE_KEY` secret to mint a short-lived installation token.
+Install the shared bot App on this repository and disable duplicate execution
+by the hosted Renovate App. Dependency rules live in `renovate.json`.
 
 After merging a PR, `chezmoi update` deploys the changes. Mise remains on
 `latest` via Topgrade. DNF/OS, OpenSCAD snapshots, branch externals and model
 downloads retain their existing update strategies.
+
+### CI and releases
+
+Work happens on `main`. The three workflows separate development checks,
+release qualification and maintenance. Explicitly prepare the first `1.0.0`
+using `release.yml` with `first_release=true`; subsequent semantic releases
+are requested automatically after successful main qualification.
+
+`feat` increments minor, `fix`/`perf` increment patch, and breaking changes
+increment major after 1.0.0. Other changes alone do not release.
+The CI creates annotated tags without `v` and GitHub Releases with git-cliff notes.
+Choosing `main` or a tag for deployment is a separate later change.
+
+The isolated test suite exercises native chezmoi `apply`, `verify` and convergence,
+plus failure/retry regressions. See [CI operations and bootstrap action status](.github/CI.md).
 
 ### Quadlet updates
 
@@ -95,7 +110,7 @@ without its Wayland platform plugin. For GUI launches from the terminal, use
 `env QT_QPA_PLATFORM=xcb openscad`.
 
 To update, change the version, AppImage URL and SHA256 in
-`.chezmoidata/openscad.yaml` using https://openscad.org/downloads.html#snapshots.
+`.chezmoidata/openscad.yaml` using <https://openscad.org/downloads.html#snapshots>.
 The Distrobox onchange script tracks this file. Keep the previous values to
 roll back to an earlier snapshot.
 

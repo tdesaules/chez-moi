@@ -1,0 +1,38 @@
+name: Plan dotfiles qualification
+description: Select checks and validate source release events
+inputs:
+  mode:
+    description: development, prepare or publish
+    required: true
+outputs:
+  mode:
+    description: Validated event mode
+  source_sha:
+    description: Exact checked-out commit
+  version:
+    description: Planned stable version
+  has_lint:
+    description: Whether static checks are selected
+  has_images:
+    description: Always false for this source-only repository
+  has_tests:
+    description: Whether functional qualification is selected
+  has_release:
+    description: Whether publication is selected
+  has_assets:
+    description: Whether external assets must be checked
+  request_release:
+    description: Whether main should dispatch release preparation
+  lint_matrix:
+    description: Selected named linters and files
+  build_matrix:
+    description: Empty image build matrix
+  test_matrix:
+    description: Native runner qualification matrix
+  plan_artifact:
+    description: Source plan artifact name
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    INPUT_MODE: ${{ inputs.mode }}

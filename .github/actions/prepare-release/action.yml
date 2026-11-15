@@ -1,0 +1,11 @@
+name: Prepare qualified source release
+description: Verify receipts and atomically publish changelog commit and annotated tag
+inputs:
+  token:
+    description: Shared bot App installation token
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    CI_TOKEN: ${{ inputs.token }}
