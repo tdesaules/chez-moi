@@ -8,7 +8,8 @@ for cmd in hf kcl jq; do
     fi
 done
 
-export HF_TOKEN="{{ gopass "perso/token/huggingface.co/9161b82f-5aad-45e0-be35-2332d675fc59" | trim }}"
+HF_TOKEN=$(gopass show -o "perso/token/huggingface.co/9161b82f-5aad-45e0-be35-2332d675fc59")
+export HF_TOKEN
 
 CONFIG_FILE="{{ .chezmoi.homeDir }}/.config/models/config.kcl"
 CONFIG_JSON=$(kcl "$CONFIG_FILE" --format json 2>/dev/null)
@@ -18,15 +19,22 @@ if [ -z "$CONFIG_JSON" ]; then
     exit 1
 fi
 
-DOWNLOAD_DIR=$(echo "$CONFIG_JSON" | jq -r ".download_dir")
+DOWNLOAD_DIR=$(echo "$CONFIG_JSON" | jq -er '.download_dir | select(type == "string" and startswith("/") and . != "/")')
 
 if [ -z "$DOWNLOAD_DIR" ]; then
     echo "ERROR: download_dir is empty in $CONFIG_FILE" >&2
     exit 1
 fi
 
+echo "$CONFIG_JSON" | jq -e '
+    .models | type == "array" and length > 0 and
+    all(.[]; (.repo | type == "string" and test("^[^/]+/[^/]+$")) and
+             (.file | type == "string" and length > 0 and
+                      . != "." and . != ".." and (contains("/") | not)))' >/dev/null
 CACHE_DIR="$DOWNLOAD_DIR/.hf-cache"
 mkdir -p "$CACHE_DIR"
+exec 9>"$CACHE_DIR/download.lock"
+flock 9
 
 TOTAL=$(echo "$CONFIG_JSON" | jq '.models | length')
 CURRENT=0
@@ -53,8 +61,6 @@ while read -r model_json; do
         continue
     fi
 
-    rm -f "$DOWNLOAD_DIR/.cache/huggingface/download/$FILE.lock"
-
     ATTEMPT=0
     DOWNLOADED=false
     while [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; do
@@ -63,7 +69,7 @@ while read -r model_json; do
             echo "  Retry $ATTEMPT/$MAX_RETRIES for $FILE..."
             sleep "$RETRY_DELAY"
         fi
-        if hf download "$REPO" "$FILE" --cache-dir "$CACHE_DIR" 2>&1; then
+        if SNAPSHOT_FILE=$(hf download "$REPO" "$FILE" --cache-dir "$CACHE_DIR" --quiet); then
             DOWNLOADED=true
             break
         fi
@@ -71,10 +77,8 @@ while read -r model_json; do
     done
 
     if [ "$DOWNLOADED" = true ]; then
-        REPO_CACHE_NAME="models--$(echo "$REPO" | sed 's/\//--/g')"
-        SNAPSHOT_HASH=$(ls "$CACHE_DIR/$REPO_CACHE_NAME/snapshots/" 2>/dev/null | head -1)
-        if [ -n "$SNAPSHOT_HASH" ] && [ -e "$CACHE_DIR/$REPO_CACHE_NAME/snapshots/$SNAPSHOT_HASH/$FILE" ]; then
-            ln -sf ".hf-cache/$REPO_CACHE_NAME/snapshots/$SNAPSHOT_HASH/$FILE" "$DOWNLOAD_DIR/$FILE"
+        if [[ "$SNAPSHOT_FILE" == "$CACHE_DIR/"* ]] && [ -f "$SNAPSHOT_FILE" ]; then
+            ln -sf ".hf-cache/${SNAPSHOT_FILE#"$CACHE_DIR/"}" "$DOWNLOAD_DIR/$FILE"
             echo "  Downloaded and symlinked."
             SUCCESS=$((SUCCESS + 1))
         else
@@ -86,6 +90,11 @@ while read -r model_json; do
         FAIL=$((FAIL + 1))
     fi
 done < <(echo "$CONFIG_JSON" | jq -c '.models[]')
+
+if [ "$FAIL" -gt 0 ]; then
+    echo "ERROR: $FAIL download(s) failed; preserving existing models and caches." >&2
+    exit 1
+fi
 
 echo ""
 echo "Cleaning up orphaned models in $DOWNLOAD_DIR..."
@@ -119,17 +128,18 @@ if [ -d "$OLD_CACHE_DIR" ]; then
 fi
 
 ORPHAN_CACHE=0
-CACHED_REPOS=$(hf cache list --cache-dir "$CACHE_DIR" --format quiet 2>/dev/null || true)
+CACHED_REPOS=$(hf cache list --cache-dir "$CACHE_DIR" --format quiet)
 for cached_repo in $CACHED_REPOS; do
     repo_id="${cached_repo#model/}"
     if ! grep -qxF "$repo_id" <<< "$EXPECTED_REPOS"; then
         echo "  Removing orphan cache repo: $repo_id"
-        hf cache rm "$cached_repo" --cache-dir "$CACHE_DIR" -y 2>/dev/null || true
+        hf cache rm "$cached_repo" --cache-dir "$CACHE_DIR" -y
         ORPHAN_CACHE=$((ORPHAN_CACHE + 1))
     fi
 done
 
-hf cache prune --cache-dir "$CACHE_DIR" -y 2>/dev/null || true
+# Do not prune revisions within retained repositories: a deployed model may
+# still point to a snapshot which is no longer referenced by the upstream branch.
 
 echo ""
 echo "Cleanup complete: $ORPHAN_FLAT orphan file(s), $BROKEN broken symlink(s), $ORPHAN_CACHE orphan cache repo(s)."
