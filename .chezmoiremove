@@ -1,4 +1,6 @@
 .gitconfig-thales
+.config/distrobox/zen-work.desktop
+.local/share/applications/zen-distrobox-zen-work.desktop
 .config/containers/systemd/llama-server.container
 .config/containers/systemd/muse-server.container
 .config/systemd/user/ornith-tray.service

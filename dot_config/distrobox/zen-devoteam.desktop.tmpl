@@ -1,14 +1,14 @@
 [Desktop Entry]
 Version=1.0
-Name=Zen (Work)
-Exec=zen-browser --profile "{{ .chezmoi.homeDir }}/.zen/work" --name zen-work %u
+Name=Zen (Devoteam)
+# Keep the former Work profile to preserve existing sessions and bookmarks.
+Exec=zen-browser --no-remote --profile "{{ .chezmoi.homeDir }}/.zen/work" --name zen-devoteam %u
 Icon={{ .chezmoi.homeDir }}/.local/share/icons/zen.svg
 Type=Application
 MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
-StartupWMClass=zen-work
+StartupWMClass=zen-devoteam
 Categories=Network;WebBrowser;
 StartupNotify=true
 Terminal=false
 X-MultipleArgs=false
 Keywords=Internet;WWW;Browser;Web;Explorer;
-Actions=new-window;new-blank-window;new-private-window;profilemanager;

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Zen (Thales)
+Exec=zen-browser --no-remote --profile "{{ .chezmoi.homeDir }}/.zen/thales" --name zen-thales %u
+Icon={{ .chezmoi.homeDir }}/.local/share/icons/zen.svg
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;application/x-xpinstall;application/pdf;application/json;
+StartupWMClass=zen-thales
+Categories=Network;WebBrowser;
+StartupNotify=true
+Terminal=false
+X-MultipleArgs=false
+Keywords=Internet;WWW;Browser;Web;Explorer;

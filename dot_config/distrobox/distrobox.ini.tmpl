@@ -46,7 +46,7 @@ hostname="zen-distrobox"
 pre_init_hooks="dnf copr enable --assumeyes myriad-sun/zen-browser"
 additional_packages="zen-browser"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
-exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen-work.desktop"
+exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/zen-perso.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen-devoteam.desktop {{ .chezmoi.homeDir }}/.config/distrobox/zen-thales.desktop"
 {{ end -}}
 
 [zed-distrobox]

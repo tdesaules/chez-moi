@@ -173,6 +173,10 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## distrobox
 
+- Zen Devoteam reuses the former Work profile at `~/.zen/work` to preserve
+  browsing data. Zen Thales uses `~/.zen/thales`; both launch with `--no-remote`
+  and distinct window classes in the shared `zen-distrobox` container.
+
 - Niri Tonic Files uses a dedicated Fedora 44 box (runtime pinned in
   `.chezmoidata/apps.yaml`), with GTK 4, Node.js and both cloud adapters.
   Its release archive is SHA-256 checked and extracted to `/opt/niri-tonic-files` inside
