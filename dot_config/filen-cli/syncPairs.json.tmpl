@@ -1,6 +1,6 @@
 [
   {
-    "local": "/var{{ .chezmoi.homeDir }}/document",
+    "local": {{ joinPath .chezmoi.homeDir "document" | toJson }},
     "remote": "/document",
     "syncMode": "twoWay",
     "disableLocalTrash": false,
@@ -8,7 +8,7 @@
     "excludeDotFiles": true
   },
   {
-    "local": "/var{{ .chezmoi.homeDir }}/.config/chromium",
+    "local": {{ joinPath .chezmoi.homeDir ".config/chromium" | toJson }},
     "remote": "/.config/chromium",
     "syncMode": "twoWay",
     "disableLocalTrash": true,
@@ -16,7 +16,7 @@
     "excludeDotFiles": false
   },
   {
-    "local": "/var{{ .chezmoi.homeDir }}/.zen",
+    "local": {{ joinPath .chezmoi.homeDir ".zen" | toJson }},
     "remote": "/.zen",
     "syncMode": "twoWay",
     "disableLocalTrash": true,

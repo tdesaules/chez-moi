@@ -17,15 +17,6 @@ def --env "update-env" [] {
 }
 export-env {
 
-  'hide,CARGO_HOME,
-hide,GOBIN,
-hide,GOROOT,
-hide,RUSTUP_HOME,
-hide,RUSTUP_TOOLCHAIN,
-set,PATH,/home/tdesaules/.local/bin:/home/tdesaules/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
-hide,MISE_SHELL,
-hide,__MISE_DIFF,
-hide,__MISE_DIFF,' | parse vars | update-env
   $env.MISE_SHELL = "nu"
   let mise_hook = {
     condition: { "MISE_SHELL" in $env }

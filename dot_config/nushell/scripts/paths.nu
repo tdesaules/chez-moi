@@ -18,6 +18,7 @@ export-env {
     }
     $env.PATH = (
         $current_path
+        | prepend ($nu.home-dir | path join ".local" "share" "mise" "shims")
         | prepend ($nu.home-dir | path join ".local" "bin")
         | append "/usr/local/bin"
         | append "/usr/local/sbin"
