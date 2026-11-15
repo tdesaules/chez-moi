@@ -1,6 +1,7 @@
 #!/bin/bash
 
 {{- if .is_systemd }}
+set -euo pipefail
 
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
@@ -21,6 +22,32 @@
 # {{ include ".chezmoidata/beszel.yaml" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.path.tmpl" | sha256sum }}
 # {{ include "dot_config/systemd/user/gopass-age-usb-handler.service.tmpl" | sha256sum }}
+# {{ include "dot_config/containers/systemd/ai.network" | sha256sum }}
+# {{ include ".chezmoidata/gopass.yaml" | sha256sum }}
+# {{ include "dot_local/bin/executable_gopass-age-usb-handler.tmpl" | sha256sum }}
+# {{ include "dot_local/bin/executable_gopass-age-selfheal.tmpl" | sha256sum }}
+
+# Only operate on units owned by this source tree. The rendered inventory also
+# changes when a source unit is added or removed.
+services=(
+{{ range glob (joinPath .chezmoi.sourceDir "dot_config/systemd/user/*") -}}
+{{ $name := base . | trimSuffix ".tmpl" | trimPrefix "private_" -}}
+{{ if or (hasSuffix ".service" $name) (hasSuffix ".socket" $name) (hasSuffix ".path" $name) (hasSuffix ".timer" $name) -}}
+    {{ $name | quote }}
+# {{ include (joinPath "dot_config/systemd/user" (base .)) | sha256sum }}
+{{ end -}}
+{{ end -}}
+)
+containers=(
+{{ range glob (joinPath .chezmoi.sourceDir "dot_config/containers/systemd/*.container*") -}}
+{{ $name := base . | trimSuffix ".tmpl" | trimPrefix "private_" -}}
+{{ if hasSuffix ".container" $name -}}
+    {{ $name | quote }}
+# {{ include (joinPath "dot_config/containers/systemd" (base .)) | sha256sum }}
+{{ end -}}
+{{ end -}}
+)
+failures=0
 
 USER_SYSTEMD_DIR="{{ .chezmoi.homeDir }}/{{ .systemd.user_dir }}"
 USER_CONTAINERS_DIR="{{ .chezmoi.homeDir }}/{{ .systemd.containers_dir }}"
@@ -33,19 +60,23 @@ fi
 _log "success" "systemd user daemon reloaded."
 
 # Retire the previously managed timer; container restarts are manual.
-if ! output=$(systemctl --user disable --now podman-auto-update.timer 2>&1); then
+if [ "$(systemctl --user show podman-auto-update.timer --property=LoadState --value)" != "not-found" ] &&
+    ! output=$(systemctl --user disable --now podman-auto-update.timer 2>&1); then
     _log "error" "$output"
     _error_handler "disable podman-auto-update.timer"
 fi
 
 _log "info" "podman quadlet containers in $USER_CONTAINERS_DIR will be processed by systemd daemon-reload."
 
-services=$(find "$USER_SYSTEMD_DIR" -maxdepth 1 \( -name '*.service' -o -name '*.socket' -o -name '*.path' \) -printf '%f\n' 2>/dev/null)
-
-if [ -z "$services" ]; then
+if [ "${#services[@]}" -eq 0 ]; then
     _log "info" "no systemd user service/socket files found."
 else
-    for service in $services; do
+    for service in "${services[@]}"; do
+        if [ ! -f "$USER_SYSTEMD_DIR/$service" ]; then
+            _log "error" "managed unit is missing: $service"
+            failures=$((failures + 1))
+            continue
+        fi
         if ! grep -q "^\[Install\]" "$USER_SYSTEMD_DIR/$service" 2>/dev/null; then
             continue
         fi
@@ -54,38 +85,52 @@ else
         if ! output=$(systemctl --user enable "$service" 2>&1); then
             echo "$output"
             _log "error" "failed to enable $service"
+            failures=$((failures + 1))
             continue
         fi
 
-        _log "info" "queueing $service restart..."
-        if ! output=$(systemctl --user --no-block restart "$service" 2>&1); then
+        _log "info" "restarting $service..."
+        if ! output=$(systemctl --user restart "$service" 2>&1); then
             echo "$output"
-            _log "error" "failed to queue $service restart"
+            _log "error" "failed to restart $service"
+            failures=$((failures + 1))
         else
-            _log "success" "enabled and queued $service restart"
+            _log "success" "enabled and restarted $service"
         fi
     done
 fi
 
-containers=$(find "$USER_CONTAINERS_DIR" -maxdepth 1 -name '*.container' -printf '%f\n' 2>/dev/null)
 WANTS_DIR="$USER_SYSTEMD_DIR/default.target.wants"
 
-for container in $containers; do
+for container in "${containers[@]}"; do
+    if [ ! -f "$USER_CONTAINERS_DIR/$container" ]; then
+        _log "error" "managed quadlet is missing: $container"
+        failures=$((failures + 1))
+        continue
+    fi
     if ! grep -q "^\[Install\]" "${USER_CONTAINERS_DIR}/${container}" 2>/dev/null; then
         continue
     fi
     service="${container%.container}.service"
-    _log "info" "enabling and queueing $service..."
+    # The following Beszel setup script provisions this file on first apply.
+    if [ "$service" = "beszel-agent.service" ] &&
+        [ ! -f "{{ .chezmoi.homeDir }}/.config/beszel/agent.env" ]; then
+        _log "info" "beszel-agent will be started after provisioning"
+        continue
+    fi
+    _log "info" "enabling and restarting $service..."
     mkdir -p "$WANTS_DIR"
     ln -sf "/run/user/$(id -u)/systemd/generator/${service}" "${WANTS_DIR}/${service}"
-    if ! output=$(systemctl --user --no-block restart "$service" 2>&1); then
+    if ! output=$(systemctl --user restart "$service" 2>&1); then
         echo "$output"
-        _log "error" "failed to queue $service"
+        _log "error" "failed to restart $service"
+        failures=$((failures + 1))
     else
-        _log "success" "enabled and queued $service"
+        _log "success" "enabled and restarted $service"
     fi
 done
 
+[ "$failures" -eq 0 ] || _error_handler "$failures managed unit operations"
 _log "success" "all systemd user services and quadlet containers processed."
 
 {{- end }}

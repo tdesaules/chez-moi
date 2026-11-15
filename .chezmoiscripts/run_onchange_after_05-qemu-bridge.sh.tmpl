@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 {{- if .is_fedora }}
+set -euo pipefail
 {{ include ".chezmoitemplates/functions.tmpl" }}
 
 # {{ include "dot_local/share/qemu/br-qemu.nmconnection" | sha256sum }}
@@ -20,11 +21,11 @@ else
         _error_handler "br-qemu.nmconnection deployment"
     fi
     sudo chmod 600 "$NM_CONN_DEST"
-    sudo nmcli connection reload 2>/dev/null || true
+    sudo nmcli connection reload
     if nmcli -t -f NAME connection show --active 2>/dev/null | grep -q "^{{ .qemu.connection }}$"; then
         _log "info" "restarting {{ .qemu.connection }} connection to apply changes..."
-        sudo nmcli connection down "{{ .qemu.connection }}" 2>/dev/null || true
-        sudo nmcli connection up "{{ .qemu.connection }}" 2>/dev/null || true
+        sudo nmcli connection down "{{ .qemu.connection }}"
+        sudo nmcli connection up "{{ .qemu.connection }}"
         _log "success" "{{ .qemu.connection }} connection restarted"
     fi
     _log "success" "deployed br-qemu.nmconnection"

@@ -91,13 +91,15 @@ else
     _log "info" "gopass store already exists, skipping clone"
 fi
 
-_log "info" "unlocking gopass age agent..."
+_log "info" "preparing gopass age agent recovery..."
 "{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" age agent start > /dev/null 2>&1 || true
-if ! OUTPUT=$("{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" age agent unlock 2>&1); then
+# On affected releases, unlock marks an empty agent unlocked without loading
+# identities. Leave it locked so the next decrypt performs normal recovery.
+if ! OUTPUT=$("{{ .chezmoi.homeDir }}/.local/share/mise/shims/gopass" age agent lock 2>&1); then
     echo "$OUTPUT"
-    _error_handler "gopass age agent unlock"
+    _error_handler "gopass age agent recovery preparation"
 fi
-_log "success" "age agent unlocked"
+_log "success" "age agent ready for recovery on next access"
 
 unset GOPASS_AGE_PASSWORD
 

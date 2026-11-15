@@ -20,7 +20,7 @@
 # already locked. Invoked by gopass-age-usb-handler when the AGE key is
 # inserted. Remove once a gopass release ships #3488 (+ #3509).
 
-AGENT_SOCKET="/run/user/$(id -u)/gopass/gopass-age-agent.sock"
+AGENT_SOCKET="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gopass/gopass-age-agent.sock"
 PYTHON="/usr/bin/python3"
 
 # Fixed dummy age ciphertext, encrypted to a throwaway recipient that matches
