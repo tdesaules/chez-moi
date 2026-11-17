@@ -29,7 +29,7 @@ jobs:
           repositories: ${{ github.event.repository.name }}
       - name: Update dependencies
         if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
-        uses: tdesaules/github-actions/maintenance/update-dependencies@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/maintenance/update-dependencies@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           repository: ${{ github.repository }}
           token: ${{ steps.app.outputs.token }}
@@ -40,7 +40,7 @@ jobs:
           token: ${{ github.token }}
       - name: Check documentation links
         if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
-        uses: tdesaules/github-actions/lint/lychee@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/lint/lychee@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           files: '["README.md", ".github/CI.md"]'
       - name: Inventory source dependencies
@@ -48,7 +48,7 @@ jobs:
         timeout-minutes: 5
         if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
         continue-on-error: true
-        uses: tdesaules/github-actions/oci/new-sbom@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/oci/new-sbom@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           source: dir:.
           format: syft-json
@@ -58,7 +58,7 @@ jobs:
         timeout-minutes: 10
         if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
         continue-on-error: true
-        uses: tdesaules/github-actions/oci/test-vulnerabilities@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/oci/test-vulnerabilities@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           sbom: .build/security/source.syft.json
           fail-on: none
@@ -67,7 +67,7 @@ jobs:
         timeout-minutes: 2
         if: ${{ !cancelled() && steps.guard.outcome == 'success' }}
         continue-on-error: true
-        uses: tdesaules/github-actions/workflow/summarize-security@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/workflow/summarize-security@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           subject: git:${{ github.sha }}
           sbom-outcome: ${{ steps.sbom.outcome }}
