@@ -56,22 +56,22 @@ jobs:
           persist-credentials: false
       - name: Validate workflows
         if: matrix.id == 'actionlint'
-        uses: tdesaules/github-actions/lint/actionlint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/lint/actionlint@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           files: ${{ toJSON(matrix.files) }}
       - name: Validate YAML
         if: matrix.id == 'yaml'
-        uses: tdesaules/github-actions/lint/yaml@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/lint/yaml@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           files: ${{ toJSON(matrix.files) }}
       - name: Validate action recipes
         if: matrix.id == 'hadolint'
-        uses: tdesaules/github-actions/lint/hadolint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/lint/hadolint@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           files: ${{ toJSON(matrix.files) }}
       - name: Validate Markdown
         if: matrix.id == 'markdownlint'
-        uses: tdesaules/github-actions/lint/markdownlint@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/lint/markdownlint@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           files: ${{ toJSON(matrix.files) }}
       - name: Validate rendered dotfiles
@@ -124,7 +124,7 @@ jobs:
         with:
           token: ${{ github.token }}
       - name: Qualify exact source on native runner
-        uses: tdesaules/github-actions/check/test-go@727e561c44b938c184dd51eea33b816fe99c37ac # 1.6.3
+        uses: tdesaules/github-actions/check/test-go@816accfb927cf1da23bbf5be51efa6f0a0639b38 # 1.8.1
         with:
           directory: .github/actions
       - name: Qualify chezmoi behavior on native runner
