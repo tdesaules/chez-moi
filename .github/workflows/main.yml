@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     outputs:
       mode: ${{ steps.plan.outputs.mode }}
@@ -95,7 +95,7 @@ jobs:
       ${{ !cancelled() && needs.check.result == 'success' &&
           needs.check.outputs.has_images == 'true' &&
           needs.lint.result == 'success' }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       # Source-only repository: check always declares this phase empty.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
