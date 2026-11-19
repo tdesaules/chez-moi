@@ -20,7 +20,8 @@ manager: Nord is applied through userChrome/userContent, not an extension.
 | Thales accent | Aurora purple `#b48ead` |
 | Errors/close hover and warnings | Aurora red `#bf616a`, yellow `#ebcb8b` |
 
-Aurora is a small profile signature: selected-tab edge, workspace indicator and
+The selected-tab edge is Nord15 purple and the “New Tab” label is Nord9 blue
+in every profile. The profile-specific Aurora accent marks the workspace indicator and
 internal-page heading underline. It does not flood toolbars or selected tabs.
 Frost is shared across profiles. Nord0 is reserved for shadows and color mixing.
 Snow Storm text on all three main surfaces has a minimum contrast ratio of about

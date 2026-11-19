@@ -87,7 +87,11 @@ zen-folder > .tab-group-label-container > label,
 .tabbrowser-tab:is([selected], [visuallyselected], [multiselected]) .tab-background {
     background-color: var(--nord-raised) !important;
     background-image: none !important;
-    box-shadow: inset 3px 0 0 var(--nord-profile-accent) !important;
+    box-shadow: inset 3px 0 0 var(--nord15) !important;
+}
+
+:is(#vertical-tabs-newtab-button, #tabs-newtab-button) .toolbarbutton-text {
+    color: var(--nord9) !important;
 }
 
 .tabbrowser-tab:is([selected], [visuallyselected]) .tab-label {

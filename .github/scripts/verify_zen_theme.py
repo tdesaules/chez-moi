@@ -166,6 +166,7 @@ def verify(container, profile, directory, theme):
                     contentFrame: read("#tabbrowser-tabpanels browser[type='content']"),
                     address: read("#urlbar-input"),
                     selectedTab: read(".tabbrowser-tab[selected] .tab-background"),
+                    newTabLabel: read(":is(#vertical-tabs-newtab-button, #tabs-newtab-button) .toolbarbutton-text"),
                     workspace: read(".zen-current-workspace-indicator-name"),
                     parserChecked: typeof Services !== "undefined",
                     parserErrors: typeof Services !== "undefined" ?
@@ -185,6 +186,8 @@ def verify(container, profile, directory, theme):
             assert theme["fonts"]["mono"] in report["chrome"]["address"]["font"], report
             expected = theme["palette"][theme["profiles"][profile]["accent"]]
             assert report["chrome"]["accent"] == expected, report
+            assert rgb(theme["palette"]["nord15"]) in report["chrome"]["selectedTab"]["shadow"], report
+            assert report["chrome"]["newTabLabel"]["color"] == rgb(theme["palette"]["nord9"]), report
             assert theme["fonts"]["display"] in report["chrome"]["workspace"]["font"], report
             assert report["chrome"]["workspace"]["weight"] == str(theme["fonts"]["display_weight"]), report
             assert report["chrome"]["parserChecked"], report
