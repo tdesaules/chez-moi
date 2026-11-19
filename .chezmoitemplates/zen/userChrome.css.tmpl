@@ -152,6 +152,22 @@ zen-folder .tab-group-folder-icon {
     caret-color: var(--nord8) !important;
 }
 
+/* Draw above the opaque suggestion rows so all four edges stay visible. */
+#urlbar[breakout-extend] > .urlbar-background {
+    border-color: transparent !important;
+    outline: none !important;
+}
+
+#urlbar[breakout-extend]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--nord-profile-accent);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+}
+
 .urlbarView {
     color: var(--nord-text) !important;
     background-color: var(--nord-surface) !important;
