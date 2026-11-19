@@ -158,6 +158,7 @@ def verify(container, profile, directory, theme):
                     schemeWithLightWorkspace,
                     accent: style.getPropertyValue("--nord-profile-accent").trim(),
                     toolbox: read("#navigator-toolbox"),
+                    outerFrame: read("#zen-browser-background"),
                     contentFrame: read("#tabbrowser-tabpanels browser[type='content']"),
                     address: read("#urlbar-input"),
                     selectedTab: read(".tabbrowser-tab[selected] .tab-background"),
@@ -171,6 +172,7 @@ def verify(container, profile, directory, theme):
                 };
             """)
             assert report["chrome"]["toolbox"]["background"] == rgb(theme["palette"]["nord2"]), report
+            assert report["chrome"]["outerFrame"]["background"] == rgb(theme["palette"]["nord2"]), report
             assert report["chrome"]["contentFrame"]["background"] == rgb(theme["palette"]["nord3"]), report
             assert report["chrome"]["dark"], report
             assert report["chrome"]["schemeWithLightWorkspace"] == "dark", report
