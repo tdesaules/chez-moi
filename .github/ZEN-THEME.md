@@ -8,7 +8,9 @@ manager: Nord is applied through userChrome/userContent, not an extension.
 
 | Role | Colors |
 | --- | --- |
-| Main surfaces | Nord1 `#3b4252` |
+| Tab sidebar | Nord3 `#4c566a` |
+| Content frame and built-in about pages | Nord4 `#d8dee9`, with dark text on internal pages |
+| Other chrome surfaces | Nord1 `#3b4252` |
 | Fields, cards, menus, dialogs | Nord2 `#434c5e` |
 | Hover and selected surfaces | Nord3 `#4c566a` |
 | Secondary, normal and heading text | `#d8dee9`, `#e5e9f0`, `#eceff4` |

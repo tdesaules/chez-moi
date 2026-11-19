@@ -7,10 +7,20 @@
     :root,
     :host {
 {{ includeTemplate "zen/tokens.css.tmpl" . }}
+        --nord-base: var(--nord4);
+        --nord-surface: var(--nord5);
+        --nord-raised: var(--nord6);
+        --nord-text: var(--nord1);
+        --nord-secondary-text: var(--nord2);
+        --nord-heading: var(--nord0);
+        --nord-primary-button: var(--nord5);
+        --nord-primary-button-hover: var(--nord6);
+        --nord-selection: var(--nord9);
+        color-scheme: light !important;
     }
 
     html, body, page, window, .activity-stream {
-        color-scheme: dark !important;
+        color-scheme: light !important;
         background-color: var(--nord-base) !important;
         color: var(--nord-text) !important;
         font-family: var(--nord-font-sans) !important;
