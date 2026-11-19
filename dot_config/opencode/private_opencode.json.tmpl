@@ -3,17 +3,9 @@
   "shell": "/usr/bin/bash",
   "policies": [
     { "action": "provider.use", "resource": "*", "effect": "deny" },
-    { "action": "provider.use", "resource": "openai", "effect": "allow" },
-    { "action": "provider.use", "resource": "opencode", "effect": "allow" }
+    { "action": "provider.use", "resource": "openai", "effect": "allow" }
   ],
   "providers": {
-    "opencode": {
-      "models": {
-        "muse-spark-1.3-contributor-free": {
-          "name": "muse-spark-1.3-contributor-free"
-        }
-      }
-    },
     "openai": {
       "models": {
         "gpt-6.2-astra": {
