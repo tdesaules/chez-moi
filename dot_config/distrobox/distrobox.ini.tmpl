@@ -13,7 +13,7 @@ exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {
 
 {{ if eq .chezmoi.arch "amd64" -}}
 [niri-tonic-files-distrobox]
-# Release binaries require Fedora 44's glibc and GTK runtime.
+# Keep the GTK runtime on the release validated for the packaged binary.
 image=quay.io/fedora/fedora:{{ .niri_tonic_files_fedora }}
 replace=true
 start_now=true

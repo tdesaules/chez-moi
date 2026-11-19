@@ -205,7 +205,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   Scope content CSS to browser-owned pages, excluding web `about:blank`/`srcdoc`
   frames. See `.github/ZEN-THEME.md` for sources and isolated browser verification.
 
-- Niri Tonic Files uses a dedicated Fedora 44 box (runtime pinned in
+- Niri Tonic Files uses a dedicated Fedora 45 box (runtime pinned in
   `.chezmoidata/apps.yaml`), with GTK 4, Node.js and both cloud adapters.
   Its release archive is SHA-256 checked and extracted to `/opt/niri-tonic-files` inside
   the container; Filen dependencies use `npm ci --omit=dev --ignore-scripts`.
