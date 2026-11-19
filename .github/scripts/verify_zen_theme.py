@@ -159,6 +159,10 @@ def verify(container, profile, directory, theme):
                     accent: style.getPropertyValue("--nord-profile-accent").trim(),
                     toolbox: read("#navigator-toolbox"),
                     outerFrame: read("#zen-browser-background"),
+                    gutter: read("#tabbrowser-tabpanels"),
+                    pageShadow: getComputedStyle(document.querySelector(
+                        "#tabbrowser-tabpanels .browserSidebarContainer:not(.zen-glance-overlay)"
+                    )).boxShadow,
                     contentFrame: read("#tabbrowser-tabpanels browser[type='content']"),
                     address: read("#urlbar-input"),
                     selectedTab: read(".tabbrowser-tab[selected] .tab-background"),
@@ -173,6 +177,8 @@ def verify(container, profile, directory, theme):
             """)
             assert report["chrome"]["toolbox"]["background"] == rgb(theme["palette"]["nord2"]), report
             assert report["chrome"]["outerFrame"]["background"] == rgb(theme["palette"]["nord2"]), report
+            assert report["chrome"]["gutter"]["background"] == report["chrome"]["toolbox"]["background"], report
+            assert report["chrome"]["pageShadow"] == "none", report
             assert report["chrome"]["contentFrame"]["background"] == rgb(theme["palette"]["nord3"]), report
             assert report["chrome"]["dark"], report
             assert report["chrome"]["schemeWithLightWorkspace"] == "dark", report

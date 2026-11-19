@@ -16,6 +16,8 @@ menupopup {
 /* Opaque Nord surfaces, including Zen's separately painted background layers. */
 #main-window,
 #browser,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
 #navigator-toolbox,
 #nav-bar,
 #TabsToolbar,
@@ -37,8 +39,11 @@ menupopup {
     color: var(--nord-text) !important;
 }
 
-#tabbrowser-tabbox,
-#tabbrowser-tabpanels,
+/* Zen normally casts a shadow from the page into the bottom gutter. */
+#tabbrowser-tabpanels .browserSidebarContainer:not(.zen-glance-overlay) {
+    box-shadow: none !important;
+}
+
 #tabbrowser-tabpanels browser[type="content"],
 .browserStack {
     color-scheme: dark !important;
