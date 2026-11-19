@@ -1,5 +1,39 @@
 opencode:
   openai:
+    # Catalog snapshot: explicitly hide models other than Astra/Sol 6.2.
+    disabled_models:
+      - gpt-6.2-astra-fast
+      - gpt-6.2-astra-ultrafast
+      - gpt-6.2-sol-fast
+      - gpt-6.2-sol-ultrafast
+      - gpt-6-cyber
+      - gpt-6.1-terra
+      - gpt-6.1-terra-fast
+      - gpt-6.1-terra-flex
+      - gpt-6.1-sol
+      - gpt-6.1-sol-fast
+      - gpt-6.1-sol-flex
+      - gpt-6.1-sol-ultrafast
+      - gpt-6-sol
+      - gpt-6-sol-fast
+      - gpt-6-sol-flex
+      - gpt-6-luna
+      - gpt-6-luna-fast
+      - gpt-6-luna-flex
+      - gpt-6-astra
+      - gpt-6-astra-fast
+      - gpt-6-astra-flex
+      - gpt-6-astra-ultrafast
+      - gpt-5.6-cyber
+      - gpt-5.6-luna
+      - gpt-5.6-luna-fast
+      - gpt-5.6-luna-flex
+      - gpt-5.6-sol
+      - gpt-5.6-sol-fast
+      - gpt-5.6-sol-flex
+      - gpt-5.6-terra
+      - gpt-5.6-terra-fast
+      - gpt-5.6-terra-flex
     limit:
       context: 1000000
       input: 872000

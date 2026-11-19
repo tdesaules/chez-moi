@@ -8,6 +8,9 @@
   "providers": {
     "openai": {
       "models": {
+{{- range .opencode.openai.disabled_models }}
+        {{ . | toJson }}: { "disabled": true },
+{{- end }}
         "gpt-6.2-astra": {
           "name": "gpt-6.2-astra",
           "limit": {{ .opencode.openai.limit | toJson }}
