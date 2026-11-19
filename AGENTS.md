@@ -244,7 +244,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   fetch changes immediately. The old `~/.local/share/skills` clone is unmanaged.
 - Provider config: `dot_config/opencode/private_opencode.json.tmpl`. Native V2
   policies allow only `openai` and `opencode`; credentials are managed externally.
-- Explicit model overrides cover GPT-6 Astra, GPT-6.1 Sol, GPT-6 Luna and
+- Explicit model overrides cover GPT-6.2 Astra, GPT-6.2 Sol and
   Muse Spark 1.3 Contributor Free. V2 ignores the old `whitelist` fields: these
   overrides are not an allowlist. Hide individual unwanted models with the
   documented `disabled` field; do not invent a model policy or wildcard field.
