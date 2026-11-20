@@ -3,7 +3,7 @@ WORKDIR /src
 COPY main.go .
 RUN CGO_ENABLED=0 go build -trimpath -o /entrypoint main.go
 FROM docker.io/orhunp/git-cliff:2.14.2@sha256:1e696a381a1b0366bb6ccbb6bd4e50e73473fda88eab3a757b95e0d0d66c9531 AS cliff
-FROM quay.io/fedora/fedora:45@sha256:b174cd5906c712f59a675cc85ea2ca8ff3bcf3643f1a1f3bc4e14dc28bcf1872
+FROM quay.io/fedora/fedora:45@sha256:f236063d5a7a15e76ff034f2be5fa6f7a8922fcb655093ad972a1f196b14a007
 # hadolint ignore=DL3041
 RUN dnf install -y --setopt=install_weak_deps=False python3 git jq chezmoi-2.73.0-1.fc45 util-linux-core findutils diffutils && dnf clean all
 COPY --from=build /entrypoint /entrypoint
