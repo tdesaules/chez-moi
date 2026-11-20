@@ -81,11 +81,6 @@ class ReleaseContractTests(unittest.TestCase):
             self.assertEqual(changed_files("a" * 40, "b" * 40),
                              ["old name", "new name", "deleted", ""])
 
-    def test_missing_history_fails(self):
-        with patch("plan_ci.git", side_effect=ValueError("missing history")):
-            with self.assertRaises(ValueError):
-                changed_files("a" * 40, "b" * 40)
-
     def test_receipts_require_complete_matching_success(self):
         plan = {"source_sha": "abc", "test_matrix": {"include": [
             {"arch": "amd64"}, {"arch": "arm64"}]}}
@@ -173,6 +168,13 @@ class PlanEventTests(unittest.TestCase):
         self.assertFalse(plan["has_lint"])
         self.assertFalse(plan["has_tests"])
         self.assertFalse(plan["has_images"])
+
+    def test_rewritten_branch_qualifies_current_tree(self):
+        plan = self.plan("development", before="a" * 40)
+        self.assertEqual(plan["files"], ["README.md", "cliff.toml"])
+        self.assertTrue(plan["has_lint"])
+        self.assertTrue(plan["has_tests"])
+        self.assertFalse(plan["has_release"])
 
     def test_docs_only_development_does_not_select_runtime_qualification(self):
         self.run_git("-c", "tag.gpgsign=false", "tag", "-a", "1.0.0", "-m", "initial")
