@@ -17,4 +17,4 @@ freecad: "1.1.4"
 librepcb: "2.1.1"
 # renovate: depName=niri-tonic/niri-tonic-files
 niri_tonic_files: "1.0.1"
-niri_tonic_files_fedora: "44"
+niri_tonic_files_fedora: "45"

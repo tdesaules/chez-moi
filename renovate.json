@@ -13,6 +13,13 @@
   ],
   "packageRules": [
     {
+      "description": "Keep CI on Fedora 45; Quay regularly removes previous manifest digests",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["quay.io/fedora/fedora"],
+      "allowedVersions": "/^45$/",
+      "pinDigests": false
+    },
+    {
       "matchPackageNames": ["storytold/lightcraft", "storytold/pdfcraft", "storytold/vectorcraft"],
       "extractVersion": "^v(?<version>.*)$"
     },
