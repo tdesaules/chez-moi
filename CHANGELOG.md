@@ -4,6 +4,47 @@ All notable changes are documented using [Keep a Changelog](https://keepachangel
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-21
+
+### Added
+
+- Adopt the validated Fedora 45 Files runtime
+
+- Contrast the tab sidebar with a Snow Storm page canvas
+
+- Install Helm alongside kubectl
+
+- Install OpenTofu and Terraform
+
+### Changed
+
+- List fuzzy path candidates in one pass
+
+### Fixed
+
+- Opencode config
+
+- Hide unwanted OpenAI models
+
+- Bind the path explorer to the builtin ls
+
+- Expose only the Steam launcher
+
+- Name the owning tab from its starting directory
+
+- Remove the page shadow from the bottom gutter
+
+- Qualify the full tree after a branch rewrite
+
+- Skip Terra bootstrap on subsequent starts
+
+- Launch Big Picture windowed at the display scale
+
+- Keep Fedora 45 usable across Quay manifest rotations
+
+- Recognize the hosted Ubuntu 26.04 runner in actionlint
+
+[1.1.0]: https://github.com/tdesaules/chez-moi/compare/1.0.0...1.1.0
 ## [1.0.0] - 2026-11-15
 
 ### Added
