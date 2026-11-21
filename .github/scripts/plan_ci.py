@@ -11,7 +11,11 @@ def changed_files(before, after):
     if not before or set(before) == {"0"}:
         # A new branch conservatively qualifies the entire source.
         return git("ls-files", "-z", strip=False).split("\0")
-    git("cat-file", "-e", before + "^{commit}")
+    try:
+        git("cat-file", "-e", before + "^{commit}")
+    except subprocess.CalledProcessError:
+        # Renovate may rewrite a branch: its old tip need not exist in a full clone.
+        return git("ls-tree", "-r", "--name-only", "-z", after, strip=False).split("\0")
     return git("diff", "--name-only", "--no-renames", "-z", before, after, "--", strip=False).split("\0")
 
 

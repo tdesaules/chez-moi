@@ -16,6 +16,8 @@ menupopup {
 /* Opaque Nord surfaces, including Zen's separately painted background layers. */
 #main-window,
 #browser,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
 #navigator-toolbox,
 #nav-bar,
 #TabsToolbar,
@@ -32,17 +34,20 @@ menupopup {
 #zen-browser-background::before,
 #zen-browser-background::after {
     color-scheme: dark !important;
-    background-color: var(--nord-base) !important;
+    background-color: var(--nord2) !important;
     background-image: none !important;
     color: var(--nord-text) !important;
 }
 
-#tabbrowser-tabbox,
-#tabbrowser-tabpanels,
+/* Zen normally casts a shadow from the page into the bottom gutter. */
+#tabbrowser-tabpanels .browserSidebarContainer:not(.zen-glance-overlay) {
+    box-shadow: none !important;
+}
+
 #tabbrowser-tabpanels browser[type="content"],
 .browserStack {
     color-scheme: dark !important;
-    background-color: var(--nord-base) !important;
+    background-color: var(--nord3) !important;
 }
 
 /* Sans for controls, Mono for addresses/data, Comfortaa for section headings. */
@@ -82,7 +87,11 @@ zen-folder > .tab-group-label-container > label,
 .tabbrowser-tab:is([selected], [visuallyselected], [multiselected]) .tab-background {
     background-color: var(--nord-raised) !important;
     background-image: none !important;
-    box-shadow: inset 3px 0 0 var(--nord-profile-accent) !important;
+    box-shadow: inset 3px 0 0 var(--nord15) !important;
+}
+
+:is(#vertical-tabs-newtab-button, #tabs-newtab-button) .toolbarbutton-text {
+    color: var(--nord9) !important;
 }
 
 .tabbrowser-tab:is([selected], [visuallyselected]) .tab-label {
@@ -145,6 +154,22 @@ zen-folder .tab-group-folder-icon {
 #urlbar-input, #searchbar input {
     color: var(--nord-heading) !important;
     caret-color: var(--nord8) !important;
+}
+
+/* Draw above the opaque suggestion rows so all four edges stay visible. */
+#urlbar[breakout-extend] > .urlbar-background {
+    border-color: transparent !important;
+    outline: none !important;
+}
+
+#urlbar[breakout-extend]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--nord9);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .urlbarView {
