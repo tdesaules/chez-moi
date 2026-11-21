@@ -147,16 +147,16 @@ def path-explorer [current_arg: string, cmd: string, is_cd: bool] {
         $active_path = (if $d == "." or $d == "" { "" } else if $d == "/" { "/" } else { $"($d)/" })
     }
     mut is_first_run = true
+    let blue = (ansi light_blue)
+    let white = (ansi white)
+    let reset = (ansi reset)
     loop {
-        let search_path = if ($active_path | is-empty) { "" } else { $active_path }
-        let normal_files = (try { glob $"($search_path)*" } catch { [] })
-        let hidden_files = (try { glob $"($search_path).*" } catch { [] })
-        mut candidates = ($normal_files | append $hidden_files | uniq | where { |it| let b = ($it | path basename); $b != "." and $b != ".." }
-            | each { |it|
-                let type = (try { $it | path expand | path type } catch { "file" })
-                if $is_cd and $type != "dir" { return null }
-                if $type == "dir" { $"(ansi light_blue)($it)/(ansi reset)" } else { $"(ansi white)($it)(ansi reset)" }
-            } | where { $in != null })
+        let search_path = if ($active_path | is-empty) { $env.PWD } else { $active_path | path expand --no-symlink }
+        let entries = (try { ls --all --full-paths $search_path } catch { [] })
+        mut candidates = ($entries | each { |entry|
+            let is_dir = ($entry.type == "dir" or ($entry.type == "symlink" and (try { ($entry.name | path expand | path type) == "dir" } catch { false })))
+            if $is_dir { $"($blue)($entry.name)/($reset)" } else if not $is_cd { $"($white)($entry.name)($reset)" }
+        })
         if ($active_path | is-not-empty) { $candidates = ($candidates | prepend $"(ansi green)($active_path)(ansi reset)(char tab)__current__") }
         let query = (if $is_first_run { $is_first_run = false; if ($current_arg | str ends-with "/") { "" } else { $current_arg | path basename } } else { "" })
         let fzf_out = ($candidates | str join (char nl) | fzf --height 30% --layout reverse --border --delimiter (char tab) --with-nth 1 --prompt $"($cmd) ($active_path) > " --ansi --expect "tab,right,left" --query $query --select-1 --exit-0 --exact)
