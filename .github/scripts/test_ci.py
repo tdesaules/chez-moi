@@ -191,6 +191,7 @@ class PlanEventTests(unittest.TestCase):
         self.assertFalse(plan["has_release"])
 
     def test_git_cliff_bump_and_changelog(self):
+        self.run_git("-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", "feat: initial profile")
         self.run_git("-c", "tag.gpgsign=false", "tag", "-a", "1.0.0", "-m", "initial")
         for subject, expected in [
             ("perf: improve startup", "1.0.1"),
@@ -206,7 +207,7 @@ class PlanEventTests(unittest.TestCase):
         self.assertIn("BREAKING", notes)
         self.assertIn("### Added", notes)
         self.assertIn("### Changed", notes)
-        self.assertIn("/compare/1.0.0...2.0.0", notes)
+        self.assertIn("/compare/1.0.0...2.0.0\n\n## [1.0.0]", notes)
 
     def test_git_cliff_breaking_changes_override_routine_types(self):
         for previous, subject, expected in [

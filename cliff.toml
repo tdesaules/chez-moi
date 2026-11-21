@@ -25,6 +25,8 @@ body = """
 """
 trim = true
 postprocessors = [
+  # git-cliff concatenates release bodies; separate the next heading from the link.
+  { pattern = '(\[[0-9]+\.[0-9]+\.[0-9]+\]: https://[^\n]+)\n?', replace = "$1\n\n" },
   { pattern = '\n{3,}', replace = "\n\n" },
 ]
 

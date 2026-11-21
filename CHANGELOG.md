@@ -45,6 +45,7 @@ All notable changes are documented using [Keep a Changelog](https://keepachangel
 - Recognize the hosted Ubuntu 26.04 runner in actionlint
 
 [1.1.0]: https://github.com/tdesaules/chez-moi/compare/1.0.0...1.1.0
+
 ## [1.0.0] - 2026-11-15
 
 ### Added
