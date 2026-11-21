@@ -158,9 +158,15 @@ def verify(container, profile, directory, theme):
                     schemeWithLightWorkspace,
                     accent: style.getPropertyValue("--nord-profile-accent").trim(),
                     toolbox: read("#navigator-toolbox"),
+                    outerFrame: read("#zen-browser-background"),
+                    gutter: read("#tabbrowser-tabpanels"),
+                    pageShadow: getComputedStyle(document.querySelector(
+                        "#tabbrowser-tabpanels .browserSidebarContainer:not(.zen-glance-overlay)"
+                    )).boxShadow,
                     contentFrame: read("#tabbrowser-tabpanels browser[type='content']"),
                     address: read("#urlbar-input"),
                     selectedTab: read(".tabbrowser-tab[selected] .tab-background"),
+                    newTabLabel: read(":is(#vertical-tabs-newtab-button, #tabs-newtab-button) .toolbarbutton-text"),
                     workspace: read(".zen-current-workspace-indicator-name"),
                     parserChecked: typeof Services !== "undefined",
                     parserErrors: typeof Services !== "undefined" ?
@@ -170,13 +176,18 @@ def verify(container, profile, directory, theme):
                             .map(m => ({message: m.errorMessage, line: m.lineNumber})) : []
                 };
             """)
-            assert report["chrome"]["toolbox"]["background"] == rgb(theme["palette"]["nord1"]), report
-            assert report["chrome"]["contentFrame"]["background"] == rgb(theme["palette"]["nord1"]), report
+            assert report["chrome"]["toolbox"]["background"] == rgb(theme["palette"]["nord2"]), report
+            assert report["chrome"]["outerFrame"]["background"] == rgb(theme["palette"]["nord2"]), report
+            assert report["chrome"]["gutter"]["background"] == report["chrome"]["toolbox"]["background"], report
+            assert report["chrome"]["pageShadow"] == "none", report
+            assert report["chrome"]["contentFrame"]["background"] == rgb(theme["palette"]["nord3"]), report
             assert report["chrome"]["dark"], report
             assert report["chrome"]["schemeWithLightWorkspace"] == "dark", report
             assert theme["fonts"]["mono"] in report["chrome"]["address"]["font"], report
             expected = theme["palette"][theme["profiles"][profile]["accent"]]
             assert report["chrome"]["accent"] == expected, report
+            assert rgb(theme["palette"]["nord15"]) in report["chrome"]["selectedTab"]["shadow"], report
+            assert report["chrome"]["newTabLabel"]["color"] == rgb(theme["palette"]["nord9"]), report
             assert theme["fonts"]["display"] in report["chrome"]["workspace"]["font"], report
             assert report["chrome"]["workspace"]["weight"] == str(theme["fonts"]["display_weight"]), report
             assert report["chrome"]["parserChecked"], report
@@ -239,7 +250,7 @@ def verify(container, profile, directory, theme):
                         url: location.href,
                         dark: matchMedia("(prefers-color-scheme: dark)").matches};
             """)
-            assert report["preferences"]["background"] == rgb(theme["palette"]["nord1"]), report
+            assert report["preferences"]["background"] == rgb(theme["palette"]["nord3"]), report
             assert theme["fonts"]["display"] in report["preferences"]["headingFont"], report
             screenshot = client.call("WebDriver:TakeScreenshot", {})
             if isinstance(screenshot, dict):
@@ -251,7 +262,7 @@ def verify(container, profile, directory, theme):
                     const s = getComputedStyle(document.body || document.documentElement);
                     return {background: s.backgroundColor, color: s.color, font: s.fontFamily};
                 """)
-                assert report[page]["background"] == rgb(theme["palette"]["nord1"]), report
+                assert report[page]["background"] == rgb(theme["palette"]["nord3"]), report
             client.call("WebDriver:Navigate", {"url":
                 "data:text/html,<style>body{background:rgb(250,249,248);color:rgb(20,21,22);font-family:serif}</style><p>Website styles stay intact</p>"})
             report["website"] = client.script("""
