@@ -1,0 +1,4 @@
+# Hosted label already used by our jobs, missing from actionlint's built-in list.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
