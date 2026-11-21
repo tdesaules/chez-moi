@@ -3,29 +3,20 @@
   "shell": "/usr/bin/bash",
   "policies": [
     { "action": "provider.use", "resource": "*", "effect": "deny" },
-    { "action": "provider.use", "resource": "openai", "effect": "allow" },
-    { "action": "provider.use", "resource": "opencode", "effect": "allow" }
+    { "action": "provider.use", "resource": "openai", "effect": "allow" }
   ],
   "providers": {
-    "opencode": {
-      "models": {
-        "muse-spark-1.3-contributor-free": {
-          "name": "muse-spark-1.3-contributor-free"
-        }
-      }
-    },
     "openai": {
       "models": {
-        "gpt-6-astra": {
-          "name": "gpt-6-astra",
+{{- range .opencode.openai.disabled_models }}
+        {{ . | toJson }}: { "disabled": true },
+{{- end }}
+        "gpt-6.2-astra": {
+          "name": "gpt-6.2-astra",
           "limit": {{ .opencode.openai.limit | toJson }}
         },
-        "gpt-6.1-sol": {
-          "name": "gpt-6.1-sol",
-          "limit": {{ .opencode.openai.limit | toJson }}
-        },
-        "gpt-6-luna": {
-          "name": "gpt-6-luna",
+        "gpt-6.2-sol": {
+          "name": "gpt-6.2-sol",
           "limit": {{ .opencode.openai.limit | toJson }}
         }
       }

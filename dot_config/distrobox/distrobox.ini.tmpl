@@ -13,7 +13,7 @@ exported_apps="{{ .chezmoi.homeDir }}/.config/distrobox/chromium-perso.desktop {
 
 {{ if eq .chezmoi.arch "amd64" -}}
 [niri-tonic-files-distrobox]
-# Release binaries require Fedora 44's glibc and GTK runtime.
+# Keep the GTK runtime on the release validated for the packaged binary.
 image=quay.io/fedora/fedora:{{ .niri_tonic_files_fedora }}
 replace=true
 start_now=true
@@ -56,7 +56,7 @@ start_now=true
 entry=false
 hostname="zed-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
+pre_init_hooks="if ! rpm -q terra-release >/dev/null 2>&1; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra-bootstrap,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 additional_packages="zed"
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 exported_bins="/usr/bin/zed"
@@ -71,7 +71,7 @@ start_now=true
 entry=false
 hostname="steam-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
+pre_init_hooks="if ! rpm -q terra-release >/dev/null 2>&1; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra-bootstrap,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 pre_init_hooks="if ! rpm -q rpmfusion-free-release >/dev/null 2>&1; then dnf install --assumeyes https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ .chezmoi.osRelease.versionID }}.noarch.rpm; fi"
 # Steam needs 32-bit EGL for PipeWire capture and full VAAPI codecs for Remote Play.
 additional_packages="lsb_release pciutils pipewire-libs gamescope mangohud steam mesa-libEGL.i686 libglvnd-egl.i686 mesa-va-drivers-freeworld.i686 mesa-va-drivers-freeworld.x86_64 libva-utils"
@@ -87,7 +87,7 @@ start_now=true
 entry=false
 hostname="filen-distrobox"
 {{ includeTemplate "distrobox/pre-init.tmpl" -}}
-pre_init_hooks="if [[ ! -f /etc/yum.repos.d/terra.repo ]]; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
+pre_init_hooks="if ! rpm -q terra-release >/dev/null 2>&1; then dnf install --nogpgcheck --assumeyes --repofrompath 'terra-bootstrap,https://repos.fyralabs.com/terra{{ .chezmoi.osRelease.versionID }}' terra-release; fi"
 {{- $filen_version := .filen }}
 {{ includeTemplate "distrobox/common-hooks.tmpl" -}}
 init_hooks="curl --fail --location --retry 3 https://github.com/FilenCloudDienste/filen-desktop/releases/download/{{ $filen_version }}/Filen_linux_x86_64.rpm -o /tmp/filen.rpm"
