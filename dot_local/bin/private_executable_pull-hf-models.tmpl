@@ -33,6 +33,8 @@ echo "$CONFIG_JSON" | jq -e '
                       . != "." and . != ".." and (contains("/") | not)))' >/dev/null
 CACHE_DIR="$DOWNLOAD_DIR/.hf-cache"
 mkdir -p "$CACHE_DIR"
+# hf returns canonical paths (e.g. /var/home for a /home symlink).
+CACHE_DIR=$(realpath "$CACHE_DIR")
 exec 9>"$CACHE_DIR/download.lock"
 flock 9
 
