@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Inkling — Nord</title>
+  <rect width="256" height="256" rx="48" fill="#2e3440"/>
+  <path d="m58 198 26-78 68-62 46 46-62 68z" fill="#88c0d0"/>
+  <path d="m151 58 16-16 47 47-16 16z" fill="#b48ead"/>
+  <path d="m59 197 59-59" stroke="#2e3440" stroke-width="8"/>
+  <circle cx="119" cy="137" r="11" fill="#2e3440"/>
+</svg>

@@ -270,19 +270,22 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
 
 ## llama.cpp
 
-- `.chezmoidata/llama.yaml` defines three independent Vulkan servers, all with five slots:
+- `.chezmoidata/llama.yaml` defines four independent Vulkan servers, all with five slots:
   - `llama` / `nanbeige-server.service`: DealignAI Nanbeige4.3-33B UNCENSORED
     Q4_K_M, localhost 50501, 64K per slot (bounded for host memory).
   - `qwen` / `qwen-server.service`: DealignAI Qwen3.8-27B UNCENSORED
     (`CRACK-Q4_K_M` filename), localhost 50502, 256K per slot.
   - `ripple` / `ripple-server.service`: DealignAI Ripple-65B-Preview UNCENSORED
     Q4_K_M, localhost 50503, 128K per slot.
+  - `inkling` / `inkling-server.service`: AtomicChat Inkling 2 Mini Uncensored
+    AD-Q4_K with the F16 vision projector, localhost 50504, 32K per slot.
+    Requires llama.cpp b12600 or newer for `inkling2_loop`.
   All use Q8 KV cache and flash attention to reduce cache memory use.
-- Qwen/Ripple wrappers merge their overrides with `llama` defaults using a deep copy.
+- Qwen/Ripple/Inkling wrappers merge their overrides with `llama` defaults using a deep copy.
   Shared implementations live in `.chezmoitemplates/llama-*` and `llama.desktop.tmpl`.
   Each model has a distinct launcher, toggle lock, tray ID, port and container name.
-- `dot_config/models/config.kcl.tmpl` downloads Nanbeige, Qwen and Ripple.
-  Only Qwen has a vision projector (`mmproj-Qwen3.8-27B-f16.gguf`);
+- `dot_config/models/config.kcl.tmpl` downloads Nanbeige, Qwen, Ripple and Inkling.
+  Qwen and Inkling have vision projectors;
   Nanbeige and Ripple are text-only. The downloader removes the retired Ornith,
   Unsloth Qwen and Muse files and caches during orphan cleanup.
   `run_once_before_04-replace-llama-models.sh.tmpl` stops the old services;
@@ -299,7 +302,7 @@ Target machine: Kinoite, nushell + mise + gopass + niri.
   The tray uses `/usr/bin/python3`, system PyGObject/Gio and GdkPixbuf,
   not mise Python. It re-registers when the tray watcher restarts.
 - Nanbeige uses an original north–south compass SVG; Ripple uses water ripples.
-  All three icons use Nord colors. Qwen's logo geometry comes from LobeHub,
+  All four icons use Nord colors. Qwen's logo geometry comes from LobeHub,
   with its MIT license included in the rendered SVG.
 - Context fitting is disabled to prevent silently reducing the requested capacity.
   Vulkan reports about 79 GiB accessible on this Strix Halo host, including shared

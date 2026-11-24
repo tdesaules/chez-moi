@@ -1,6 +1,6 @@
 download_dir = "{{ .chezmoi.homeDir }}/{{ .llama.models_dir }}"
 models = [
-{{ range list .llama .qwen .ripple }}
+{{ range list .llama .qwen .ripple .inkling }}
     {
         repo = "{{ .repo }}"
         file = "{{ .model }}"
