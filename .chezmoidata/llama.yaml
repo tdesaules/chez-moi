@@ -2,7 +2,7 @@ llama:
   image: ghcr.io/ggml-org/llama.cpp:server-vulkan
   service: nanbeige-server.service
   tray_service: nanbeige-tray.service
-  name: Nanbeige4.3-33B UNCENSORED
+  name: Nanbeige4.3-33B-Uncensored
   icon: nanbeige
   port: 50501
   models_dir: .local/share/huggingface/models
@@ -18,7 +18,7 @@ llama:
 qwen:
   service: qwen-server.service
   tray_service: qwen-tray.service
-  name: Qwen3.8-27B UNCENSORED
+  name: Qwen3.8-27B-Uncensored
   icon: qwen
   port: 50502
   repo: dealignai/Qwen3.8-27B-UNCENSORED-GGUF
@@ -32,7 +32,7 @@ qwen:
 ripple:
   service: ripple-server.service
   tray_service: ripple-tray.service
-  name: Ripple-65B-Preview UNCENSORED
+  name: Ripple-65B-Preview-Uncensored
   icon: ripple
   port: 50503
   repo: dealignai/Ripple-65B-Preview-UNCENSORED-GGUF
@@ -46,7 +46,7 @@ inkling:
   image: ghcr.io/ggml-org/llama.cpp:server-vulkan@sha256:5766735f77edf02ca179264e71e18ed1466e9332912e30f88f7a4ccd0dc6d5b6
   service: inkling-server.service
   tray_service: inkling-tray.service
-  name: Inkling 2 Mini Uncensored
+  name: Inkling-2-Mini-Uncensored
   icon: inkling
   port: 50504
   repo: AtomicChat/Inkling-2-Mini-Uncensored-GGUF
