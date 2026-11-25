@@ -147,6 +147,18 @@ def verify(container, profile, directory, theme):
                 ])).catch(e => done(String(e)));
             """, asynchronous=True)
             assert report["search"] == ["DuckDuckGo", "DuckDuckGo"], report["search"]
+            report["tabsAppended"] = client.script("""
+                const browser = window.gBrowser;
+                const add = related => browser.addTrustedTab("about:blank", {relatedToCurrent: related});
+                const first = add(false), second = add(false);
+                browser.selectedTab = first;
+                const third = add(true);
+                const appended = [first, second, third].map(tab => Array.from(browser.tabs).indexOf(tab));
+                for (const tab of [third, second, first]) browser.removeTab(tab, {animate: false});
+                return appended;
+            """)
+            a, b, c = report["tabsAppended"]
+            assert 0 <= a < b < c, report["tabsAppended"]
             report["chrome"] = client.script("""
                 const root = document.documentElement;
                 const style = getComputedStyle(root);
