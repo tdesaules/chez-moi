@@ -1,0 +1,9 @@
+{
+  "policies": {
+    "DisableAppUpdate": true,
+    "SearchEngines": {
+      "Default": "DuckDuckGo",
+      "DefaultPrivate": "DuckDuckGo"
+    }
+  }
+}

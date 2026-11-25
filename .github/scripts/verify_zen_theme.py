@@ -137,6 +137,16 @@ def verify(container, profile, directory, theme):
                 raise RuntimeError("Refusing to automate an unrelated browser profile")
             owns_browser = True
             client.call("Marionette:SetContext", {"value": "chrome"})
+            report["search"] = client.script("""
+                const done = arguments[arguments.length - 1];
+                const {SearchService} = ChromeUtils.importESModule(
+                    "moz-src:///toolkit/components/search/SearchService.sys.mjs");
+                SearchService.init().then(async () => done([
+                    (await SearchService.getDefault()).name,
+                    (await SearchService.getDefaultPrivate()).name
+                ])).catch(e => done(String(e)));
+            """, asynchronous=True)
+            assert report["search"] == ["DuckDuckGo", "DuckDuckGo"], report["search"]
             report["chrome"] = client.script("""
                 const root = document.documentElement;
                 const style = getComputedStyle(root);
