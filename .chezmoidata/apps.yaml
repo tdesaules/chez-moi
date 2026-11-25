@@ -8,7 +8,7 @@ craft:
   # renovate: depName=kilianvivien/DarkSlide
   darkslide: "v1.3.1"
 # renovate: depName=FilenCloudDienste/filen-desktop
-filen: "v3.0.53"
+filen: "v3.0.55"
 # renovate: depName=OrcaSlicer/OrcaSlicer
 orcaslicer: "v2.5.0"
 # renovate: depName=FreeCAD/FreeCAD
