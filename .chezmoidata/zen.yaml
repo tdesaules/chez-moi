@@ -32,7 +32,10 @@ zen:
     thales:
       name: Thales
       accent: nord15
+  download_dir: download
   preferences:
+    browser.download.folderList: 2
+    browser.download.useDownloadDir: true
     toolkit.legacyUserProfileCustomizations.stylesheets: true
     # Append new tabs, including links opened from an existing tab.
     zen.view.show-newtab-button-top: false
